@@ -67,6 +67,8 @@ import IcdManager from './pages/Admin/IcdManager';
 import IcdManager2 from './pages/Admin/IcdManager2';
 import NurseNotes from './pages/Admin/NurseNotes';
 
+import Patients from './modules/admin/pages/Patients';
+
 function App() {
   return (
     <div>
@@ -104,6 +106,7 @@ function App() {
               <Route path='/PrenatalRie' element={<PrenatalRie/>} />
 
               <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+                <Route path ='/Patients' element={<Patients />} />
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 <Route path='/NurseNotes' element={<NurseNotes />} />

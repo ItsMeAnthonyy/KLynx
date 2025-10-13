@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda+Caption:wght@800&display=swap');
+
 /*
     min(30px, 7%); - Use 30px padding, unless the screen is small (width: 200px when minimize) — then use 7% of that 200px or less padding.
     So min choose whoever is the smallest.
@@ -36,28 +38,36 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 1rem;
     background: #dde6ed;
+    
 }
 
 .FileMaintenance-Header{
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-color: #07598D;
+    padding: 1rem;
 }
 
+
+/*
 .FileMaintenance-Content hr{
     width: calc(100% + 3rem);
     border: none;
     height: 0.5px;
-    background-color: #1114a3;
+    background-color: #07598D;
     margin: 0.1em 0;
     margin-left: -2rem;
     
 }
+*/
 
 .FileMaintenance-Content .FileMaintenance-Header .FileMaintenance-HeaderTitle h1{
-    color: #1114a3;
+    color: white;
+    font-family: 'Coda Caption', sans-serif;
+    font-weight: 800;
+    margin-left: 0.7em;
 }
 
 .FileMaintenance-HeaderSetting{
@@ -70,7 +80,7 @@
     font-size: 26px;
     cursor: pointer;
     transition: 0.5s ease-in-out;
-    color: #1114a3;
+    color: white;
 }
 
 .FileMaintenance-Icon:hover{
@@ -161,7 +171,6 @@
 }
 
 .FileMaintenance-TableWrapper{
-    width: calc(100% + 3rem);
     margin-left: -2rem;
 }
 

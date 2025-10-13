@@ -88,8 +88,8 @@ const Sidebar = () => {
                                 <ul className={`sub-mSidebar2 ${openDropdowns.includes(101) ? "show" : ""}`}>
                                     <div>
                                         <li><Link to="/Consultation">Patient's Consultation</Link></li>
-                                        <li><Link to="/Prescription">Doctor's Prescription</Link></li>
-                                        <li><Link to="/Note">Doctor's Note</Link></li>
+                                        {/*<li><Link to="/Prescription">Doctor's Prescription</Link></li>
+                                        <li><Link to="/Note">Doctor's Note</Link></li>*/}
                                     </div>
                                 </ul>
                             </li>
@@ -107,7 +107,7 @@ const Sidebar = () => {
                                 </ul>
                             </li>
                             <li><Link to="/Immunization">Immunization Records</Link></li>
-                            <li><Link to="/AnimalBite">Animal Bite Incident Records</Link></li>
+                            {/*<li><Link to="/AnimalBite">Animal Bite Incident Records</Link></li>*/}
                         </div>
                     </ul>
                 </li>
@@ -133,10 +133,10 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sub-mSidebar-Nondropdown">
-                    <Link to="/">Patient Health Record</Link>
+                    {/*<Link to="/">Patient Health Record</Link>*/}
                     <Link to="/DiseaseReport">Medical Report</Link>
-                    <Link to="">Animal Bite Incident Report</Link>
-                    <Link to="">Maternal Care Report</Link>
+                    {/*<Link to="">Animal Bite Incident Report</Link>
+                    <Link to="">Maternal Care Report</Link>*/}
                 </li>
 
                 <li className="mSidebar-logout">
