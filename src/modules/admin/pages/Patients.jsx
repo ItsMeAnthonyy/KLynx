@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '../../../components/sidebar';
 import '../../../components/css/GlobalContainer.css';
-import '../../../components/css/DashboardAlt.css';
+import './Patients.css';
 import '../../../components/css/FileMaintenance.css'
 import '../../../pages/Admin/Doctors.css'
 import axios from 'axios';
@@ -325,6 +325,32 @@ const Patients = () => {
                     </div>
                 </div>
                 {/*<hr></hr>*/}
+                <div className="Patients-Cards-Container">
+                    <div className="Patients-Card">
+                        <div className="Patients-CardTitle">
+                            <h4>Total Number of Patients</h4>
+                        </div>
+                        <div className="Patients-CardNumber">
+                            <h1>15</h1>
+                        </div>
+                    </div>
+                    <div className="Patients-Card">
+                        <div className="Patients-CardTitle">
+                            <h4>Active Patients</h4>
+                        </div>
+                        <div className="Patients-CardNumber">
+                            <h1>16</h1>
+                        </div>
+                    </div>
+                    <div className="Patients-Card">
+                        <div className="Patients-CardTitle">
+                            <h4>Inactive Patients</h4>
+                        </div>
+                        <div className="Patients-CardNumber">
+                            <h1>10</h1>
+                        </div>
+                    </div>
+                </div>
                 <div className="FileMaintenance-Filter-Container">
                     <div className="FileMaintenance-Entries">
                         <span>Show</span>

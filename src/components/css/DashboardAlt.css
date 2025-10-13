@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda:wght@400;800&display=swap');
+
 /*
     min(30px, 7%); - Use 30px padding, unless the screen is small (width: 200px when minimize) — then use 7% of that 200px or less padding.
     So min choose whoever is the smallest.
@@ -62,6 +64,8 @@
     align-items: center;
     margin-top: 1rem;
     color: #1114a3;
+    font-family: 'Coda', sans-serif;
+    color: #2D3748;
 }
 
 .DashboardAlt-Card{
