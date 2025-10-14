@@ -353,7 +353,7 @@ const Patients = () => {
                 </div>
                 <div className="FileMaintenance-Filter-Container">
                     <div className="FileMaintenance-Entries">
-                        <span>Show</span>
+                        <span>SHOW</span>
                         <select>
                             <option hidden></option>
                             <option value="5">5</option>
@@ -362,8 +362,7 @@ const Patients = () => {
                         <span>Entries</span>
                     </div>
                     <div className="FileMaintenance-AddSearch">
-                            <button onClick={() => handleModalOpen()}>Add</button>
-                            <span>Search:</span>
+                            <button onClick={() => handleModalOpen()}>+</button>
                             <input type="text" placeholder="Search here..."/>
                     </div>
                 </div>
@@ -371,11 +370,11 @@ const Patients = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>Patient ID</th>
-                                <th>Family ID</th>
-                                <th>Patient Name</th>
-                                <th>Contact Number</th>
-                                <th>Sex</th>
+                                <th>Patient Name (Lastname, Firstname, Middle)</th>
+                                <th>Birthday</th>
+                                <th>Registration</th>
+                                <th>Queue</th>
+                                <th>Download Data</th>
                                 <th colSpan="3">Record</th>
                             </tr>
                         </thead>
@@ -383,19 +382,19 @@ const Patients = () => {
                             {consultProfiles.map((consProf, key) => (
                             <tr key={key}>
                                 <td>
-                                    {consProf.PatientID}
+                                    {consProf.LastName}, {consProf.FirstName} {consProf.MiddleName}
                                 </td>
                                 <td>
-                                    {consProf.FamilyID}
+                                    {consProf.Birthday}
                                 </td>
                                 <td>
-                                {consProf.LastName}, {consProf.FirstName} {consProf.MiddleName}
+                                    {consProf.DateCreated}
                                 </td>
                                 <td>
-                                    {consProf.ContactNumber}
+                                    Add to Queue
                                 </td>
                                 <td>
-                                    {consProf.Sex}
+                                    Download Data
                                 </td>
                                 <td>
                                     <button onClick={() => viewHistory(consProf.ConsultID) }>View History</button>

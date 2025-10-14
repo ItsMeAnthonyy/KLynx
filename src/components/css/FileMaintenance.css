@@ -74,10 +74,11 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    padding-right: 1.5rem;
 }
 
 .FileMaintenance-Icon{
-    font-size: 26px;
+    font-size: 35px;
     cursor: pointer;
     transition: 0.5s ease-in-out;
     color: white;
@@ -92,10 +93,17 @@
     display: flex;
     gap: 20px;
     align-items: center;
-    margin-top: 1rem;
-    color: #1114a3;
+    color: #2D3748;
     align-items: center;
     justify-content: space-between;
+    padding-right: 2.3rem;
+    padding-left: 2.3rem;
+}
+
+.FileMaintenance-Filter-Container .FileMaintenance-Entries span{
+    font-family: 'Coda Caption', sans-serif;
+    font-weight: 800;
+    font-size: 1.5em;
 }
 
 .FileMaintenance-Entries{
@@ -106,10 +114,10 @@
 }
 
 .FileMaintenance-Entries select{
-    border-radius: 15px;
+    border-radius: 10px;
     border: none;
-    border: 1px solid #1114a3;
-    padding: 3px 24px;
+    border: 1px solid #112250;
+    padding: 13px 45px;
 }
 
 .FileMaintenance-AddSearch{
@@ -123,13 +131,13 @@
 }
 
 .FileMaintenance-AddSearch button{
-    border-radius: 15px;
+    border-radius: 20px;
     border: none;
     /*outline: none; how cursor pointer will look on button*/ 
-    background: #1114a3;
-    color: white;
-    padding: 4px 24px;
-    font-size: 0.9em;
+    background: #112250;
+    color: #ebeff3;
+    padding: 2px 9px;
+    font-size: 1.5em;
     transition: 0.5s ease-in-out;
 }
 
@@ -140,21 +148,22 @@
 }
 
 .FileMaintenance-AddSearch input{
-    border-radius: 15px;
+    border-radius: 10px;
     border: none;
-    border: 1px solid #1114a3;
-    padding: 3px 7px;
+    border: 1px solid #112250;
+    padding: 13px 100px;
+    box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
 }
 
 .FileMaintenance-Content table{
-    margin-top: 4rem;
+    margin-top: 1rem;
     font-size: 0.8em;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
     width: 100%;
     text-align: center;
     transition: all 0.3s ease;
     table-layout: fixed;
-
 }
 
 .FileMaintenance-Content table td:nth-child(5) {
@@ -171,29 +180,52 @@
 }
 
 .FileMaintenance-TableWrapper{
-    margin-left: -2rem;
+    margin: 16px auto;
+    padding: 0.5rem 1.5rem;
+    width: 95%;
+    max-width: 1600px;
+    border-radius: 11px;
+    border: 1px solid #112250;
+    box-sizing: border-box;
+    box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
 }
 
-.FileMaintenance-Content table thead tr{
-    border-bottom: 1px solid #1114a3;
-}
 
 .FileMaintenance-Content table thead tr th{
-    font-weight: 600;
-    color: #1114a3;
-}
-
-.FileMaintenance-Content table tbody td{
-    height: 4.5em;
-    border-bottom: 1px solid #1114a3;
+    font-family: 'Coda Caption', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: #2D3748;
 }
 
 .FileMaintenance-Content table tbody tr:hover{
     background-color: #8e8e974e;
 }
 
-.FileMaintenance-Content table tbody tr:last-child td{
-    border: none;
+.FileMaintenance-Content table tbody tr{
+    background-color: #ebeff3;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 
+        0 0 0 1px #112250,         /* crisp border-like shadow */
+        5px 5px 1px rgba(151, 151, 151, 0.15); /* soft offset shadow */
+}
+
+.FileMaintenance-Content table tbody td {
+    padding: 1rem;
+    font-family: 'Coda', sans-serif;
+    font-size: 13px;
+    color: #2D3748;
+}
+
+.FileMaintenance-Content table tbody td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.FileMaintenance-Content table tbody td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .FileMaintenance-Content table tbody td:nth-child(7) button{
