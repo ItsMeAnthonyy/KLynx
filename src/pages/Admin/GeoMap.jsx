@@ -5,6 +5,8 @@ import '@maptiler/sdk/dist/maptiler-sdk.css';
 import './Maps.css';
 import Sidebar from '../../components/Sidebar';
 import axios from 'axios';
+import { BiError } from 'react-icons/bi';
+import ProfileDropdown from '../../components/ProfileDropdown';
 
 /* 🔑 MapTiler key ------------------------------------------------ */
 maptilersdk.config.apiKey = 'zKdOhGfQaGxspXOXk97Z';
@@ -340,44 +342,22 @@ dbData.forEach(({ DiagnosisName }) => {
   return (
     <div className='container'>
         <Sidebar />
-     <div className='main'>
-      <div className="header">
-        <h2>
-         Geographical Map 
-        </h2>
-        <div className="icon">
-          <i
-            className="fas fa-bell"
-            id="notif"
-            onClick={() => setShowNotifications(!showNotifications)}
-          ></i>
-          <i
-            className="fas fa-cog"
-            id="settings"
-            onClick={() => setShowSettings(!showSettings)}
-          ></i>
-        </div>
-
-        
-          {showNotifications && (
-            <div className="dropdown notifications-dropdown">
-              <ul>
-                <li>New disease alert: Dengue</li>
-                <li>System maintenance scheduled</li>
-                <li>Weekly report available</li>
-              </ul>
-            </div>
-          )}
-          {showSettings && (
-            <div className="dropdown settings-dropdown">
-              <ul>
-                <li onClick={() => setShowManageAccount(true)}>Manage Account</li>
-                <li onClick={() => setShowTerms(true)}>Terms and Condition</li>
-                <li onClick={() => setShowAddAdmin(true)}>Add Admin Account</li>
-              </ul>
-            </div>
-          )}
-      </div>
+     <div className='FileMaintenance-Content'>
+      <div className="FileMaintenance-Header">
+               <div className="FileMaintenance-HeaderTitle">
+                 <h1>GeoMap</h1>
+               </div>
+     
+               <div className="FileMaintenance-HeaderSetting">
+                 <button className="emergency-button">
+                   <BiError/>EMERGENCY MODE
+                 </button>
+                 <ProfileDropdown 
+                   email="admin@klynx.com"
+                   name="Admin User"
+                 />
+               </div>
+             </div>
 
       {/* --- Disease Analytics Dashboard --- */}
       <div className="disease-analytics-dashboard"

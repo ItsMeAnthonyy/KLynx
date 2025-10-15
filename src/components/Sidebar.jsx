@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import React from 'react';  
+
 import { Link } from 'react-router-dom';
 import { BiGridAlt, BiBarChartAlt2, BiFolder, BiChevronsLeft, BiChevronDown, BiLogOut } from 'react-icons/bi';
 import './css/Sidebar.css';
@@ -72,6 +72,7 @@ const Sidebar = () => {
                 <li className="sub-mSidebar-Nondropdown">
                     <Link to="/ICDManager2">ICD-10</Link>
                     <Link to="/NurseNotes">Nurse Notes</Link>
+                    <Link to="/Notifications">Notifications</Link>
                 </li>
                 <li>
                     <button className={`mSidebar-dropdown-btn ${openDropdowns.includes(1) ? "rotate" : ""}`} onClick={() => toggleDropdown(1)}>
@@ -87,9 +88,9 @@ const Sidebar = () => {
                                 </button>
                                 <ul className={`sub-mSidebar2 ${openDropdowns.includes(101) ? "show" : ""}`}>
                                     <div>
-                                        <li><Link to="/Consultation">Patient's Consultation</Link></li>
-                                        <li><Link to="/Prescription">Doctor's Prescription</Link></li>
-                                        <li><Link to="/Note">Doctor's Note</Link></li>
+                                        <li><Link to="/ConsultationDetail">Patient&apos;s Consultation</Link></li>
+                                        <li><Link to="/Prescription">Doctor&apos;s Prescription</Link></li>
+                                        <li><Link to="/Note">Doctor&apos;s Note</Link></li>
                                     </div>
                                 </ul>
                             </li>

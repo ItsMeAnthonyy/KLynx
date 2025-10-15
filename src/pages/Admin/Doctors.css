@@ -17,23 +17,23 @@
   box-shadow: 0 5px 10px rgba(0, 0, 0, 1);
   position: relative;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   overflow-y: auto;
   max-height: 90vh;
 }
 
 .add-doctors-popup-content h2{
   font-size: 1.5rem;
-  color: #1114a3;
+  color: #112250;
   font-weight: 500;
-  text-align: center;
+  text-align: flex-start;
 }
 
-.add-doctors-popup-content h4{
-  font-size: 1rem;
-  color: #1114a3;
+.add-doctors-popup-content h3{
+  font-size: 1.5rem;
+  color: #112250;
   font-weight: 400;
-  text-align: center;
+  text-align: flex-start;
 }
 
 .add-doctors-popup-content .add-doctors-form{
@@ -46,7 +46,7 @@
 }
 
 .add-doctors-input-box label{
-    color: #1114a3;
+    color: #112250;
 }
 
 .add-doctors-form :where(.add-doctors-input-box input:not([type="radio"]), .add-doctors-select-box, .add-doctors-input-box textarea ){
@@ -57,8 +57,8 @@
   font-size: 1em;
   color: black;
   margin-top: 8px;
-  border: 1px solid #003399;
-  border-radius: 20px;
+  border: 0.1rem solid #112250;
+  border-radius: 0.35rem;
   padding: 0 15px;
   box-sizing: border-box;
 }
@@ -68,8 +68,8 @@
 }
 
 .add-consult-accompanied-by-button button {
-  background-color: #1114a3;
-  border-radius: 0.9rem;
+  background-color: #112250;
+  border-radius: 1rem;
   padding: 0.4rem 1.2rem;
   border: none;
   color: white;
@@ -79,7 +79,7 @@
 }
 
 .add-consult-accompanied-by-button button:hover {
-  background-color: #2d2fcc;
+  background-color: #112250;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -177,7 +177,7 @@
 
 
 .add-doctors-save-button{
-background-color: #1114a3;
+background-color: #112250;
     border: none;
     border-radius: 25px;
     color: #ffffff;
@@ -190,7 +190,7 @@ background-color: #1114a3;
 }
 
 .add-doctors-cancel-button{
-background-color: #FF5733;
+background-color: #07598D;
     border: none;
     border-radius: 25px;
     color: #ffffff;

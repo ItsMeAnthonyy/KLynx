@@ -43,7 +43,12 @@ import Calendar from './pages/Admin/Calendar';
 import Staff from './pages/Admin/Staff';
 import Nurse from './pages/Admin/Nurse';
 import Patient from './pages/Admin/Patient';
-//import AnimalBite from './pages/Admin/AnimalBite';
+import AnimalBite from './pages/Admin/AnimalBite';
+
+import ConsultationDetail from './Modules/Admin/Pages/ConsultationDetail';
+
+import Notifications from './pages/Admin/Notifications';
+import Settings from './pages/Admin/Settings';
 //import TotalPatients from './pages/Admin/TotalPatients';
 //import Notes from './pages/Admin/Note';
 //import Prescription from './pages/Admin/Prescription'
@@ -103,10 +108,12 @@ function App() {
               
               <Route path='/PrenatalRie' element={<PrenatalRie/>} />
 
-              <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+              {/* <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}> */}
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 <Route path='/NurseNotes' element={<NurseNotes />} />
+                <Route path='/Notifications' element={<Notifications />} />
+                  <Route path='/Settings' element={<Settings />} />
 
                 <Route path='/GeoMap' element={<GeoMaps />} />              
                 <Route path='/DashboardAlt' element={<DashboardAlt/>} />
@@ -114,21 +121,23 @@ function App() {
                 <Route path='/Immunization' element={<Immunization/>} />
                 <Route path='/Prenatal' element={<Prenatal/>} />
                 <Route path='/Consultation' element={<Consultation />} />
+                <Route path='/ConsultationDetail' element={<ConsultationDetail />} />
                 
                 <Route path='/Staff' element={<Staff/>} />
                 <Route path='/Nurse' element={<Nurse/>} />
                 <Route path='/Doctors' element={<Doctors/>} />
                 <Route path='/Patient' element={<Patient/>} />
 
+                <Route path='/AnimalBite' element={<AnimalBite/>} />
+
                 <Route path='/Patientrecord' element={<Patientrecord />} />
                 <Route path='/Calendar' element={<Calendar />} />
                 
                 <Route path='/DiseaseReport' element={<DiseaseReport />} />
                 {/*<Route path='/Dashboard' element={<Dashboard />} />  */}
-                
-                
-              </Route> 
-              
+
+
+           {/* //   </Route> */}
 
               <Route path='/Appointment' element={<Appointment />} />
               <Route path='/Patient-Dashboard' element={<Dashboard2/>} />

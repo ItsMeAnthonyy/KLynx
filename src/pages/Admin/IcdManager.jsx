@@ -2,31 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 
-const icdOptions = [
-  {
-    label: "Infectious Diseases",
-    options: [
-      { value: "A00", label: "A00 - Cholera" },
-      { value: "A01", label: "A01 - Typhoid fever" },
-      { value: "A09", label: "A09 - Gastroenteritis" },
-    ],
-  },
-  {
-    label: "Respiratory Diseases",
-    options: [
-      { value: "J06.9", label: "J06.9 - Acute URI" },
-      { value: "J18.9", label: "J18.9 - Pneumonia" },
-      { value: "J45", label: "J45 - Asthma" },
-    ],
-  },
-  {
-    label: "Endocrine Disorders",
-    options: [
-      { value: "E11", label: "E11 - Type 2 diabetes mellitus" },
-      { value: "E03.9", label: "E03.9 - Hypothyroidism" },
-    ],
-  },
-];
+// Default icdOptions removed; options are loaded dynamically from the API.
 
 /* Custom MenuList that preserves react-select's Option elements */
 const CollapsibleMenuList = (props) => {
@@ -57,6 +33,7 @@ const CollapsibleMenuList = (props) => {
           <div key={groupLabel} style={{ userSelect: "none" }}>
             {/* Category header */}
             <div
+          
               onClick={() => toggleGroup(groupLabel)}
               style={{
                 display: "flex",
@@ -194,3 +171,4 @@ export default function IcdCollapsibleDropdown({ onChange }) {
     </div>
   );
 }
+
