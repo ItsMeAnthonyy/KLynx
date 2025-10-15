@@ -357,11 +357,14 @@ const ConsultationDetail = () => {
                         recordType={activeTab}
                         patientId={patientData?.id}
                     />
-                )}  
-                
-      </main>
-    </div> 
-    
+                )}   
+                {message.text && (
+                    <div className={`message ${message.type}`}>
+                        {message.text}
+                    </div>
+                )}
+            </main>
+        </div>
 
   )
 }
