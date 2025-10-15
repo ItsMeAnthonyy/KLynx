@@ -358,11 +358,7 @@ const ConsultationDetail = () => {
                         patientId={patientData?.id}
                     />
                 )}   
-                {message.text && (
-                    <div className={`message ${message.type}`}>
-                        {message.text}
-                    </div>
-                )}
+                
             </main>
         </div>
 
