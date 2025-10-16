@@ -5,15 +5,14 @@ import '../../../components/css/GlobalContainer.css';
 import './Patients.css';
 import '../../../components/css/FileMaintenance.css'
 import '../../../pages/Admin/Doctors.css'
-import './Visits.css'
 import axios from 'axios';
 import React from 'react';  
-import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash, BiArrowBack } from 'react-icons/bi';
+import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
 import { fetchPatientData } from "../services/patientService";
 
-const Visits = () => {
+const Patients = () => {
     const navigate = useNavigate();
 
     const [allPatients, setAllPatients] = useState([]);
@@ -325,9 +324,6 @@ const Visits = () => {
         }
     }
 
-    const handleBackToPatientList = () => {
-        navigate('/Patients');
-    };
     
 
     return (
@@ -336,7 +332,7 @@ const Visits = () => {
             <main className="FileMaintenance-Content">
                 <div className="FileMaintenance-Header">
                     <div className="FileMaintenance-HeaderTitle">
-                        <h1>PREVIOUS VISIT LIST</h1>
+                        <h1>PATIENTS</h1>
                     </div>
                     <div className="FileMaintenance-HeaderSetting">
                         <BiSolidBell className="FileMaintenance-Icon" />
@@ -344,11 +340,41 @@ const Visits = () => {
                     </div>
                 </div>
                 {/*<hr></hr>*/}
-                <div className="Visits-Filter-Container">
+                <div className="Patients-Cards-Container">
+                    <div className="Patients-Card">
+                        <div className="Patients-CardTitle">
+                            <h4>Total Number of Patients</h4>
+                        </div>
+                        <div className="Patients-CardNumber">
+                            <h1>15</h1>
+                        </div>
+                    </div>
+                    <div className="Patients-Card">
+                        <div className="Patients-CardTitle">
+                            <h4>Active Patients</h4>
+                        </div>
+                        <div className="Patients-CardNumber">
+                            <h1>16</h1>
+                        </div>
+                    </div>
+                    <div className="Patients-Card">
+                        <div className="Patients-CardTitle">
+                            <h4>Inactive Patients</h4>
+                        </div>
+                        <div className="Patients-CardNumber">
+                            <h1>10</h1>
+                        </div>
+                    </div>
+                </div>
+                <div className="FileMaintenance-Filter-Container">
                     <div className="FileMaintenance-Entries">
-                        <button onClick={handleBackToPatientList} className="Visits-BackButton">
-                            <BiArrowBack/> Back to Patient List
-                        </button>
+                        <span>SHOW</span>
+                        <select>
+                            <option hidden></option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                        </select>
+                        <span>Entries</span>
                     </div>
                     <div className="FileMaintenance-AddSearch">
                             <button onClick={() => handleModalOpen()}>+</button>
@@ -359,11 +385,11 @@ const Visits = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>No.</th>
-                                <th>Options</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Type of Consultation</th>
+                                <th>Patient Name (Lastname, Firstname, Middle)</th>
+                                <th>Birthday</th>
+                                <th>Registration</th>
+                                <th>Queue</th>
+                                <th>Download Data</th>
                                 <th colSpan="3">Record</th>
                             </tr>
                         </thead>
@@ -371,7 +397,12 @@ const Visits = () => {
                             {consultProfiles.map((consProf, key) => (
                             <tr key={key}>
                                 <td>
-                                    1
+                                    <button
+                                        className="PatientNameButton"
+                                        onClick={() => handleViewPatient(consProf)}
+                                    >
+                                        {consProf.LastName}, {consProf.FirstName} {consProf.MiddleName}
+                                    </button>
                                 </td>
                                 <td>
                                     {consProf.Birthday}
@@ -1483,4 +1514,4 @@ const Visits = () => {
     );
 }
 
-export default Visits;
+export default Patients;

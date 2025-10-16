@@ -1,0 +1,25 @@
+.Visits-Filter-Container{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    color: #2D3748;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 2.3rem;
+    padding-left: 1rem;
+    padding-top: 0.8em;
+}
+
+
+.FileMaintenance-Entries .Visits-BackButton {
+    padding: 13px 18px;
+    background-color: #ebeff3;
+    color: #2D3748;
+    border: 1px solid #112250;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.FileMaintenance-Entries .Visits-BackButton:hover {
+  background-color: #8e8e974e;
+}
