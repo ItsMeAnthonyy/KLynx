@@ -54,7 +54,7 @@ const Sidebar = () => {
                 <li className="mSidebar-Active">
                     <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
                         <BiGridAlt className="BiGridAlt mSidebarLogo" />
-                        <span><strong>Main</strong></span>
+                        <span className="mSidebar-General" >Main</span>
                     </Link>
                 </li>
                 <li className="sub-mSidebar-Nondropdown">
@@ -66,12 +66,13 @@ const Sidebar = () => {
                 <li>
                     <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
                         <BiFolder className="BiFolder mSidebarLogo" />
-                        <span><strong>File Maintenance</strong></span>
+                        <span className="mSidebar-General" >File Maintenance</span>
                     </Link>
                 </li>
                 <li className="sub-mSidebar-Nondropdown">
                     <Link to="/ICDManager2">ICD-10</Link>
                     <Link to="/NurseNotes">Nurse Notes</Link>
+                    <Link to="/Patients">Patient List</Link>
                 </li>
                 <li>
                     <button className={`mSidebar-dropdown-btn ${openDropdowns.includes(1) ? "rotate" : ""}`} onClick={() => toggleDropdown(1)}>
@@ -129,7 +130,7 @@ const Sidebar = () => {
                 <li>
                     <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
                         <BiBarChartAlt2 className="BiBarChartAlt2 mSidebarLogo" />
-                        <span><strong>Reports</strong></span>
+                        <span className="mSidebar-General" >Reports</span>
                     </Link>
                 </li>
                 <li className="sub-mSidebar-Nondropdown">
@@ -143,7 +144,7 @@ const Sidebar = () => {
                     
                     <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); handleLogout(); }}>
                         <BiLogOut className="BiFolder mSidebarLogo" />
-                        <span><strong>Logout</strong></span>
+                        <span className="mSidebar-General" >Logout</span>
                     </Link>
                 
                 </li>

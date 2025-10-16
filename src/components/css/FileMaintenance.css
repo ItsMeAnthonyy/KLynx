@@ -192,9 +192,9 @@
 
 
 .FileMaintenance-Content table thead tr th{
-    font-family: 'Coda Caption', sans-serif;
+    font-family: 'Coda', sans-serif;
     font-weight: 800;
-    font-size: 16px;
+    font-size: 14px;
     color: #2D3748;
 }
 
@@ -214,8 +214,24 @@
 .FileMaintenance-Content table tbody td {
     padding: 1rem;
     font-family: 'Coda', sans-serif;
-    font-size: 13px;
+    font-size: 1.3em;
     color: #2D3748;
+}
+
+.FileMaintenance-Content table tbody td .PatientNameButton{
+    font-family: 'Coda', sans-serif;
+    font-size: 0.9em;
+    color: #2D3748;
+    text-decoration: underline;
+    transition: color 0.1s ease;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.FileMaintenance-Content table tbody td .PatientNameButton:hover {
+    color: #E2E8F0;
 }
 
 .FileMaintenance-Content table tbody td:first-child {

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../../components/sidebar';
 import '../../../components/css/GlobalContainer.css';
 import './Patients.css';
@@ -12,8 +11,7 @@ import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash } from 'react-icons/
 
 import { fetchPatientData } from "../services/patientService";
 
-const Patients = () => {
-    const navigate = useNavigate();
+const Visits = () => {
 
     const [allPatients, setAllPatients] = useState([]);
     const [allDoctors, setAllDoctors] = useState([]);
@@ -1514,4 +1512,4 @@ const Patients = () => {
     );
 }
 
-export default Patients;
+export default Visits;

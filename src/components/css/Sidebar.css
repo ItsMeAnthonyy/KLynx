@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda+Caption:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Coda:wght@400;800&display=swap');
 /*
     align-self: start; It tells one specific item inside a flex (or grid) container to align to the top (or left, depending on layout direction) — even if the others are centered or stretched.
 */
@@ -12,6 +14,7 @@
     position: sticky;
     top: 0;
     align-self: start;
+    font-family: 'Coda', sans-serif;
     
 
     transition: 300ms ease-in-out;
@@ -173,9 +176,15 @@
 }
 
 #mSidebar hr {
-  width: 100%;
-  border: none;
-  height: 1px;
-  background-color: rgba(255, 255, 255, 0.2);
-  margin: 0.5em 0; /* add some spacing */
+    width: 100%;
+    border: none;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0.5em 0; /* add some spacing */
+}
+
+.mSidebar-General{
+    font-family: 'Coda Caption', sans-serif;
+    font-weight: 800;
+    font-size: 1em;
 }

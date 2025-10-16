@@ -40,3 +40,9 @@
     text-align: center;
     font-size: 1.7rem;
 }
+
+
+.PatientNameButton{
+    background: none;
+    border: none;
+}

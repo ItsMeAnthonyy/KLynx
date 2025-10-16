@@ -68,6 +68,7 @@ import IcdManager2 from './pages/Admin/IcdManager2';
 import NurseNotes from './pages/Admin/NurseNotes';
 
 import Patients from './modules/admin/pages/Patients';
+import Visits from './modules/admin/pages/Visits';
 
 function App() {
   return (
@@ -107,6 +108,7 @@ function App() {
 
               <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
                 <Route path ='/Patients' element={<Patients />} />
+                <Route path="/patient/:id/visits" element={<Visits />} />
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 <Route path='/NurseNotes' element={<NurseNotes />} />
