@@ -505,7 +505,7 @@ const AnimalBite = () => {
 
                                     <div className="add-doctors-input-box">
                                         <label className="required">ID/IM</label>
-                                        <select name="ID/IM" className="site-select" required value={formData['ID/IM'] ?? ''} onChange={handleFormChange}>
+                                        <select name="IDIM" className="selectBox" required value={formData['ID/IM'] ?? ''} onChange={handleFormChange}>
                                             <option value="">Select</option>
                                             <option value="PCEC">PCEC</option>
                                             <option value="Other">PVRV</option>
@@ -519,7 +519,7 @@ const AnimalBite = () => {
                                
                                 <div className="add-doctors-input-box">
                                     <label className="required">If yes, date given</label>
-                                        <select type="date" placeholder="D0" name="D0" className="site-select" required value={formData.D0 ?? ''} onChange={handleFormChange}>
+                                        <select type="activeDateGiven" placeholder="D0" name="D0" className="selectBox" required value={formData.D0 ?? ''} onChange={handleFormChange}>
                                         <option value="">Select</option>
                                         <option value="D0">D0</option>
                                         <option value="D3">D3</option>

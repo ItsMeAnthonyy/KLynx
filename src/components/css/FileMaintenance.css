@@ -199,7 +199,7 @@
 }
 
 .FileMaintenance-Content table td:nth-child(5) {
-    width: 220px;
+    width: 5%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -240,12 +240,8 @@
 
 .FileMaintenance-Content table tbody td:nth-child(7) button{
     /*outline: none; how cursor pointer will look on button*/ 
-    border-radius: 15px;
-    border: none;
-    padding: 4px 20px;
-    margin-right: 5px;
-    background: #112250;
-    color: #112250;
+  
+  
     font-size: 0.9em;
     transition: 0.5s ease-in-out;
 }
