@@ -24,9 +24,10 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 6px;
+    
 }
 
-#mSidebar::-webkit-scrollbar {
+#mSidebar:hover::-webkit-scrollbar {
   width: 2px;
 }
 
@@ -35,6 +36,10 @@
   border-radius: 10px;
 }
 
+#mSidebar::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
 
 
 #mSidebar ul{

@@ -10,10 +10,14 @@ import React from 'react';
 import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
+import AddPatientModal from '../popups/AddPatientModal';
+
+
 import { fetchPatientData } from "../services/patientService";
 
 const Patients = () => {
     const navigate = useNavigate();
+    const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
 
     const [allPatients, setAllPatients] = useState([]);
     const [allDoctors, setAllDoctors] = useState([]);
@@ -324,6 +328,7 @@ const Patients = () => {
         }
     }
 
+
     
 
     return (
@@ -377,7 +382,13 @@ const Patients = () => {
                         <span>Entries</span>
                     </div>
                     <div className="FileMaintenance-AddSearch">
-                            <button onClick={() => handleModalOpen()}>+</button>
+                            <button 
+                                title="Add new Patient" 
+                                onClick={() => setIsAddPatientModalOpen(true)}
+                                aria-label="Add new Patient"
+                            >
+                                +
+                            </button>
                             <input type="text" placeholder="Search here..."/>
                     </div>
                 </div>
@@ -433,6 +444,11 @@ const Patients = () => {
                     </table>
                 </div>
             </main>
+
+            <AddPatientModal 
+                isOpen={isAddPatientModalOpen} 
+                onClose={() => setIsAddPatientModalOpen(false)} 
+            />
 
             {/* MODALS SECTION */}
             {showModal && (

@@ -1,0 +1,152 @@
+.consultationForm {
+  padding: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr  ;
+  gap: 1rem;
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: hsl(215, 25%, 15%); /* foreground */
+  margin-bottom: 0.5rem;
+}
+
+.required {
+  color: hsl(0, 84.2%, 60.2%); /* destructive */
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: hsl(215, 25%, 15%); /* foreground */
+  background: hsl(210, 40%, 98%); /* background */
+  border: 2px solid hsl(210, 25%, 90%); /* input */
+  border-radius: calc(0.75rem - 0.25rem);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+}
+
+.formInput:hover,
+.formTextarea:hover {
+  border-color: hsl(215, 15%, 50%); /* muted-foreground */
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: hsl(200, 95%, 40%); /* ring */
+  box-shadow: 0 0 0 3px hsl(200, 95%, 40% / 0.1);
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder {
+  color: hsl(215, 15%, 50%); /* muted-foreground */
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.formActions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.btnPrimary {
+  background: linear-gradient(to right, hsl(200, 95%, 40%), hsl(195, 100%, 50%)); /* gradient-primary */
+  color: hsl(0, 0%, 100%); /* primary-foreground */
+  box-shadow: 0 10px 30px -10px hsl(200, 95%, 40% / 0.2); /* shadow-elegant */
+}
+
+.btnPrimary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px hsl(195, 100%, 50% / 0.15); /* shadow-glow */
+}
+
+.btnPrimary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnPrimary:focus-visible {
+  outline: 2px solid hsl(200, 95%, 40%); /* ring */
+  outline-offset: 2px;
+}
+
+.btnCancel {
+  background: hsl(210, 30%, 92%); /* muted */
+  color: hsl(215, 25%, 15%); /* foreground */
+  border: 1px solid hsl(210, 25%, 88%); /* border */
+}
+
+.btnCancel:hover:not(:disabled) {
+  background: hsl(185, 90%, 45%); /* accent */
+  color: hsl(0, 0%, 100%); /* accent-foreground */
+}
+
+.btnCancel:focus-visible {
+  outline: 2px solid hsl(200, 95%, 40%); /* ring */
+  outline-offset: 2px;
+}
+
+.btnCancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .consultationForm {
+    padding: 1.5rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .btnPrimary,
+  .btnCancel {
+    width: 100%;
+  }
+
+  .formActions {
+    flex-direction: column-reverse;
+  }
+}
+
+/* Success toast styling */
+:global(.toast-success) {
+  background: hsl(142, 71%, 45%); /* success */
+  color: hsl(0, 0%, 100%); /* success-foreground */
+  border: none;
+}

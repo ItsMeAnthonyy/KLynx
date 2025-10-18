@@ -39,7 +39,9 @@
   justify-content: space-between;
 }
 
-button {
+
+/* disabled, inaaffect niya ibang .css file, dont use element selectors pls
+ button {
   padding: 5px 10px;
     background-color: #1114a3;
     margin-left: 15px;
@@ -54,3 +56,4 @@ h2{
     color: #1114a3;
 
 }
+    */
