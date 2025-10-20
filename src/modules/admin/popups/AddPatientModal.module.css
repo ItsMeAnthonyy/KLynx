@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda+Caption:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap');
+
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -15,7 +18,7 @@
   background: hsl(0, 0%, 100%);
   border-radius: 0.75rem;
   box-shadow: 0 10px 30px -10px hsl(200, 95%, 40%, 0.2), 0 0 0 1px hsl(210, 25%, 88%);
-  max-width: 600px;
+  max-width: 832px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -58,17 +61,19 @@
 }
 
 .modalTitle {
+  font-family: 'Coda Caption', sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
-  color: hsl(215, 25%, 15%); /* deep slate foreground */
+  color: #112250; /* deep slate foreground */
   margin: 0;
   letter-spacing: -0.025em;
 }
 
 .modalSubtitle {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.95rem;
   color: hsl(215, 15%, 50%); /* muted foreground */
   margin: 0.5rem 0 0;
-  font-size: 0.95rem;
 }
 
 @media (max-width: 640px) {

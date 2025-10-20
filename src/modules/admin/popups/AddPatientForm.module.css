@@ -1,3 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda+Caption:wght@800&display=swap');
+
+.inputWrapper {
+  position: relative;
+  display: inline-block; /* Or block, depending on your layout */
+  width: 100%;
+}
+
+.requiredAsterisk {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem; /* Adjust as needed */
+  transform: translateY(-50%);
+  color: red;
+  pointer-events: none; /* So it doesn't block clicks on the input */
+}
+
+.errorMessage {
+  color: hsl(0, 84.2%, 60.2%); /* destructive */
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+
 .consultationForm {
   padding: 2rem;
 }
@@ -6,9 +30,25 @@
   margin-bottom: 1.5rem;
 }
 
-.formRow {
+.formGroup input::placeholder{
+  font-family: 'Coda', sans-serif;
+}
+
+.formRow2 {
   display: grid;
-  grid-template-columns: 1fr 1fr  ;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formRow3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.formRow4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1rem;
 }
 
@@ -27,14 +67,14 @@
 .formInput,
 .formTextarea {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1rem 0.75rem 1rem;
   font-size: 0.95rem;
-  color: hsl(215, 25%, 15%); /* foreground */
+  color: #2D3748; /* foreground */
   background: hsl(210, 40%, 98%); /* background */
   border: 2px solid hsl(210, 25%, 90%); /* input */
   border-radius: calc(0.75rem - 0.25rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: inherit;
+  font-family: 'Coda', sans-serif;
 }
 
 .formInput:hover,
@@ -49,9 +89,20 @@
   box-shadow: 0 0 0 3px hsl(200, 95%, 40% / 0.1);
 }
 
+.inputError {
+  border-color: hsl(0, 84.2%, 60.2%) !important; /* destructive */
+  box-shadow: 0 0 0 3px hsl(0, 84.2%, 60.2% / 0.1) !important;
+}
+
 .formInput::placeholder,
 .formTextarea::placeholder {
-  color: hsl(215, 15%, 50%); /* muted-foreground */
+  color: #11225080;
+}
+
+.datePickerWrapper {
+  width: 100%;
+  display: block;
+  font-family: 'Coda', sans-serif;
 }
 
 .formTextarea {
@@ -130,7 +181,9 @@
     padding: 1.5rem;
   }
 
-  .formRow {
+  .formRow2,
+  .formRow3,
+  .formRow4 {
     grid-template-columns: 1fr;
   }
 
@@ -149,4 +202,55 @@
   background: hsl(142, 71%, 45%); /* success */
   color: hsl(0, 0%, 100%); /* success-foreground */
   border: none;
+}
+
+/* --- React Datepicker Overrides --- */
+
+/* Calendar popup container */
+:global(.react-datepicker) {
+  font-family: 'Coda', sans-serif;
+  border: 2px solid hsl(210, 25%, 90%); /* input */
+  border-radius: calc(0.75rem - 0.25rem);
+  box-shadow: 0 10px 30px -10px hsl(200 95% 40% / 0.2);
+}
+
+/* Header section (month and year) */
+:global(.react-datepicker__header) {
+  background-color: hsl(210, 40%, 98%); /* background */
+  border-bottom: 2px solid hsl(210, 25%, 90%); /* input */
+}
+
+/* Month and year text */
+:global(.react-datepicker__current-month),
+:global(.react-datepicker-time__header),
+:global(.react-datepicker-year-header) {
+  color: hsl(215, 25%, 15%); /* foreground */
+  font-weight: 600;
+}
+
+/* Navigation arrows */
+:global(.react-datepicker__navigation-icon::before) {
+  border-color: hsl(215, 25%, 15%); /* foreground */
+}
+
+/* Day names (Su, Mo, Tu, etc.) */
+:global(.react-datepicker__day-name) {
+  color: hsl(215, 15%, 50%); /* muted-foreground */
+  font-weight: 600;
+}
+
+/* Individual day numbers */
+:global(.react-datepicker__day) {
+  color: hsl(215, 25%, 15%); /* foreground */
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+:global(.react-datepicker__day:hover) {
+  background-color: hsl(210, 30%, 92%); /* muted */
+}
+
+/* Selected day */
+:global(.react-datepicker__day--selected) {
+  background-color: hsl(200, 95%, 40%); /* ring */
+  color: white;
 }

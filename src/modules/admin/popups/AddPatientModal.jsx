@@ -47,10 +47,10 @@ const AddPatientModal = ({ isOpen, onClose }) => {
                 </button>
                 <div className={modalStyles.modalHeader}>
                     <h2 id="modalTitle" className={modalStyles.modalTitle}>
-                        New Consultation
+                        CREATE PATIENT PROFILE
                     </h2>
                     <p className={modalStyles.modalSubtitle}>
-                        Fill in the details to schedule a new consultation
+                        Fill in the details to add new Patient
                     </p>
                 </div>
 

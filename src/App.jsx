@@ -129,9 +129,7 @@ function App() {
                 <Route path='/Calendar' element={<Calendar />} />
                 
                 <Route path='/DiseaseReport' element={<DiseaseReport />} />
-                {/*<Route path='/Dashboard' element={<Dashboard />} />  */}
-                
-                
+                {/*<Route path='/Dashboard' element={<Dashboard />} />  */}  
               </Route> 
               
 
