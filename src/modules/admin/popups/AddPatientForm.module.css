@@ -8,8 +8,8 @@
 
 .requiredAsterisk {
   position: absolute;
-  top: 50%;
-  right: 0.5rem; /* Adjust as needed */
+  top: 35%;
+  right: 0.4rem; /* Adjust as needed */
   transform: translateY(-50%);
   color: red;
   pointer-events: none; /* So it doesn't block clicks on the input */
@@ -87,6 +87,10 @@
   outline: none;
   border-color: hsl(200, 95%, 40%); /* ring */
   box-shadow: 0 0 0 3px hsl(200, 95%, 40% / 0.1);
+}
+
+.inputWrapper select:invalid {
+  color: #11225080; /* Same color as input placeholder */
 }
 
 .inputError {

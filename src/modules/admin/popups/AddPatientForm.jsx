@@ -22,8 +22,6 @@ const MaskedInput = forwardRef((props, ref) => (
 ));
 
 const AddPatientForm = ({ onSuccess, onCancel }) => {
-    const [startDate, setStartDate] = useState(null);
-
     const [patientFormData, setPatientFormData] = useState({
         lastName: '',
         firstName: '',
@@ -33,6 +31,9 @@ const AddPatientForm = ({ onSuccess, onCancel }) => {
         dateOfBirth: '',
         sex: '',
         civilStatus: '',
+        occupation: '',
+        educationalAttainment: '',
+        phoneNumber: '',
         date: '',
         time: '',
         reason: '',
@@ -92,7 +93,12 @@ const AddPatientForm = ({ onSuccess, onCancel }) => {
             setDateOfBirthError('Birth date cannot be in the future.');
         } else {
             setDateOfBirthError('');
-            setPatientFormData(prev => ({ ...prev, [name]: date.toISOString().split('T')[0], age: age.toString() }));
+            // Format the date to YYYY-MM-DD without timezone conversion
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            setPatientFormData(prev => ({ ...prev, [name]: formattedDate, age: age.toString() }));
         }
     };
 
@@ -261,7 +267,8 @@ const AddPatientForm = ({ onSuccess, onCancel }) => {
                             required
                             aria-invalid={!!sexError}
                         >
-                            <option value="">Sex</option>
+                            
+                            <option value="" hidden>Sex</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
@@ -282,9 +289,125 @@ const AddPatientForm = ({ onSuccess, onCancel }) => {
                             required
                             aria-invalid={!!civilStatusError}
                         >
-                            <option value="">Civil Status</option>
+                            
+                            <option value="" hidden>Civil Status</option>
                             <option value="Single">Single</option>
                             <option value="Married">Married</option>
+                        </select>
+                        <span className={formStyles.requiredAsterisk}>*</span>
+                    </div>
+                    {civilStatusError && <div className={formStyles.errorMessage}>{civilStatusError}</div>}
+                </div>
+            </div>
+
+            <div className={formStyles.formRow3}>
+                <div className={formStyles.formGroup}>
+                    <div className={formStyles.inputWrapper}>
+                        <select
+                            id="occupation"
+                            name="occupation"
+                            className={`${formStyles.formInput} ${formStyles.selectInput} ${civilStatusError ? formStyles.inputError : ''}`}
+                            value={patientFormData.occupation}
+                            onChange={handleChange}
+                            onBlur={handleCivilStatusBlur}
+                            aria-invalid={!!civilStatusError}
+                        >
+                            
+                            <option value="" hidden>Occupation</option>
+                            <option value="Single">Nurse</option>
+                            <option value="Married">Doctor</option>
+                        </select>
+                        <span className={formStyles.requiredAsterisk}>*</span>
+                    </div>
+                    {civilStatusError && <div className={formStyles.errorMessage}>{civilStatusError}</div>}
+                </div>
+
+                <div className={formStyles.formGroup}>
+                    <div className={formStyles.inputWrapper}>
+                        <select
+                            id="educationalAttainment"
+                            name="educationalAttainment"
+                            className={`${formStyles.formInput} ${formStyles.selectInput} ${civilStatusError ? formStyles.inputError : ''}`}
+                            value={patientFormData.educationalAttainment}
+                            onChange={handleChange}
+                            onBlur={handleCivilStatusBlur}
+                            aria-invalid={!!civilStatusError}
+                        >
+                            
+                            <option value="" hidden>Educational Attainment</option>
+                            <option value="none">No Formal Education</option>
+                            <option value="elementary_level">Elementary Level</option>
+                            <option value="elementary_graduate">Elementary Graduate</option>
+                            <option value="high_school_level">High School Level</option>
+                            <option value="high_school_graduate">High School Graduate</option>
+                            <option value="college_level">College Level</option>
+                            <option value="college_graduate">College Graduate</option>
+                            <option value="vocational_graduate">Vocational Graduate</option>
+                            <option value="post_graduate">Post-Graduate</option>
+                        </select>
+                        <span className={formStyles.requiredAsterisk}>*</span>
+                    </div>
+                    {civilStatusError && <div className={formStyles.errorMessage}>{civilStatusError}</div>}
+                </div>
+
+                <div className={formStyles.formGroup}>
+                    <div className={formStyles.inputWrapper}>
+                        <InputMask
+                            mask="9999-999-9999"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            className={formStyles.formInput}
+                            value={patientFormData.phoneNumber}
+                            onChange={handleChange}
+                            placeholder="Phone Number"
+                            required
+                            maskChar={'X'}
+                            aria-required="true"
+                            inputMode="numeric"
+                            pattern="\d{4}-\d{3}-\d{4}"
+                        >
+                            {(inputProps) => <input {...inputProps} type="tel" />}
+                        </InputMask>
+                    </div>
+                </div>
+            </div>
+
+            <div className={formStyles.formRow2}>
+                <div className={formStyles.formGroup}>
+                    <div className={formStyles.inputWrapper}>
+                        <InputMask
+                            mask="99-999999999-9"
+                            id="philhealthNumber"
+                            name="philhealthNumber"
+                            className={formStyles.formInput}
+                            value={patientFormData.philhealthNumber}
+                            onChange={handleChange}
+                            placeholder="Philhealth Number"
+                            required
+                            maskChar={'X'}
+                            aria-required="true"
+                            inputMode="numeric"
+                            pattern="\d{2}-\d{9}-\d{1}"
+                        >
+                        </InputMask>
+                    </div>
+                </div>
+
+                <div className={formStyles.formGroup}>
+                    <div className={formStyles.inputWrapper}>
+                        <select
+                            id="street"
+                            name="street"
+                            className={`${formStyles.formInput} ${formStyles.selectInput} ${civilStatusError ? formStyles.inputError : ''}`}
+                            value={patientFormData.street}
+                            onChange={handleChange}
+                            onBlur={handleCivilStatusBlur}
+                            aria-invalid={!!civilStatusError}
+                        >
+                            
+                            <option value="" hidden>Street</option>
+                            <option value="kalayaan">Kalayaan</option>
+                            <option value="karangalan">Karangalan</option>
                         </select>
                         <span className={formStyles.requiredAsterisk}>*</span>
                     </div>
