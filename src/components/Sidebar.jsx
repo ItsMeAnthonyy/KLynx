@@ -165,10 +165,10 @@ const Sidebar = () => {
                             </Link>
                         </li>
                         <li className="sub-mSidebar-Nondropdown">
-                            <Link to="/">Patient Health Record</Link>
+                      
                             <Link to="/DiseaseReport">Medical Report</Link>
-                            <Link to="">Animal Bite Incident Report</Link>
-                            <Link to="">Maternal Care Report</Link>
+                            <Link to="/AnimalBiteReport">Animal Bite Incident Report</Link>
+                            <Link to="/MaternalReport">Maternal Care Report</Link>
                         </li>
                     </>
                 )}

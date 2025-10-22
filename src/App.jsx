@@ -54,6 +54,8 @@ import Settings from './pages/Admin/Settings';
 //import Prescription from './pages/Admin/Prescription'
 import Prenatal2 from './pages/Patient/Prenatal';
 import DiseaseReport from './pages/Reports/Diseasereport';
+import AnimalBiteReport from './pages/Reports/AnimalBiteReport';
+import MaternalReport from './pages/Reports/MaternalReport';
 const ROLES = {
   'User': 2001,
   'Editor': 1984,
@@ -138,6 +140,8 @@ function App() {
                 <Route path='/Calendar' element={<Calendar />} />
                 
                 <Route path='/DiseaseReport' element={<DiseaseReport />} />
+                <Route path='/AnimalBiteReport' element={<AnimalBiteReport />} />
+                <Route path='/MaternalReport' element={<MaternalReport />} />
                 {/*<Route path='/Dashboard' element={<Dashboard />} />  */}
 
 

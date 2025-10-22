@@ -1,0 +1,437 @@
+﻿/* Container */
+.container {
+    display: flex;
+    background-color: #f5f7fa;
+    min-height: 100vh;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #DDE6ED;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    background-color: #07598D;
+}
+
+.headerLeft {
+    flex: 1;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 8px 0;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.emergencyButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 2px solid #fc8181;
+    border-radius: 8px;
+    color: #c53030;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.emergencyButton:hover {
+    background-color: #fff5f5;
+}
+
+/* Message */
+.message {
+    padding: 12px 20px;
+    margin: 20px 2rem 0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 2px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 2px solid #f5c6cb;
+}
+
+/* Action Section */
+.actionSection {
+    padding: 0 2rem;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.downloadButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background-color: #27374D;
+    border: 2px solid #27374D;
+    border-radius: 50px;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.downloadButton:hover {
+    background-color: #1a2534;
+    border-color: #1a2534;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 55, 77, 0.3);
+}
+
+/* Stats Grid */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 2rem;
+}
+
+.statCard {
+    background: white;
+    border: 2px solid #27374D;
+    border-left-width: 6px;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.statCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.statLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.statValue {
+    font-size: 36px;
+    font-weight: 700;
+    color: #27374D;
+}
+
+/* Chart Section */
+.chartSection {
+    background: white;
+    border: 2px solid #27374D;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1.5rem 2rem;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chartHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.chartControls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.monthLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #27374D;
+    margin: 0;
+}
+
+.monthSelector {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #27374D;
+    background-color: white;
+    border: 2px solid #27374D;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+    min-width: 200px;
+}
+
+.monthSelector:hover {
+    border-color: #526D82;
+    background-color: #f8f9fa;
+}
+
+.monthSelector:focus {
+    border-color: #27374D;
+    box-shadow: 0 0 0 3px rgba(39, 55, 77, 0.1);
+}
+
+.chartContainer {
+    width: 100%;
+    height: 400px;
+    position: relative;
+}
+
+.noData {
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+    font-size: 16px;
+    font-style: italic;
+}
+
+ 
+.downloadChartButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #27374D;
+    color: white;
+    border: 2px solid #27374D;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+/* Table Section */
+.tableSection {
+    background: #DDE6ED;
+    border: 2px solid #27374D;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1.5rem 2rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tableTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #27374D;
+    margin: 0;
+    padding: 1.5rem 1.5rem 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tableSubtitle {
+    font-size: 14px;
+    color: #718096;
+    margin: 0;
+    padding: 0 1.5rem 1rem;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    background-color: #27374D;
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #27374D;
+}
+
+.table tbody tr {
+    border-bottom: 2px solid #27374D;
+    transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: #f7fafc;
+}
+
+.table tbody td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: #27374D;
+    font-weight: 500;
+    text-align: center;
+}
+
+.indexCell {
+    font-weight: 700;
+    color: #2c5282;
+    width: 60px;
+}
+
+.typeCell {
+    text-align: left;
+    font-weight: 600;
+}
+
+.countCell {
+    font-weight: 700;
+    color: #27374D;
+}
+
+.percentCell {
+    font-weight: 600;
+    color: #48A9A6;
+}
+
+.totalRow {
+    background-color: rgba(39, 55, 77, 0.05);
+    font-weight: 700;
+}
+
+.totalLabel {
+    text-align: right !important;
+    font-size: 16px;
+    font-weight: 700;
+    color: #27374D;
+}
+
+.totalValue {
+    font-size: 16px;
+    font-weight: 700;
+    color: #27374D;
+    background-color: rgba(39, 55, 77, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .statsGrid {
+        margin: 1.5rem 1rem;
+        grid-template-columns: 1fr;
+    }
+    
+    .actionSection {
+        padding: 0 1rem;
+        justify-content: center;
+    }
+    
+    .chartSection {
+        margin: 1.5rem 1rem;
+        padding: 1rem;
+    }
+
+    .chartHeader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .chartControls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .monthSelector {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .chartContainer {
+        height: 300px;
+    }
+    
+    .tableSection {
+        margin: 1.5rem 1rem;
+    }
+    
+    .downloadButton {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.statSubtext {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.animalTypeCell {
+    text-align: left !important;
+    font-weight: 600;
+    color: #27374D;
+    padding-left: 20px !important;
+}
+
+.numberCell {
+    font-weight: 600;
+    color: #27374D;
+}
+
+.treatmentCell {
+    font-weight: 600;
+    color: #f59e0b;
+}
+
+.recoveredCell {
+    font-weight: 600;
+    color: #10b981;
+}
+
+.deathsCell {
+    font-weight: 700;
+    color: #ef4444;
+}
+
+.notesCell {
+    text-align: left !important;
+    color: #718096;
+    font-style: italic;
+    font-size: 13px;
+}
