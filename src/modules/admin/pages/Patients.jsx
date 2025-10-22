@@ -166,8 +166,8 @@ const Patients = () => {
     }
 
     function getConsultProfiles() {
-        axios.get('http://localhost/api/Patient_Consult_Profiles.php').then(function(response){
-            console.log("Get All Consult Profiles: ", response.data);
+        axios.get('http://localhost/api/Patient.php').then(function(response){
+            console.log("Get All Patient Profiles: ", response.data);
             setDoctorsList(response.data);
             setConsultProfiles(response.data);
         });
@@ -401,7 +401,6 @@ const Patients = () => {
                                 <th>Registration</th>
                                 <th>Queue</th>
                                 <th>Download Data</th>
-                                <th colSpan="3">Record</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -416,7 +415,7 @@ const Patients = () => {
                                     </button>
                                 </td>
                                 <td>
-                                    {consProf.Birthday}
+                                    {consProf.Birthdate}
                                 </td>
                                 <td>
                                     {consProf.DateCreated}
@@ -426,17 +425,6 @@ const Patients = () => {
                                 </td>
                                 <td>
                                     Download Data
-                                </td>
-                                <td>
-                                    <button onClick={() => viewHistory(consProf.ConsultID) }>View History</button>
-                                </td>
-                                <td>
-                                    <button onClick={() => editDoctor(prenProf.PatientID) } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Edit" >
-                                    <BiSolidEdit className="FileMaintenance-TableIcon FileMaintenance-IconEdit" />  </button>
-                                </td>
-                                <td>
-                                    <button onClick={() => { setSelectedDoctor(consProf.ConsultID); setDeleteDoctorModal(true); } } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Delete" >
-                                    <BiSolidTrash className="FileMaintenance-TableIcon" />  </button>
                                 </td>
                             </tr>
                             ))}

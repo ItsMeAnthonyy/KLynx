@@ -21,6 +21,53 @@
   margin-top: 0.25rem;
 }
 
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputWithIcon .formInput {
+  flex: 1;
+  padding-right: 3rem;
+}
+
+.iconButton {
+  position: absolute;
+  right: 0.5rem;
+  background: hsl(200, 95%, 40%);
+  color: hsl(0, 0%, 100%);
+  border: none;
+  border-radius: calc(0.75rem - 0.25rem);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.inputWithIcon:hover .formInput{
+  border-color: hsl(215, 15%, 50%);
+}
+
+.iconButton:hover {
+  background: hsl(200, 95%, 40% / 0.9);
+  transform: scale(1.05);
+}
+
+.iconButton:active {
+  transform: scale(0.98);
+}
+
+.iconButton:focus-visible {
+  outline: 2px solid hsl(200, 95%, 40%);
+  outline-offset: 2px;
+}
+
 
 .consultationForm {
   padding: 2rem;
@@ -79,7 +126,7 @@
 
 .formInput:hover,
 .formTextarea:hover {
-  border-color: hsl(215, 15%, 50%); /* muted-foreground */
+  border-color: hsl(215, 15%, 50%);
 }
 
 .formInput:focus,
@@ -92,6 +139,8 @@
 .inputWrapper select:invalid {
   color: #11225080; /* Same color as input placeholder */
 }
+
+
 
 .inputError {
   border-color: hsl(0, 84.2%, 60.2%) !important; /* destructive */
