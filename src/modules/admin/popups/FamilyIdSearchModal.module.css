@@ -1,0 +1,261 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: hsl(215 25% 10% / 0.75);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 60;
+  animation: fade-in 0.2s ease-out;
+}
+
+.container {
+  background: hsl(0, 0%, 100%); /* --card */
+  border-radius: 0.75rem; /* --radius */
+  box-shadow: 0 10px 30px -10px hsl(200, 95%, 40%, 0.2), 
+              0 0 0 1px hsl(210, 25%, 88%); /* --shadow-elegant and --border */
+  max-width: 800px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid hsl(210, 25%, 88%);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(215, 25%, 15%);
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.closeButton {
+  background: hsl(210, 30%, 92%); /* --muted */
+  border: none;
+  border-radius: calc(0.75rem - 0.25rem); /* --radius */
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: hsl(215, 25%, 15%); /* --foreground */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* --transition-smooth */
+}
+
+.closeButton:hover {
+  background: hsl(185, 90%, 45%); /* --accent */
+  color: hsl(0, 0%, 100%);         /* --accent-foreground */
+  transform: scale(1.05);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid hsl(200, 95%, 40%); /* --ring */
+  outline-offset: 2px;
+}
+
+.searchBox {
+  position: relative;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid hsl(210, 25%, 88%); /* --border */
+}
+
+.searchIcon {
+  position: absolute;
+  left: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: hsl(215, 15%, 50%); /* --muted-foreground */
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: hsl(210, 40%, 98%); /* --background */
+  border: 2px solid hsl(210, 25%, 90%); /* --input */
+  border-radius: calc(0.75rem - 0.25rem); /* --radius */
+  font-size: 0.95rem;
+  color: hsl(215, 25%, 15%); /* --foreground */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* --transition-smooth */
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: hsl(200, 95%, 40%); /* --ring */
+  box-shadow: 0 0 0 3px hsl(200, 95%, 40%, 0.1); /* --ring / 0.1 */
+}
+
+.searchInput::placeholder {
+  color: hsl(215, 15%, 50%); /* --muted-foreground */
+}
+
+.tableWrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  background: hsl(210, 30%, 92%, 0.5); /* --muted / 0.5 */
+  backdrop-filter: blur(8px);
+  z-index: 1;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem 1.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: hsl(215, 15%, 50%); /* --muted-foreground */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid hsl(210, 25%, 88%); /* --border */
+}
+
+.table td {
+  padding: 1rem 1.75rem;
+  font-size: 0.95rem;
+  color: hsl(215, 25%, 15%); /* --foreground */
+  border-bottom: 1px solid hsl(210, 25%, 88%); /* --border */
+}
+
+.tableRow {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* --transition-smooth */
+}
+
+.tableRow:hover {
+  background: hsl(185, 90%, 45%); /* --accent */
+}
+
+.tableRow:active {
+  background: hsl(185, 90%, 45%, 0.8); /* --accent / 0.8 */
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 1.75rem !important;
+  color: hsl(215, 15%, 50%); /* --muted-foreground */
+  font-style: italic;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+
+
+/* COLOR STILL OFF, REPROMPT: */
+.generateButtonHeader {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: hsl(220, 90%, 56%);
+  color: hsl(0, 0%, 100%);
+  border: none;
+  border-radius: calc(0.5rem - 0.25rem);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px hsl(220, 90%, 56%, 0.2);
+}
+
+.generateButtonHeader:hover {
+  background: hsl(220, 90%, 56%, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px hsl(220, 90%, 56%, 0.3);
+}
+
+.generateButtonHeader:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px hsl(220, 90%, 56%, 0.2);
+}
+
+.generateButtonHeader:focus-visible {
+  outline: 2px solid hsl(220, 90%, 66%);
+  outline-offset: 2px;
+}
+
+
+
+/* Scrollbar styling */
+.tableWrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: hsl(210, 25%, 88%); /* --border */
+  border-radius: 4px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+  background: hsl(215, 15%, 50%); /* --muted-foreground */
+}
+
+@media (max-width: 768px) {
+  .container {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .header {
+    padding: 1.25rem 1.25rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .searchBox {
+    padding: 1rem 1.25rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .table th {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .table th:first-child,
+  .table td:first-child {
+    padding-left: 1rem;
+  }
+
+  .table th:last-child,
+  .table td:last-child {
+    padding-right: 1rem;
+  }
+}
