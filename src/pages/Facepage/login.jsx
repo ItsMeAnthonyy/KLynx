@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import './Frontpage.css';
 import axios from "axios";
@@ -7,7 +7,7 @@ import useAuth from '../../hooks/useAuth';
 const Login = () => {
   const { auth, setAuth } = useAuth();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/Consultation";
+  const from = location.state?.from?.pathname || "/DashboardAlt";
 
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({});
@@ -60,9 +60,9 @@ const Login = () => {
     <div className="Login-Page-Box">
       
       <form className="login-form" onSubmit={handleSubmit}>
-      <h1>Welcome, Admin!</h1>
+      <h1>Welcome!</h1>
         <div>
-          <label htmlFor="adID">Admin ID:</label>
+          <label htmlFor="adID">Username:</label>
           <input
             type="text"
             id="adID"

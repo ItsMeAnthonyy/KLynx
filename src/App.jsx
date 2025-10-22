@@ -71,6 +71,8 @@ import GeoMaps from './pages/Admin/GeoMap';
 import IcdManager from './pages/Admin/IcdManager';
 import IcdManager2 from './pages/Admin/IcdManager2';
 import NurseNotes from './pages/Admin/NurseNotes';
+import UserManagement from './modules/admin/pages/UserManagement';
+import StaffHealthRecord from './modules/admin/pages/StaffHealthRecord';
 
 function App() {
   return (
@@ -112,6 +114,7 @@ function App() {
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 <Route path='/NurseNotes' element={<NurseNotes />} />
+                <Route path='/UserManagement' element={<UserManagement />} />
                 <Route path='/Notifications' element={<Notifications />} />
                   <Route path='/Settings' element={<Settings />} />
 
@@ -122,6 +125,7 @@ function App() {
                 <Route path='/Prenatal' element={<Prenatal/>} />
                 <Route path='/Consultation' element={<Consultation />} />
                 <Route path='/ConsultationDetail' element={<ConsultationDetail />} />
+                <Route path='/StaffHealthRecord' element={<StaffHealthRecord />} />
                 
                 <Route path='/Staff' element={<Staff/>} />
                 <Route path='/Nurse' element={<Nurse/>} />

@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import "../../components/css/FileMaintenance.css";
-import { BiPlus, BiTrash, BiSend } from 'react-icons/bi';
+import { BiPlus, BiTrash, BiSend, BiError } from 'react-icons/bi';
 import Sidebar from "../../components/Sidebar";
-import { BiError } from 'react-icons/bi';
-import Settings from '../Admin/Settings';
 import ProfileDropdown from '../../components/ProfileDropdown';
-
+import styles from './Notifications.module.css';
 
 const Notifications = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [notifications, setNotifications] = useState([
     {
       id: '1',
@@ -46,17 +44,25 @@ const Notifications = () => {
     recipients: 'all',
   });
 
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
-  if (isSettingsOpen) {
-    return <Settings onClose={() => setIsSettingsOpen(false)} />;
-  }
-
   const handleCreateNotification = () => {
+    if (!newNotification.title.trim() || !newNotification.message.trim()) {
+      setMessage({ text: 'Please fill in all required fields', type: 'error' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+      return;
+    }
+
+    const recipientsMap = {
+      'all': 'All Users',
+      'patients': 'Patients Only',
+      'staff': 'Staff Only',
+      'doctors': 'Doctors Only',
+      'nurses': 'Nurses Only'
+    };
+
     const notification = {
-      id: String(notifications.length + 1),
+      id: String(Date.now()),
       ...newNotification,
-      recipients: newNotification.recipients === 'all' ? 'All Users' : 'Patients',
+      recipients: recipientsMap[newNotification.recipients] || 'All Users',
       createdAt: new Date(),
       sentAt: null,
     };
@@ -64,41 +70,49 @@ const Notifications = () => {
     setNotifications([notification, ...notifications]);
     setNewNotification({ title: '', message: '', type: 'info', recipients: 'all' });
     setIsCreateDialogOpen(false);
+    setMessage({ text: 'Notification created successfully!', type: 'success' });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
 
   const handleSendNotification = (id) => {
     setNotifications(notifications.map(n => 
       n.id === id ? { ...n, sentAt: new Date() } : n
     ));
+    setMessage({ text: 'Notification sent successfully!', type: 'success' });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
 
   const handleDeleteNotification = (id) => {
     if (window.confirm('Are you sure you want to delete this notification?')) {
       setNotifications(notifications.filter(n => n.id !== id));
+      setMessage({ text: 'Notification deleted successfully', type: 'success' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     }
   };
 
-  const getTypeColor = (type) => {
+  const getTypeBadgeClass = (type) => {
     switch (type) {
-      case 'success': return 'bg-success';
-      case 'warning': return 'bg-warning';
-      case 'error': return 'bg-error';
-      default: return 'bg-info';
+      case 'success': return styles.badgeSuccess;
+      case 'warning': return styles.badgeWarning;
+      case 'error': return styles.badgeError;
+      default: return styles.badgeInfo;
     }
   };
 
   return (
-    <div className="FileMaintenance-Container">
-        <Sidebar />
-      <main className="FileMaintenance-Content">
-        <div className="FileMaintenance-Header">
-          <div className="FileMaintenance-HeaderTitle">
-            <h1>Notifications</h1>
+    <div className={styles.container}>
+      <Sidebar />
+      <main className={styles.content}>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <h1 className={styles.title}>Notifications Management</h1>
+           
           </div>
-
-          <div className="FileMaintenance-HeaderSetting">
-            <button className="emergency-button">
-              <BiError/>EMERGENCY MODE
+          <div className={styles.headerRight}>
+            <button className={styles.emergencyButton}>
+              <BiError />
+              EMERGENCY MODE
             </button>
             <ProfileDropdown 
               email="admin@klynx.com"
@@ -107,76 +121,82 @@ const Notifications = () => {
           </div>
         </div>
 
-        <hr />
-
-        <div className="FileMaintenance-TableContainer">
-          <div className="FileMaintenance-TableTitle">  
-            <h2>All Notifications</h2>
-            <div className="FileMaintenance-AddSearch">
-            <button onClick={() => setIsCreateDialogOpen(true)} >
-              <BiPlus  />
-              Create Notification
-            </button>
+        {/* Success/Error Message */}
+        {message.text && (
+          <div className={`${styles.message} ${message.type === 'success' ? styles.success : styles.error}`}>
+            {message.text}
           </div>
+        )}
+
+        {/* Add Notification Button */}
+        <div className={styles.actionSection}>
+          <button className={styles.addButton} onClick={() => setIsCreateDialogOpen(true)}>
+            <BiPlus size={20} />
+            Create Notification
+          </button>
         </div>
-              
-          <table>
+
+        {/* Notifications Table */}
+        <div className={styles.tableSection}>
+          <h2 className={styles.tableTitle}>All Notifications</h2>
+          <p className={styles.tableSubtitle}>Manage and send notifications to users</p>
+          
+          <table className={styles.table}>
             <thead>
               <tr>
+                <th>#</th>
                 <th>Title</th>
                 <th>Message</th>
                 <th>Type</th>
                 <th>Recipients</th>
                 <th>Created</th>
                 <th>Status</th>
-                <th colSpan="1">Actions</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {notifications.map((notification) => (
+              {notifications.map((notification, index) => (
                 <tr key={notification.id}>
-                  <td>{notification.title}</td>
-                  <td className="truncate max-w-[200px]">{notification.message}</td>
+                  <td className={styles.indexCell}>{index + 1}</td>
+                  <td className={styles.titleCell}>{notification.title}</td>
+                  <td className={styles.messageCell}>{notification.message}</td>
                   <td>
-                    <span className={`badge ${getTypeColor(notification.type)}`}>
+                    <span className={`${styles.badge} ${getTypeBadgeClass(notification.type)}`}>
                       {notification.type}
                     </span>
                   </td>
                   <td>{notification.recipients}</td>
                   <td>{notification.createdAt.toLocaleDateString()}</td>
                   <td>
-                    <span className={`badge ${notification.sentAt ? 'bg-success' : 'bg-warning'}`}>
+                    <span className={`${styles.badge} ${notification.sentAt ? styles.badgeSuccess : styles.badgeDraft}`}>
                       {notification.sentAt ? 'Sent' : 'Draft'}
                     </span>
                   </td>
                   <td>
-                    <div className="action-buttons">
+                    <div className={styles.actionButtons}>
                       {!notification.sentAt && (
-                        <td>
                         <button
+                          className={styles.sendBtn}
                           onClick={() => handleSendNotification(notification.id)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                          >
-                          <BiSend className="FileMaintenance-TableIcon" />
-                          Send
+                          title="Send Notification"
+                        >
+                          <BiSend size={18} />
                         </button>
-                        </td>
                       )}
-                      <td>
                       <button
+                        className={styles.deleteBtn}
                         onClick={() => handleDeleteNotification(notification.id)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        title="Delete Notification"
                       >
-                        <BiTrash className="FileMaintenance-TableIcon" />
+                        <BiTrash size={18} />
                       </button>
-                        </td>
                     </div>
                   </td>
                 </tr>
               ))}
               {notifications.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center">
+                  <td colSpan={8} className={styles.emptyMessage}>
                     No notifications found
                   </td>
                 </tr>
@@ -185,46 +205,51 @@ const Notifications = () => {
           </table>
         </div>
 
+        {/* Create Notification Modal */}
         {isCreateDialogOpen && (
-          <div className="add-doctors-popup-overlay">
-            <div className="add-doctors-popup-content">
-              <div className="add-doctors-popup-header history-popup-header">
-                <h2>Create New Notification</h2>
-                <button className="close-button" onClick={() => setIsCreateDialogOpen(false)}>X</button>
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>Create New Notification</h2>
+                <button className={styles.closeButton} onClick={() => setIsCreateDialogOpen(false)}>
+                  ×
+                </button>
               </div>
 
-              <div className="add-doctors-form">
-                <div className="add-doctors-column">
-                  <div className="add-doctors-input-box">
-                    <label className="required">Title</label>
-                    <input
-                      type="text"
-                      placeholder="Enter notification title"
-                      value={newNotification.title}
-                      onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
-                    />
-                  </div>
+              <div className={styles.modalBody}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    Title <span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className={styles.formInput}
+                    placeholder="Enter notification title"
+                    value={newNotification.title}
+                    onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
+                  />
                 </div>
 
-                <div className="add-doctors-column">
-                  <div className="add-doctors-input-box">
-                    <label className="required">Message</label>
-                    <textarea
-                      placeholder="Enter notification message"
-                      rows={4}
-                      value={newNotification.message}
-                      onChange={(e) => setNewNotification({ ...newNotification, message: e.target.value })}
-                    />
-                  </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>
+                    Message <span className={styles.required}>*</span>
+                  </label>
+                  <textarea
+                    className={styles.formTextarea}
+                    placeholder="Enter notification message"
+                    rows={4}
+                    value={newNotification.message}
+                    onChange={(e) => setNewNotification({ ...newNotification, message: e.target.value })}
+                  />
                 </div>
 
-                <div className="add-doctors-column">
-                  <div className="add-doctors-input-box">
-                    <label className="required">Type</label>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Type</label>
                     <select
+                      className={styles.formSelect}
                       value={newNotification.type}
                       onChange={(e) => setNewNotification({ ...newNotification, type: e.target.value })}
-                      className="site-select"
                     >
                       <option value="info">Info</option>
                       <option value="success">Success</option>
@@ -233,12 +258,12 @@ const Notifications = () => {
                     </select>
                   </div>
 
-                  <div className="add-doctors-input-box">
-                    <label className="required">Recipients</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Recipients</label>
                     <select
+                      className={styles.formSelect}
                       value={newNotification.recipients}
                       onChange={(e) => setNewNotification({ ...newNotification, recipients: e.target.value })}
-                      className="site-select"
                     >
                       <option value="all">All Users</option>
                       <option value="patients">Patients Only</option>
@@ -248,15 +273,15 @@ const Notifications = () => {
                     </select>
                   </div>
                 </div>
+              </div>
 
-                <div className="add-doctors-buttons">
-                  <button className="add-doctors-save-button" onClick={handleCreateNotification}>
-                    Create Notification
-                  </button>
-                  <button className="add-doctors-cancel-button" onClick={() => setIsCreateDialogOpen(false)}>
-                    Cancel
-                  </button>
-                </div>
+              <div className={styles.modalFooter}>
+                <button className={styles.cancelBtn} onClick={() => setIsCreateDialogOpen(false)}>
+                  Cancel
+                </button>
+                <button className={styles.saveBtn} onClick={handleCreateNotification}>
+                  Create Notification
+                </button>
               </div>
             </div>
           </div>
