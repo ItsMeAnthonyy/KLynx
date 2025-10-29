@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import './DiseaseReport.css';
 import Sidebar from '../../components/Sidebar';
-import { Line, Bar, Pie } from "react-chartjs-2";
+import ProfileDropdown from '../../components/ProfileDropdown';
+import { Bar, Line } from "react-chartjs-2";
 import axios from 'axios';
-import 'chart.js/auto'; // Import chart.js to enable chart rendering
+import 'chart.js/auto';
+import { BiError, BiDownload } from 'react-icons/bi';
+import styles from './DiseaseReport.module.css';
 
 // Generate Disease PDF Report
 import { generatePDF } from './D Report PDF';
@@ -30,39 +32,17 @@ const allMonths = Array.from({ length: 12 }, (_, i) => {
   return `${currentYear}-${month}`;
 });
 
-
-// Convert current date to ISO format for backend compatibility
-const todayISO = new Date().toISOString(); // e.g. "2025-08-02T02:00:00.000Z"
-const dateParam = todayISO.split('T')[0]; // "2025-08-02"
-const monthParam = dateParam.slice(0, 7);  // "2025-08"
-
-
-
 function DiseaseReport() {
-  // State for managing notifications, settings, and account management
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showManageAccount, setShowManageAccount] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
-  const [showAddAdmin, setShowAddAdmin] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-
   // State for storing health data
   const [HealthData, setHealthData] = useState([]);
   const [diseaseStats, setDiseaseStats] = useState([]);
-
-    // Pagination based on real HealthData
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil(HealthData.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = HealthData.slice(startIndex, startIndex + itemsPerPage);
-  
-   // Admin Account Management
-  const [fullName, setFullName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [adminAccounts, setAdminAccounts] = useState([]);
+  const [topDiseasesMonth, setTopDiseasesMonth] = useState([]);
+  const [monthlyTopDiseases, setMonthlyTopDiseases] = useState({});
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const today = new Date();
+    return today.toISOString().slice(0, 7); // YYYY-MM format
+  });
 
 
 const handleDiseaseDownload = async () => {
@@ -83,7 +63,7 @@ const handleDiseaseDownload = async () => {
       const total = age0_17 + age18_40 + age41_59 + age60plus;
 
       return [
-        item["DiagnosisName"],  // Make sure the key matches your API
+        item["DiagnosisName"],
         age0_17,
         age18_40,
         age41_59,
@@ -108,119 +88,118 @@ const handleDiseaseDownload = async () => {
       tableData: rows,
       logo: 'src/assets/picture/medikablue.png',
     });
+
+    setMessage({ text: 'Report downloaded successfully!', type: 'success' });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   } catch (error) {
     console.error('Error generating PDF:', error);
-    alert('Could not generate report.');
+    setMessage({ text: 'Could not generate report.', type: 'error' });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   }
 };
 
-const [generalDetails, setGeneralDetails] = useState({
-    name: '',
-    username: '',
-    contact: '',
-    password: ''
-});
+const handleMonthlyTopDiseasesDownload = async () => {
+  try {
+    if (topDiseasesMonth.length === 0) {
+      setMessage({ text: 'No data available to download for this month.', type: 'error' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+      return;
+    }
 
+    const monthYear = getSelectedMonthLabel();
+
+    // Prepare data for PDF
+    const rows = topDiseasesMonth.map((item, index) => [
+      index + 1,
+      item.disease || item.DiagnosisName,
+      item.cases || item.total || 0
+    ]);
+
+    const headers = ['Rank', 'Disease Name', 'Number of Cases'];
+
+    generatePDF({
+      title: 'Top 10 Diseases Report',
+      monthYear: monthYear,
+      tableHeaders: headers,
+      tableData: rows,
+      logo: 'src/assets/picture/medikablue.png',
+    });
+
+    setMessage({ text: `Report for ${monthYear} downloaded successfully!`, type: 'success' });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+  } catch (error) {
+    console.error('Error generating monthly report:', error);
+    setMessage({ text: 'Could not generate monthly report.', type: 'error' });
+    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+  }
+};
 
 // Getting Real-time Data from PHP
 useEffect(() => {
   const fetchData = async () => {
     try {
-      // Get today's date in backend-compatible format
       const today = new Date();
-      const dateParam = today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
-      const monthParam = dateParam.slice(0, 7);             // 'YYYY-MM'
+      const dateParam = today.toISOString().split('T')[0];
+      const monthParam = dateParam.slice(0, 7);
 
-      // Call your PHP endpoint with query parameters
       const response = await fetch(`http://localhost/api/fetchHealthReport.php?date=${dateParam}&month=${monthParam}`);
       const data = await response.json();
       setHealthData(data);
     } catch (error) {
       console.error('Error fetching health report:', error);
+      setMessage({ text: 'Error fetching health data', type: 'error' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     }
   };
 
   fetchData();
 }, []);
 
-
- useEffect(() => {
-    const savedDetails = JSON.parse(localStorage.getItem('accountDetails'));
-    if (savedDetails) {
-        setGeneralDetails(savedDetails);
+// Fetching Disease Statistics
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const statsResponse = await axios.get('http://localhost/api/disease-statistics.php');
+      setDiseaseStats(statsResponse.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setMessage({ text: 'Error fetching disease statistics', type: 'error' });
+      setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     }
+  };
+
+  fetchData();
 }, []);
 
-  // Handle input changes for account management
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setGeneralDetails((prevDetails) => ({
-        ...prevDetails,
-        [name]: value
-    }));
-  };
-
-// Save account details to local storage
-  const handleSave = () => {
-    // Save the updated details to local storage
-    localStorage.setItem('accountDetails', JSON.stringify(generalDetails));
-    alert('Account details saved successfully!');
-    setShowManageAccount(false);
-  };
-
-  // Fetching Disease Statistics
-  const HandleAddAdmin = async () => {
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('fullName', fullName);
-    formData.append('username', username);
-    formData.append('password', password);
-
-    try {
-      const response = await fetch('http://localhost/OneCaintaRecord/insertAdminAccount.php', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        const result = await response.text();
-        console.log(result);
-        // Optionally, update the adminAccounts state to reflect the new admin account
-        setAdminAccounts([...adminAccounts, { fullName, username }]);
-        // Clear the form fields
-        setFullName('');
-        setUsername('');
-        setPassword('');
-        setConfirmPassword('');
-      } else {
-        console.error('Failed to add admin');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-
-//Disease  Reports
-//Bar Chart
+// Fetching Top 10 Diseases for Selected Month
 useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const statsResponse = await axios.get('http://localhost/api/disease-statistics.php');
-        setDiseaseStats(statsResponse.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
+  const fetchTopDiseases = async () => {
+    try {
+      const response = await axios.get(`http://localhost/api/top-diseases-month.php?month=${selectedMonth}`);
+      setTopDiseasesMonth(response.data);
+    } catch (error) {
+      console.error("Error fetching top diseases:", error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  if (selectedMonth) {
+    fetchTopDiseases();
+  }
+}, [selectedMonth]);
+
+// Fetching Monthly Top 10 Diseases for the Year
+useEffect(() => {
+  const fetchMonthlyTopDiseases = async () => {
+    try {
+      const response = await axios.get(`http://localhost/api/monthly-top-diseases.php?year=${currentYear}`);
+      setMonthlyTopDiseases(response.data);
+    } catch (error) {
+      console.error("Error fetching monthly top diseases:", error);
+    }
+  };
+
+  fetchMonthlyTopDiseases();
+}, []);
 
 const chartData = {
   labels: allMonths.map(monthKey =>
@@ -233,8 +212,8 @@ const chartData = {
     {
       label: 'Number of Cases',
       data: allMonths.map(monthKey => diseaseStats[monthKey] || 0),
-      backgroundColor: "#fff349ff",
-      borderColor: "#000000ff",
+      backgroundColor: "#27374D",
+      borderColor: "#27374D",
       borderWidth: 2,
     }
   ],
@@ -242,19 +221,24 @@ const chartData = {
 
 const chartOptions = {
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       position: 'top',
       labels: {
-        color: '#ffffffff', // Legend label color
+        color: '#27374D',
+        font: {
+          size: 14,
+          weight: '600'
+        }
       }
     },
     title: {
       display: true,
-      text: 'Monthly Total Diagnoses',
-      color: "#ffffffff", // Title color
+      text: `${currentYear} Monthly Total Diagnoses`,
+      color: "#27374D",
       font: {
-        size: 18,
+        size: 20,
         weight: 'bold',
       }
     },
@@ -262,280 +246,393 @@ const chartOptions = {
   scales: {
     x: {
       ticks: {
-        color: "#fff349ff", // X-axis month labels
+        color: "#27374D",
+        font: {
+          size: 12
+        }
+      },
+      grid: {
+        color: 'rgba(39, 55, 77, 0.1)'
       }
     },
     y: {
       ticks: {
-        color: "#fff349ff", // Y-axis number labels
+        color: "#27374D",
+        font: {
+          size: 12
+        }
+      },
+      grid: {
+        color: 'rgba(39, 55, 77, 0.1)'
       }
     },
   }
 };
 
+// Top 10 Diseases for Selected Month - Horizontal Bar Chart
+const getSelectedMonthLabel = () => {
+  if (!selectedMonth) return 'Current Month';
+  const date = new Date(`${selectedMonth}-01`);
+  return date.toLocaleString("en-PH", {
+    timeZone: 'Asia/Manila',
+    month: "long",
+    year: "numeric",
+  });
+};
+
+const topDiseasesChartData = {
+  labels: topDiseasesMonth.map(item => item.disease || item.DiagnosisName),
+  datasets: [
+    {
+      label: 'Number of Cases',
+      data: topDiseasesMonth.map(item => item.cases || item.total),
+      backgroundColor: [
+        '#27374D', '#526D82', '#9DB2BF', '#DDE6ED',
+        '#48A9A6', '#4281A4', '#3F88C5', '#5E60CE',
+        '#7209B7', '#B5179E'
+      ],
+      borderColor: '#27374D',
+      borderWidth: 1,
+    }
+  ],
+};
+
+const topDiseasesChartOptions = {
+  indexAxis: 'y',
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false
+    },
+    title: {
+      display: true,
+      text: `Top 10 Diseases - ${getSelectedMonthLabel()}`,
+      color: "#27374D",
+      font: {
+        size: 20,
+        weight: 'bold',
+      }
+    },
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: "#27374D",
+        font: {
+          size: 12
+        }
+      },
+      grid: {
+        color: 'rgba(39, 55, 77, 0.1)'
+      }
+    },
+    y: {
+      ticks: {
+        color: "#27374D",
+        font: {
+          size: 11
+        }
+      },
+      grid: {
+        display: false
+      }
+    },
+  }
+};
+
+// Monthly Disease Trends - Line Chart (showing top 4 diseases over time)
+const processMonthlyTrends = () => {
+  if (!monthlyTopDiseases || Object.keys(monthlyTopDiseases).length === 0) {
+    return { labels: [], datasets: [] };
+  }
+
+  // Count total cases for each disease across all months to get top 4
+  const diseaseTotals = {};
+  Object.values(monthlyTopDiseases).forEach(monthData => {
+    if (Array.isArray(monthData)) {
+      monthData.forEach(item => {
+        const disease = item.disease || item.DiagnosisName;
+        diseaseTotals[disease] = (diseaseTotals[disease] || 0) + (item.cases || 0);
+      });
+    }
+  });
+
+  // Get top 4 diseases by total cases
+  const topDiseases = Object.entries(diseaseTotals)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([disease]) => disease);
+
+  // Define colors for line chart (similar to the image)
+  const lineColors = [
+    { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },  // Blue
+    { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },  // Green
+    { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },   // Red
+    { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },  // Orange
+  ];
+
+  // Create datasets for each top disease
+  const datasets = topDiseases.map((disease, index) => ({
+    label: disease,
+    data: allMonths.map(monthKey => {
+      const monthData = monthlyTopDiseases[monthKey];
+      if (!monthData || !Array.isArray(monthData)) return 0;
+      
+      const diseaseData = monthData.find(item => 
+        (item.disease || item.DiagnosisName) === disease
+      );
+      return diseaseData ? (diseaseData.cases || diseaseData.total || 0) : 0;
+    }),
+    borderColor: lineColors[index].border,
+    backgroundColor: lineColors[index].bg,
+    borderWidth: 2,
+    tension: 0.4, // Smooth curves
+    fill: false,
+    pointRadius: 4,
+    pointHoverRadius: 6,
+    pointBackgroundColor: lineColors[index].border,
+    pointBorderColor: '#fff',
+    pointBorderWidth: 2,
+  }));
+
+  return {
+    labels: allMonths.map(monthKey =>
+      new Date(`${monthKey}-01`).toLocaleDateString("en-PH", {
+        month: "short"
+      })
+    ),
+    datasets
+  };
+};
+
+const monthlyTrendsChartData = processMonthlyTrends();
+
+const monthlyTrendsChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        color: '#27374D',
+        font: {
+          size: 12,
+          weight: '500'
+        },
+        padding: 20,
+        usePointStyle: true,
+      }
+    },
+    title: {
+      display: true,
+      text: 'Monthly Disease Trends',
+      color: "#27374D",
+      font: {
+        size: 20,
+        weight: 'bold',
+      },
+      padding: {
+        bottom: 20
+      }
+    },
+  },
+  scales: {
+    x: {
+      grid: {
+        color: 'rgba(39, 55, 77, 0.1)',
+        drawBorder: false,
+      },
+      ticks: {
+        color: "#27374D",
+        font: {
+          size: 11
+        }
+      }
+    },
+    y: {
+      beginAtZero: true,
+      grid: {
+        color: 'rgba(39, 55, 77, 0.1)',
+        drawBorder: false,
+      },
+      ticks: {
+        color: "#27374D",
+        font: {
+          size: 11
+        },
+        stepSize: 6
+      }
+    },
+  },
+  interaction: {
+    mode: 'index',
+    intersect: false,
+  },
+};
+
 return (
-
-    <div className='container'>
-
-        <div className="navbar">
-        <Sidebar />
+  <div className={styles.container}>
+    <Sidebar />
+    
+    <main className={styles.content}>
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>Medical Report</h1>
+         
+        </div>
+        <div className={styles.headerRight}>
+          <button className={styles.emergencyButton}>
+            <BiError />
+            EMERGENCY MODE
+          </button>
+          <ProfileDropdown 
+            email="admin@klynx.com"
+            name="Admin User"
+          />
+        </div>
       </div>
 
-      <div className='main'>
-        
-        <div className="header">
-          <h2>
-            Medical Report
-          </h2>
-
-          <div className="icon">
-          <div className="icon">
-           <i
-              className="fas fa-bell"
-              id="notif"
-              onClick={() => setShowNotifications(!showNotifications)}
-            ></i>
-            <i
-              className="fas fa-cog"
-              id="settings"
-              onClick={() => setShowSettings(!showSettings)}
-            ></i>
-          </div>
-
-          {showNotifications && (
-            <div className="dropdown notifications-dropdown">
-              <ul>
-                <li>New disease alert: Dengue</li>
-                <li>System maintenance scheduled</li>
-                <li>Weekly report available</li>
-              </ul>
-            </div>
-          )}
-          {showSettings && (
-            <div className="dropdown settings-dropdown">
-              <ul>
-                <li onClick={() => setShowManageAccount(true)}>Manage Account</li>
-                <li onClick={() => setShowTerms(true)}>Terms and Condition</li>
-                <li onClick={() => setShowAddAdmin(true)}>Add Admin Account</li>
-              </ul>
-            </div>
-          )}
-          </div>
+      {/* Success/Error Message */}
+      {message.text && (
+        <div className={`${styles.message} ${message.type === 'success' ? styles.success : styles.error}`}>
+          {message.text}
         </div>
-
-           <div className='container-patient'>
-          {showManageAccount && (
-                       <div className="modal-patient">
-                       <div className="modal-content-patient">
-                           <h2>Manage Account</h2>
-                           <button className="close" onClick={() => setShowManageAccount(false)}>
-                               &times;
-                           </button>
-                           <div className="modal-section-patient">
-                               <h3>General Details</h3>
-                               <form>
-                                   <label>
-                                       Complete Name:
-                                       <input
-                                           type="text"
-                                           name="name"
-                                           value={generalDetails.name}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                                   <label>
-                                       Username:
-                                       <input
-                                           type="text"
-                                           name="username"
-                                           value={generalDetails.username}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                                   <label>
-                                       Contact NO.:
-                                       <input
-                                           type="text"
-                                           name="contact"
-                                           value={generalDetails.contact}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                                   <label>
-                                       Password:
-                                       <input
-                                           type="password"
-                                           name="password"
-                                           value={generalDetails.password}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                               </form>
-                                <button className="cancel" onClick={() => setShowManageAccount(false)}>Cancel</button>
-                               <button className="save" onClick={handleSave}>Save Changes</button>
-                           </div>
-                       </div>
-                   </div>
       )}
 
-      {showAddAdmin && (
-        <div className="modal-patient">
-          <div className="modal-content-patient">
+      {/* Download Button */}
+      <div className={styles.actionSection}>
+        <button className={styles.downloadButton} onClick={handleDiseaseDownload}>
+          <BiDownload size={20} />
+          Download Medical Report
+        </button>
+      </div>
 
-            <h3>Add Admin Account</h3>
-                <button className="close"
-                  onClick={() => setShowAddAdmin(false)}
-                >
-                  &times;
-                </button>
-          <div className="modal-section-patient">
-
-            <input 
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)} 
-            placeholder="Full Name"
-             required 
-            />
-
-            <input 
-                type="text" 
-                placeholder="Username" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-                required
-            />
-            <input 
-                type="password" 
-                placeholder="Password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
-            <input 
-                type="password" 
-                placeholder="Confirm Password" 
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)} 
-                required 
-
-             />
-            <button onClick={HandleAddAdmin}>Add Admin</button>
-
-            {/* Sample output para makita if nag sasave yung admin account
-            <h3>Admin Accounts(Sample lang to check if nag aadd)</h3>
-            <ul>
-                {adminAccounts.map((account, index) => (
-                    <li key={index}>{account.username}</li>
-                ))}
-            </ul> */}
-
-
-              </div>
-
-              </div>
-            </div>
-            )}  
-
-      {showTerms && (
-            <div className="modal-patient">
-              <div className="modal-content-patient">
-                <h2>Terms & Conditions</h2>
-                <button className="close"
-                  onClick={() => setShowTerms(false)}
-                >
-                  &times;
-                </button>
-                <div className="modal-section">
-                  <p>
-                    By using this system, you agree to our terms and conditions...
-                  </p>
-                </div>
-              </div>
-            </div>
+      {/* Monthly Disease Trends Line Chart */}
+      <div className={styles.chartSection}>
+        <div className={styles.chartContainer}>
+          {monthlyTrendsChartData.datasets.length === 0 ? (
+            <p className={styles.noData}>No data available for this year.</p>
+          ) : (
+            <Line data={monthlyTrendsChartData} options={monthlyTrendsChartOptions} />
           )}
         </div>
+      </div>
 
-        <div className='contents'>
-
-          <button className='download'onClick={handleDiseaseDownload}>Download Medical Report</button>
-
-
+      {/* Top 10 Diseases with Month Selector */}
+      <div className={styles.chartSection}>
+        <div className={styles.chartHeader}>
+          <div className={styles.chartControls}>
+            <label htmlFor="monthSelector" className={styles.monthLabel}>
+              Select Month:
+            </label>
+            <select
+              id="monthSelector"
+              className={styles.monthSelector}
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            >
+              {allMonths.map(month => {
+                const date = new Date(`${month}-01`);
+                const label = date.toLocaleDateString("en-PH", {
+                  timeZone: 'Asia/Manila',
+                  month: "long",
+                  year: "numeric"
+                });
+                return (
+                  <option key={month} value={month}>
+                    {label}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <button 
+            className={styles.downloadChartButton} 
+            onClick={handleMonthlyTopDiseasesDownload}
+            disabled={topDiseasesMonth.length === 0}
+          >
+            <BiDownload size={18} />
+            Download Report
+          </button>
         </div>
-
-        <div className='container'>
-            <div className='stat-card'>
-
-                <h2>{currentYear} Medical Chart</h2>
-                <div className='chart-container'>
-                        {Object.keys(diseaseStats).length === 0 ? (
-                          <p>No data available for this year.</p>
-                        ) : (
-                          <Bar data={chartData} options={chartOptions} />
-                        )}
-                </div>
-
-            </div>
-
-
+        <div className={styles.chartContainer}>
+          {topDiseasesMonth.length === 0 ? (
+            <p className={styles.noData}>No data available for this month.</p>
+          ) : (
+            <Bar data={topDiseasesChartData} options={topDiseasesChartOptions} />
+          )}
         </div>
+      </div>
 
-
-        <div className='contents'>
-
-            
-            <div className='stat-card'>
-
-                <h1>Medical Summary Table</h1>
-
-            </div>
-
-            <div className='table-container'>
-                <table className='table-cont'>
-                    <thead>
-                        <tr>
-                            <th>Diagnosis Names</th>
-                            <th>Age 0-17</th>
-                            <th>Age 18-40</th>
-                            <th>Age 41-59</th>
-                            <th>Age 60+</th>
-                            <th>New Case (as per {formattedDate})</th>
-                            <th>Total of Cases (as per {currentMonth})</th>
-                        </tr>
-                    </thead>
-
-                        <tbody>
-                          {HealthData.map((record, index) => {
-                            // Convert age group values to numbers and sum them
-                            const age0_17 = Number(record["Age 0-17"]) || 0;
-                            const age18_40 = Number(record["Age 18-40"]) || 0;
-                            const age41_59 = Number(record["Age 41-59"]) || 0;
-                            const age60plus = Number(record["Age 60+"]) || 0;
-                            const overallTotal = age0_17 + age18_40 + age41_59 + age60plus;
-
-                            return (
-                              <tr key={index}>
-                                <td>{record["DiagnosisName"]}</td>
-                                <td>{record["Age 0-17"]}</td>
-                                <td>{record["Age 18-40"]}</td>
-                                <td>{record["Age 41-59"]}</td>
-                                <td>{record["Age 60+"]}</td>
-                                <td>{record["New Cases"]}</td>
-                                <td>{overallTotal}</td> {/* Show the overall total */}
-                              </tr>
-                            );
-                          })}
-                  </tbody>
-                </table>                    
-            </div>
-             
+      {/* Total Cases Chart */}
+      <div className={styles.chartSection}>
+        <h2 className={styles.chartTitle}>{currentYear} Total Medical Cases</h2>
+        <div className={styles.chartContainer}>
+          {Object.keys(diseaseStats).length === 0 ? (
+            <p className={styles.noData}>No data available for this year.</p>
+          ) : (
+            <Bar data={chartData} options={chartOptions} />
+          )}
         </div>
-  
+      </div>
 
+      {/* Table Section */}
+      <div className={styles.tableSection}>
+        <h2 className={styles.tableTitle}>Medical Summary Table</h2>
+        <p className={styles.tableSubtitle}>Comprehensive disease diagnosis breakdown by age groups</p>
+        
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Diagnosis Name</th>
+                <th>Age 0-17</th>
+                <th>Age 18-40</th>
+                <th>Age 41-59</th>
+                <th>Age 60+</th>
+                <th>New Cases<br/><span className={styles.subHeader}>(as of {formattedDate})</span></th>
+                <th>Total Cases<br/><span className={styles.subHeader}>(as of {currentMonth})</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {HealthData.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className={styles.emptyMessage}>
+                    No health data available
+                  </td>
+                </tr>
+              ) : (
+                HealthData.map((record, index) => {
+                  const age0_17 = Number(record["Age 0-17"]) || 0;
+                  const age18_40 = Number(record["Age 18-40"]) || 0;
+                  const age41_59 = Number(record["Age 41-59"]) || 0;
+                  const age60plus = Number(record["Age 60+"]) || 0;
+                  const overallTotal = age0_17 + age18_40 + age41_59 + age60plus;
 
-    </div>
-    </div>
-
-)}
+                  return (
+                    <tr key={index}>
+                      <td className={styles.indexCell}>{index + 1}</td>
+                      <td className={styles.diagnosisCell}>{record["DiagnosisName"]}</td>
+                      <td>{age0_17}</td>
+                      <td>{age18_40}</td>
+                      <td>{age41_59}</td>
+                      <td>{age60plus}</td>
+                      <td className={styles.highlightCell}>{record["New Cases"]}</td>
+                      <td className={styles.totalCell}>{overallTotal}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+);
+}
 
 export default DiseaseReport;   

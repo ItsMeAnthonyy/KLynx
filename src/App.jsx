@@ -43,12 +43,19 @@ import Calendar from './pages/Admin/Calendar';
 import Staff from './pages/Admin/Staff';
 import Nurse from './pages/Admin/Nurse';
 import Patient from './pages/Admin/Patient';
-//import AnimalBite from './pages/Admin/AnimalBite';
+import AnimalBite from './pages/Admin/AnimalBite';
+
+import ConsultationDetail from './Modules/Admin/Pages/ConsultationDetail';
+
+import Notifications from './pages/Admin/Notifications';
+import Settings from './pages/Admin/Settings';
 //import TotalPatients from './pages/Admin/TotalPatients';
 //import Notes from './pages/Admin/Note';
 //import Prescription from './pages/Admin/Prescription'
 import Prenatal2 from './pages/Patient/Prenatal';
 import DiseaseReport from './pages/Reports/Diseasereport';
+import AnimalBiteReport from './pages/Reports/AnimalBiteReport';
+import MaternalReport from './pages/Reports/MaternalReport';
 const ROLES = {
   'User': 2001,
   'Editor': 1984,
@@ -69,6 +76,8 @@ import NurseNotes from './pages/Admin/NurseNotes';
 
 import Patients from './modules/admin/pages/Patients';
 import Visits from './modules/admin/pages/Visits';
+import UserManagement from './modules/admin/pages/UserManagement';
+import StaffHealthRecord from './modules/admin/pages/StaffHealthRecord';
 
 function App() {
   return (
@@ -112,6 +121,9 @@ function App() {
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 <Route path='/NurseNotes' element={<NurseNotes />} />
+                <Route path='/UserManagement' element={<UserManagement />} />
+                <Route path='/Notifications' element={<Notifications />} />
+                  <Route path='/Settings' element={<Settings />} />
 
                 <Route path='/GeoMap' element={<GeoMaps />} />              
                 <Route path='/DashboardAlt' element={<DashboardAlt/>} />
@@ -119,19 +131,24 @@ function App() {
                 <Route path='/Immunization' element={<Immunization/>} />
                 <Route path='/Prenatal' element={<Prenatal/>} />
                 <Route path='/Consultation' element={<Consultation />} />
+                <Route path='/ConsultationDetail' element={<ConsultationDetail />} />
+                <Route path='/StaffHealthRecord' element={<StaffHealthRecord />} />
                 
                 <Route path='/Staff' element={<Staff/>} />
                 <Route path='/Nurse' element={<Nurse/>} />
                 <Route path='/Doctors' element={<Doctors/>} />
                 <Route path='/Patient' element={<Patient/>} />
 
+                <Route path='/AnimalBite' element={<AnimalBite/>} />
+
                 <Route path='/Patientrecord' element={<Patientrecord />} />
                 <Route path='/Calendar' element={<Calendar />} />
                 
                 <Route path='/DiseaseReport' element={<DiseaseReport />} />
-                {/*<Route path='/Dashboard' element={<Dashboard />} />  */}  
-              </Route> 
-              
+                <Route path='/AnimalBiteReport' element={<AnimalBiteReport />} />
+                <Route path='/MaternalReport' element={<MaternalReport />} />
+                {/*<Route path='/Dashboard' element={<Dashboard />} />  */}
+            </Route>
 
               <Route path='/Appointment' element={<Appointment />} />
               <Route path='/Patient-Dashboard' element={<Dashboard2/>} />

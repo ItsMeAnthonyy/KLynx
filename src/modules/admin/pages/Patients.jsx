@@ -322,7 +322,7 @@ const Patients = () => {
     const handleViewPatient = async (patient) => {
         setLoading(true);
         try {
-            navigate(`/patient/${patient.PatientID}/visits`);
+            navigate(`/patient/${patient.PatientID}/visits`, { state: { patient } });
         } finally {
             setLoading(false);
         }

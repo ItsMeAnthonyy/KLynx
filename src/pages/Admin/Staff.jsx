@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import React from 'react';  
-import Sidebar from '../../components/sidebar';
+ 
+import Sidebar from '../../components/Sidebar';
 import '../../components/css/GlobalContainer.css';
 import '../../components/css/DashboardAlt.css';
 import '../../components/css/FileMaintenance.css'
 import '../../components/css/Staff.css'
 import './Doctors.css'
 import axios from 'axios';
-import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
+import { BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
+import { BiError } from 'react-icons/bi';
+import ProfileDropdown from '../../components/ProfileDropdown';
 
 const Staff = () => {
 
@@ -107,15 +109,21 @@ const Staff = () => {
         <div className="FileMaintenance-Container">
             <Sidebar />
             <main className="FileMaintenance-Content">
-                <div className="FileMaintenance-Header">
-                    <div className="FileMaintenance-HeaderTitle">
-                        <h1>Staff</h1>
-                    </div>
-                    <div className="FileMaintenance-HeaderSetting">
-                        <BiSolidBell className="FileMaintenance-Icon" />
-                        <BiSolidCog className="FileMaintenance-Icon" onClick={() => handleSettingOpen()} />
-                    </div>
-                </div>
+                 <div className="FileMaintenance-Header">
+                          <div className="FileMaintenance-HeaderTitle">
+                            <h1>Staff</h1>
+                          </div>
+                
+                          <div className="FileMaintenance-HeaderSetting">
+                            <button className="emergency-button">
+                              <BiError/>EMERGENCY MODE
+                            </button>
+                            <ProfileDropdown 
+                              email="admin@klynx.com"
+                              name="Admin User"
+                            />
+                          </div>
+                        </div>
                 <hr></hr>
                 <div className="FileMaintenance-Filter-Container">
                     <div className="FileMaintenance-Entries">

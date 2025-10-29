@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
@@ -14,6 +14,8 @@ import getDay from 'date-fns/getDay';
 import enUS from 'date-fns/locale/en-US';
 import './Calendar.css';
 import Sidebar from '../../components/Sidebar';
+import { BiError } from 'react-icons/bi';
+import ProfileDropdown from '../../components/ProfileDropdown';
 
 const localizer = dateFnsLocalizer({
   format,
@@ -140,7 +142,7 @@ function AvailabilityModal({ onClose, onAdd }) {
             <button type="button" onClick={onClose}>Close</button>
           </div>
         </form>
-      </div>
+     </div>
     </div>
   );
 }
@@ -270,14 +272,6 @@ export default function AppointmentCalendar() {
     end: new Date(new Date(appt.date).getTime() + 60 * 60 * 1000),
   }));
 
-  // Settings and Notifications
-  
-    const [showNotifications, setShowNotifications] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
-    const [showManageAccount, setShowManageAccount] = useState(false);
-    const [showTerms, setShowTerms] = useState(false);
-  
-    const [showAddAdmin, setShowAddAdmin] = useState(false);
 
     const [generalDetails, setGeneralDetails] = useState({
     name: '',
@@ -346,186 +340,31 @@ const handleSave = () => {
 
 
   return (
-    <div className='container'>
-       <div className="navbar">
+
+    <div className='FileMaintenance-Container'>
+      
         <Sidebar />
-      </div>
+     
 
-      <div className='main'>
-            <div className="header">
-          <h2>
-             Appointment Calendar
-          </h2>
-          <div className="icon">
-          <div className="icon">
-           <i
-              className="fas fa-bell"
-              id="notif"
-              onClick={() => setShowNotifications(!showNotifications)}
-            ></i>
-            <i
-              className="fas fa-cog"
-              id="settings"
-              onClick={() => setShowSettings(!showSettings)}
-            ></i>
-          </div>
-
-          {showNotifications && (
-            <div className="dropdown notifications-dropdown">
-              <ul>
-                <li>New disease alert: Dengue</li>
-                <li>System maintenance scheduled</li>
-                <li>Weekly report available</li>
-              </ul>
-            </div>
-          )}
-          {showSettings && (
-            <div className="dropdown settings-dropdown">
-              <ul>
-                <li onClick={() => setShowManageAccount(true)}>Manage Account</li>
-                <li onClick={() => setShowTerms(true)}>Terms and Condition</li>
-                <li onClick={() => setShowAddAdmin(true)}>Add Admin Account</li>
-              </ul>
-            </div>
-          )}
-          </div>
-        </div>
-
-        <div className='container'>
-          {showManageAccount && (
-                       <div className="modal">
-                       <div className="modal-content">
-                           <h2>Manage Account</h2>
-                           <button className="close" onClick={() => setShowManageAccount(false)}>
-                               &times;
-                           </button>
-                           <div className="modal-section">
-                               <h3>General Details</h3>
-                               <form>
-                                   <label>
-                                       Complete Name:
-                                       <input
-                                           type="text"
-                                           name="name"
-                                           value={generalDetails.name}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                                   <label>
-                                       Username:
-                                       <input
-                                           type="text"
-                                           name="username"
-                                           value={generalDetails.username}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                                   <label>
-                                       Contact NO.:
-                                       <input
-                                           type="text"
-                                           name="contact"
-                                           value={generalDetails.contact}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                                   <label>
-                                       Password:
-                                       <input
-                                           type="password"
-                                           name="password"
-                                           value={generalDetails.password}
-                                           onChange={handleInputChange}
-                                       />
-                                   </label>
-                               </form>
-                                <button className="cancel" onClick={() => setShowManageAccount(false)}>Cancel</button>
-                               <button className="save" onClick={handleSave}>Save Changes</button>
-                           </div>
-                       </div>
+      <div className='FileMaintenance-Content'>
+            <div className="FileMaintenance-Header">
+                     <div className="FileMaintenance-HeaderTitle">
+                       <h1>Appointments</h1>
+                     </div>
+           
+                     <div className="FileMaintenance-HeaderSetting">
+                       <button className="emergency-button">
+                         <BiError/>EMERGENCY MODE
+                       </button>
+                       <ProfileDropdown 
+                         email="admin@klynx.com"
+                         name="Admin User"
+                       />
+                     </div>
                    </div>
 
-
-
-      )}
-
-      {showAddAdmin && (
-        <div className="modal">
-          <div className="modal-content">
-
-            <h3>Add Admin Account</h3>
-                <button className="close"
-                  onClick={() => setShowAddAdmin(false)}
-                >
-                  &times;
-                </button>
-          <div className="modal-section">
-
-            <input 
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)} 
-            placeholder="Full Name"
-             required 
-            />
-
-            <input 
-                type="text" 
-                placeholder="Username" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-                required
-            />
-            <input 
-                type="password" 
-                placeholder="Password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
-            <input 
-                type="password" 
-                placeholder="Confirm Password" 
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)} 
-                required 
-
-             />
-            <button onClick={HandleAddAdmin}>Add Admin</button>
-
-            {/* Sample output para makita if nag sasave yung admin account
-            <h3>Admin Accounts(Sample lang to check if nag aadd)</h3>
-            <ul>
-                {adminAccounts.map((account, index) => (
-                    <li key={index}>{account.username}</li>
-                ))}
-            </ul> */}
-
-
-              </div>
-
-              </div>
-            </div>
-            )}  
-
-      {showTerms && (
-            <div className="modal">
-              <div className="modal-content">
-                <h2>Terms & Conditions</h2>
-                <button className="close"
-                  onClick={() => setShowTerms(false)}
-                >
-                  &times;
-                </button>
-                <div className="modal-section">
-                  <p>
-                    By using this system, you agree to our terms and conditions...
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+    
+        <div className='FileMaintenance-Container'>
 
 
     <div style={{ padding: '20px' }}>
@@ -563,6 +402,7 @@ const handleSave = () => {
         onNavigate={(newDate) => setDate(newDate)}
         />
         </div>
+      </div>
       </div>
     </div>
 

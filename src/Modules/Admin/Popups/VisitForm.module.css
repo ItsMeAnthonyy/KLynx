@@ -1,0 +1,180 @@
+.form {
+  padding: 2rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 500;
+  color: hsl(215, 25%, 15%);
+  font-size: 0.875rem;
+}
+
+.required {
+  color: hsl(0, 84.2%, 60.2%);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid hsl(210, 25%, 88%);
+  border-radius: 0.5rem;
+  background: hsl(210, 40%, 98%);
+  color: hsl(215, 25%, 15%);
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: hsl(200, 95%, 40%);
+  box-shadow: 0 0 0 3px hsl(200, 95%, 40%, 0.1);
+}
+
+.input:read-only {
+  background: hsl(210, 30%, 92%, 0.5);
+  cursor: not-allowed;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.reactSelect {
+  font-size: 0.875rem;
+}
+
+.ageGroup {
+  margin-bottom: 1.5rem;
+}
+
+.ageInputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.ageField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ageLabel {
+  font-size: 0.75rem;
+  color: hsl(215, 15%, 50%);
+  text-align: center;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 2rem;
+  margin-top: 0.5rem;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: hsl(215, 25%, 15%);
+}
+
+.radio {
+  width: 1rem;
+  height: 1rem;
+  accent-color: hsl(200, 95%, 40%);
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid hsl(210, 25%, 88%);
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  border: none;
+}
+
+.btnCancel {
+  background: transparent;
+  color: hsl(215, 25%, 15%);
+  border: 1px solid hsl(210, 25%, 88%);
+}
+
+.btnCancel:hover:not(:disabled) {
+  background: hsl(185, 90%, 45%);
+}
+
+.btnPrimary {
+  background: hsl(200, 95%, 40%);
+  color: hsl(0, 0%, 100%);
+  box-shadow: 0 10px 30px -10px hsl(200, 95%, 40%, 0.2);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: hsl(195, 100%, 50%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 40px hsl(195, 100%, 50%, 0.15);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 2px solid hsl(200, 95%, 40%);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .form {
+    padding: 1.5rem;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .ageInputs {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

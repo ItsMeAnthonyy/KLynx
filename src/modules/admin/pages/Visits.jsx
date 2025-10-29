@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import VisitModal from '../popups/VisitModal';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import Sidebar from '../../../components/sidebar';
 import '../../../components/css/GlobalContainer.css';
 import './Patients.css';
@@ -8,7 +9,7 @@ import '../../../pages/Admin/Doctors.css'
 import './Visits.css'
 import axios from 'axios';
 import React from 'react';  
-import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash, BiArrowBack } from 'react-icons/bi';
+import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
 import { fetchPatientData } from "../services/patientService";
@@ -163,7 +164,7 @@ const Visits = () => {
     }
 
     function getConsultProfiles() {
-        axios.get('http://localhost/api/Patient_Consult_Profiles.php').then(function(response){
+        axios.get('http://localhost/api/Patient_Visits.php').then(function(response){
             console.log("Get All Consult Profiles: ", response.data);
             setDoctorsList(response.data);
             setConsultProfiles(response.data);
@@ -328,7 +329,11 @@ const Visits = () => {
     const handleBackToPatientList = () => {
         navigate('/Patients');
     };
-    
+
+    const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
+    const { patientId } = useParams();
+    const location = useLocation();
+    const patient = location.state?.patient;
 
     return (
         <div className="FileMaintenance-Container">
@@ -351,7 +356,7 @@ const Visits = () => {
                         </button>
                     </div>
                     <div className="FileMaintenance-AddSearch">
-                            <button onClick={() => handleModalOpen()}>+</button>
+                            <button onClick={() => setIsVisitModalOpen(true)}><BiPlus/></button>
                             <input type="text" placeholder="Search here..."/>
                     </div>
                 </div>
@@ -377,13 +382,13 @@ const Visits = () => {
                                     {consProf.Birthday}
                                 </td>
                                 <td>
-                                    {consProf.DateCreated}
+                                    {consProf.consultation_date}
                                 </td>
                                 <td>
-                                    Add to Queue
+                                    {consProf.consultation_time}
                                 </td>
                                 <td>
-                                    Download Data
+                                    {consProf.consultation_type}
                                 </td>
                                 <td>
                                     <button onClick={() => viewHistory(consProf.ConsultID) }>View History</button>
@@ -402,6 +407,13 @@ const Visits = () => {
                     </table>
                 </div>
             </main>
+            
+            <VisitModal
+                isOpen={isVisitModalOpen}
+                onClose={() => setIsVisitModalOpen(false)}
+                patient={patient}
+            />
+
 
             {/* MODALS SECTION */}
             {showModal && (

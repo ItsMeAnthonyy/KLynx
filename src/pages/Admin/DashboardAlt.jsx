@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import Sidebar from '../../components/sidebar';
+import { useEffect, useState } from 'react';
+import Sidebar from '../../components/Sidebar';
 import '../../components/css/GlobalContainer.css';
 import '../../components/css/DashboardAlt.css';
-import { BiSolidCog, BiSolidBell } from 'react-icons/bi';
+import { BiError } from 'react-icons/bi';
+import ProfileDropdown from '../../components/ProfileDropdown';
+import '../../components/css/FileMaintenance.css'
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+
 
 
 import PieChartExample from '../../components/piechart';
@@ -89,18 +92,24 @@ const DashboardAlt = () => {
     }, []);
 
     return (
-        <div className="DashboardAlt-Container">
+        <div className="FileMaintenance-Container">
             <Sidebar />
-            <main className="DashboardAlt-Content">
-                <div className="DashboardAlt-Header">
-                    <div className="DashbordAlt-HeaderTitle">
-                        <h1>Dashboard</h1>
-                    </div>
-                    <div className="DashboardAlt-HeaderSetting">
-                        <BiSolidBell className="Dashboard-Icon" />
-                        <BiSolidCog className="Dashboard-Icon" />
-                    </div>
-                </div>
+            <main className="FileMaintenance-Content">
+                 <div className="FileMaintenance-Header">
+                          <div className="FileMaintenance-HeaderTitle">
+                            <h1>Dashboard</h1>
+                          </div>
+                
+                          <div className="FileMaintenance-HeaderSetting">
+                            <button className="emergency-button">
+                              <BiError/>EMERGENCY MODE
+                            </button>
+                            <ProfileDropdown 
+                              email="admin@klynx.com"
+                              name="Admin User"
+                            />
+                          </div>
+                        </div>
                 <hr></hr>
                 <div className="DashboardAlt-Cards-Container">
                     <div className="DashboardAlt-Card">
@@ -138,7 +147,7 @@ const DashboardAlt = () => {
                     </div>
                     <div className="DashboardAlt-Card">
                         <div className="DashboardAlt-CardTitle">
-                            <h4>Today's Appointments</h4>
+                            <h4>Today&apos;s Appointments</h4>
                         </div>
                         <div className="DashboardAlt-CardNumber">
                             <h1>5</h1>

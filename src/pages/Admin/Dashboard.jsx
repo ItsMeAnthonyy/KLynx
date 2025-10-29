@@ -3,6 +3,11 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import Sidebar from '../../components/Navbar';
 import './consult.css';
+import '../../components/css/GlobalContainer.css';
+import '../../components/css/DashboardAlt.css';
+import '../../components/css/FileMaintenance.css'
+import { BiError } from 'react-icons/bi';
+import ProfileDropdown from '../../components/ProfileDropdown';
 import { Bar } from 'react-chartjs-2';
 import PieChartExample from '../../components/piechart';  
 import PrenatalPie from '../../components/prenatal-pie';
@@ -359,45 +364,26 @@ function Dashboard() {
           };
   return (
     <div className="container">
-      <div className="navbar">
+      
         <Sidebar />
-      </div>
+    
 
       <main className="main-content">
-        <header className="header">
-          <span className="header-text">Dashboard Overview</span>
-          <div className="icon">
-          <i
-              className="fas fa-bell"
-              id="notif"
-              onClick={() => setShowNotifications(!showNotifications)}
-            ></i>
-            <i
-              className="fas fa-cog"
-              id="settings"
-              onClick={() => setShowSettings(!showSettings)}
-            ></i>
-          </div>
-          {showNotifications && (
-            <div className="dropdown notifications-dropdown">
-              <ul>
-                <li>New disease alert: Dengue</li>
-                <li>System maintenance scheduled</li>
-                <li>Weekly report available</li>
-              </ul>
-            </div>
-          )}
-
-          {showSettings && (
-            <div className="dropdown settings-dropdown">
-              <ul>
-                <li onClick={() => setShowManageAccount(true)}>Manage Account</li>
-                <li onClick={() => setShowTerms(true)}>Terms and Condition</li>
-                <li onClick={() => setShowAddAdmin(true)}>Add Admin Account</li>
-              </ul>
-            </div>
-          )}
-        </header>
+        <div className="FileMaintenance-Header">
+                 <div className="FileMaintenance-HeaderTitle">
+                   <h1>Notifications</h1>
+                 </div>
+       
+                 <div className="FileMaintenance-HeaderSetting">
+                   <button className="emergency-button">
+                     <BiError/>EMERGENCY MODE
+                   </button>
+                   <ProfileDropdown 
+                     email="admin@klynx.com"
+                     name="Admin User"
+                   />
+                 </div>
+               </div>
           <div className='container'>
           {showManageAccount && (
                        <div className="modal">

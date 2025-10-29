@@ -32,6 +32,7 @@
 
 .FileMaintenance-Container{
     display: flex;
+    padding: 0%;
 }
 
 .FileMaintenance-Content{
@@ -84,6 +85,60 @@
     color: white;
 }
 
+.FileMaintenance-HeaderSetting .emergency-button{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 2px solid #fc8181;
+    border-radius: 8px;
+    color: #c53030;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.FileMaintenance-HeaderSetting .emergency-button:hover {
+     background-color: #fff5f5;
+}
+
+.FileMaintenance-HeaderSetting button:hover{
+    transform: scale(1.03);
+   
+    background: rgba(255, 255, 255, 0.723);
+    color: red;
+    border: 1px solid #07598D;
+}
+
+.FileMaintenance-Buttons{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.FileMaintenance-Icon{
+    font-size: 30px;
+    cursor: pointer;
+    transition: 0.5s ease-in-out;
+    color: white;
+   
+}
+
+.FileMaintenance-emergency-btn{
+
+    color: #07598D;
+    cursor: pointer;
+    border-radius: 20rem;
+    transition: 0.5s ease-in-out;
+}
+.FileMaintenance-emergency-btn:hover{
+    background: white;
+    color: red;
+    border: 1px solid #07598D;
+}
 .FileMaintenance-Icon:hover{
     transform: scale(1.3);
     cursor: pointer;
@@ -91,7 +146,7 @@
 
 .FileMaintenance-Filter-Container{
     display: flex;
-    gap: 20px;
+    gap: 5px;
     align-items: center;
     color: #2D3748;
     align-items: center;
@@ -104,6 +159,7 @@
     font-family: 'Coda Caption', sans-serif;
     font-weight: 800;
     font-size: 1.5em;
+    padding: 1rem 1rem;   
 }
 
 .FileMaintenance-Entries{
@@ -116,8 +172,8 @@
 .FileMaintenance-Entries select{
     border-radius: 10px;
     border: none;
-    border: 1px solid #112250;
-    padding: 13px 45px;
+    border: 1px solid #07598D;
+    padding: 3px 24px;
 }
 
 .FileMaintenance-AddSearch{
@@ -167,7 +223,7 @@
 }
 
 .FileMaintenance-Content table td:nth-child(5) {
-    width: 220px;
+    width: 5%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -190,12 +246,21 @@
     box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
 }
 
+.FileMaintenance-Content table thead tr{
+    border-bottom: 1px solid #112250;
+}
 
 .FileMaintenance-Content table thead tr th{
     font-family: 'Coda', sans-serif;
-    font-weight: 800;
+    font-weight: 600;
+    color: #112250;
     font-size: 14px;
     color: #2D3748;
+}
+
+.FileMaintenance-Content table tbody td{
+    height: 4.5em;
+    border-bottom: 1px solid #112250;
 }
 
 .FileMaintenance-Content table tbody tr:hover{
@@ -246,19 +311,15 @@
 
 .FileMaintenance-Content table tbody td:nth-child(7) button{
     /*outline: none; how cursor pointer will look on button*/ 
-    border-radius: 15px;
-    border: none;
-    padding: 4px 20px;
-    margin-right: 5px;
-    background: #1114a3;
-    color: white;
+  
+  
     font-size: 0.9em;
     transition: 0.5s ease-in-out;
 }
 
 .FileMaintenance-Content table tbody td .FileMaintenance-TableIcon{
-    color: #1114a3;
-    font-size: 1.4em;
+    color: #112250;
+    font-size: 1.5rem;
     transition: 0.5s ease-in-out;
 }
 
@@ -270,4 +331,176 @@
 .FileMaintenance-Content table tbody td:nth-child(7) button:hover{
     transform: scale(1.09);
     cursor: pointer;
+}
+
+.FileMaintenance-StatCard{
+    width: 100%;
+    height: 100%; 
+    padding: 5%; 
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; 
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid #112250;
+    
+   
+}
+
+.FileMaintenance-StatCardBtn{
+    border: none;
+    background: #112250;
+    color: white;
+    padding: 4px 20px;
+    margin-top: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: 0.5s ease-in-out;
+}
+
+
+
+.FileMaintenance-TableTitle{
+    display: flex;
+    justify-content: space-between;
+}
+
+.FileMaintenance-TableTitle h2{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem; 
+    color: #112250;  
+}
+
+/* Site of bite / body figure styles */
+.site-bite-row{ 
+    display:flex; 
+    gap:20px; 
+    align-items:flex-start; 
+}
+
+.site-bite-left{
+     flex:1; 
+}
+.site-bite-right{
+     flex:1; 
+}
+.site-bite-instruction{ 
+    margin-top:8px; 
+}
+.site-bite-caption{ 
+    font-size:13px; 
+    color:#666; 
+    margin-bottom:8px; 
+}
+.body-figure-box{ 
+    border:1px solid #e6e6e6; 
+    border-radius:8px; 
+    padding:12px; 
+    background:#fff; 
+    width:220px; 
+}
+.bf-region{ 
+    fill:#eceff4; 
+    stroke:#2b3b4a; 
+    stroke-width:2; cursor:pointer; 
+}
+.bf-region.selected{ 
+    fill:#2f6fd6; 
+}
+.site-select{ 
+    width:100%; 
+    margin-top:8px; 
+    padding: 1rem; 
+    border: 0.1rem solid #112250; 
+    border-radius: 8px; 
+    background: #fff; 
+}
+.site-field{ 
+    margin-top:12px; 
+}
+
+/* View history modal styles */
+.history-popup-content{ 
+    max-width:980px; 
+}
+.history-popup-header{ 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+}
+.history-popup-body{ 
+    padding:12px; 
+}
+.history-grid{ 
+    display:grid; 
+    grid-template-columns:1fr 1fr; 
+    gap:16px; }
+.history-panel{ 
+    border:3px solid #0e2946; 
+    border-radius:8px; 
+    padding:16px; 
+    background:#f6f6f8; 
+}
+.history-panel h3{ 
+    margin-top:0; 
+    color:#0e2946; 
+    letter-spacing:2px; 
+}
+.history-panel .panel-text{ 
+    color:#6d6f73; 
+    line-height:2.2; 
+}
+.history-visit-log{ 
+    margin-top:18px; 
+    border:3px solid #0e2946; 
+    border-radius:8px; 
+    padding:12px; 
+    background:#f6f6f8; 
+}
+.visit-log-top{ 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+}
+.visit-log-add{ 
+    width:36px; 
+    height:36px; 
+    border-radius:18px; 
+    background:#0e2946; 
+    color:#fff; 
+    border:none; 
+    cursor:pointer; 
+}
+.visit-log-date{ 
+    padding:8px 12px; 
+    border-radius:18px; 
+    border:1px solid #d0d3d8; 
+}
+.visit-log-head{ 
+    margin-top:12px; 
+    background:#0e2946; 
+    color:#fff; 
+    padding:8px 12px; 
+    border-radius:8px; 
+    overflow-x:auto; 
+}
+.visit-log-row{ 
+    display:flex; 
+    gap:24px; 
+    min-width:800px; 
+    padding:6px 4px; 
+}
+
+/* Required field indicator: append a red asterisk to visible labels marked with .required
+   The pseudo-element won't show if the label/parent is not rendered or has display:none, so
+   this will only appear for visible required fields (covers conditional fields that are removed from the DOM).
+*/
+.add-doctors-input-box label.required::after {
+    content: ' *';
+    color: #c00;
+    margin-left: 4px;
 }

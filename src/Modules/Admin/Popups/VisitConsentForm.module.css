@@ -1,0 +1,164 @@
+.container {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid hsl(210, 25%, 88%);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: hsl(215, 25%, 15%);
+  margin: 0;
+}
+
+.printButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: hsl(185, 90%, 45%);
+  color: hsl(0, 0%, 100%);
+  border: 1px solid hsl(210, 25%, 88%);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+}
+
+.printButton:hover {
+  background: hsl(185, 90%, 45%, 0.8);
+  transform: translateY(-1px);
+}
+
+.printButton:focus-visible {
+  outline: 2px solid hsl(200, 95%, 40%);
+  outline-offset: 2px;
+}
+
+.content {
+  background: hsl(0, 0%, 100%);
+  border: 1px solid hsl(210, 25%, 88%);
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(215, 25%, 15%);
+  margin: 0 0 0.75rem;
+}
+
+.patientInfo {
+  background: hsl(210, 30%, 92%, 0.3);
+  border-left: 3px solid hsl(200, 95%, 40%);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.patientInfo p {
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  color: hsl(215, 25%, 15%);
+}
+
+.patientInfo p:first-child {
+  margin-top: 0;
+}
+
+.patientInfo p:last-child {
+  margin-bottom: 0;
+}
+
+.text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: hsl(215, 15%, 50%);
+  margin: 0;
+}
+
+.list {
+  margin: 0.75rem 0 0;
+  padding-left: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: hsl(215, 15%, 50%);
+}
+
+.list li {
+  margin: 0.5rem 0;
+}
+
+.acknowledgment {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: hsl(200, 95%, 40%, 0.05);
+  border: 1px solid hsl(200, 95%, 40%, 0.2);
+  border-radius: 0.75rem;
+}
+
+.acknowledgment .text {
+  color: hsl(215, 25%, 15%);
+}
+
+/* Print styles */
+@media print {
+  .printButton {
+    display: none;
+  }
+
+  .container {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .content {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .section {
+    page-break-inside: avoid;
+  }
+
+  .text,
+  .list {
+    color: #000;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .printButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
+}

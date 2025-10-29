@@ -43,11 +43,11 @@
 /* disabled, inaaffect niya ibang .css file, dont use element selectors pls
  button {
   padding: 5px 10px;
-    background-color: #1114a3;
-    margin-left: 15px;
+    background-color: #112250;
+    
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 1rem;
     cursor: pointer;
 }
 h2{

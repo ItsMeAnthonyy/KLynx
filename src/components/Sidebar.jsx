@@ -1,17 +1,42 @@
 import { useState } from 'react';
-import React from 'react';  
+
 import { Link } from 'react-router-dom';
 import { BiGridAlt, BiBarChartAlt2, BiFolder, BiChevronsLeft, BiChevronDown, BiLogOut } from 'react-icons/bi';
 import './css/Sidebar.css';
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { hasPermission, PERMISSIONS } from '../utils/rolePermissions';
 
 const Sidebar = () => {
     const [isSidebarClosed, setIsSidebarClosed] = useState(false);
     const [openDropdowns, setOpenDropdowns] = useState([]);
-    const { setAuth } = useAuth();
+    const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
+
+    // Get user's role code
+    const userRoleCode = auth?.roles?.[0];
+
+    // Helper function to check if user has permission
+    const checkPermission = (permission) => {
+        if (!userRoleCode) return false;
+        return hasPermission(userRoleCode, permission);
+    };
+
+    // Check if user has any File Maintenance access
+    const hasFileMaintenance = checkPermission(PERMISSIONS.ICD_VIEW) || 
+                                checkPermission(PERMISSIONS.NURSE_NOTES_VIEW) || 
+                                checkPermission(PERMISSIONS.USER_MANAGEMENT_VIEW) || 
+                                checkPermission(PERMISSIONS.NOTIFICATIONS_VIEW);
+
+    // Check if user has any Patient Records access
+    const hasPatientRecords = checkPermission(PERMISSIONS.HEALTH_RECORDS_VIEW) || 
+                               checkPermission(PERMISSIONS.IMMUNIZATION_VIEW) || 
+                               checkPermission(PERMISSIONS.ANIMAL_BITE_VIEW);
+
+    // Check if user has any Reports access
+    const hasReports = checkPermission(PERMISSIONS.REPORTS_VIEW);
+
 
     const handleLogout = async () => {
         try {
@@ -63,82 +88,93 @@ const Sidebar = () => {
                     <Link to="/Calendar">Calendar</Link>
                 </li>
                 <hr></hr>
-                <li>
-                    <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
-                        <BiFolder className="BiFolder mSidebarLogo" />
-                        <span className="mSidebar-General" >File Maintenance</span>
-                    </Link>
+                {hasFileMaintenance && (
+                    <>
+                        <li>
+                            <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
+                                <BiFolder className="BiFolder mSidebarLogo" />
+                                <span className="mSidebar-General"><strong>File Maintenance</strong></span>
+                            </Link>
+                        </li>
+                        <li className="sub-mSidebar-Nondropdown">
+                            
+                            {/*{checkPermission(PERMISSIONS.ICD_VIEW) && (<Link to="/ICDManager2">ICD-10</Link>)}*/}
+
+                            {checkPermission(PERMISSIONS.NURSE_NOTES_VIEW) && (
+                                <Link to="/NurseNotes">Nurse Notes</Link>
+                                
+                            )}
+                            {checkPermission(PERMISSIONS.USER_MANAGEMENT_VIEW) && (
+                                <Link to="/UserManagement">User Management</Link>
+                            )}
+                            {checkPermission(PERMISSIONS.NOTIFICATIONS_VIEW) && (
+                                <Link to="/Notifications">Notifications</Link>
+                            )}
+                            {checkPermission(PERMISSIONS.NOTIFICATIONS_VIEW) && (
+                                <Link to="/StaffHealthRecord">Medical Staff Health Record</Link>
+                            )}
+
+                        </li>
+                    </>
+                )}
+                {hasPatientRecords && (
+                <li className='sub-mSidebar-Nondropdown'>
+                    
+                       
+                            {checkPermission(PERMISSIONS.HEALTH_RECORDS_VIEW) && (
+                                <li>
+
+                                    <Link to="/Patients">Patient List</Link>
+                                </li>
+                            )}
+                            
+                    
+                       
+                    
                 </li>
-                <li className="sub-mSidebar-Nondropdown">
-                    <Link to="/ICDManager2">ICD-10</Link>
-                    <Link to="/NurseNotes">Nurse Notes</Link>
-                    <Link to="/Patients">Patient List</Link>
-                </li>
-                <li>
-                    <button className={`mSidebar-dropdown-btn ${openDropdowns.includes(1) ? "rotate" : ""}`} onClick={() => toggleDropdown(1)}>
-                        <span>Patient Records</span>
-                        <BiChevronDown className="BiChevronDown mSidebarLogo" />
-                    </button>
-                    <ul className={`sub-mSidebar ${openDropdowns.includes(1) ? "show" : ""}`}>
-                        <div>
-                            <li>
-                                <button className={`mSidebar-dropdown-btn2 ${openDropdowns.includes(101) ? "rotate" : ""}`} onClick={() => toggleDropdown(101)}>
-                                    <span>Patient Consultation</span>
-                                    <BiChevronDown className="BiChevronsLeft mSidebarLogo" />
-                                </button>
-                                <ul className={`sub-mSidebar2 ${openDropdowns.includes(101) ? "show" : ""}`}>
-                                    <div>
-                                        <li><Link to="/Consultation">Patient's Consultation</Link></li>
-                                        {/*<li><Link to="/Prescription">Doctor's Prescription</Link></li>
-                                        <li><Link to="/Note">Doctor's Note</Link></li>*/}
-                                    </div>
-                                </ul>
-                            </li>
-                            <li>
-                                <button className={`mSidebar-dropdown-btn2 ${openDropdowns.includes(102) ? "rotate" : ""}`} onClick={() => toggleDropdown(102)}>
-                                    <span>Maternal Care</span>
-                                    <BiChevronDown className="BiChevronsLeft mSidebarLogo" />
-                                </button>
-                                <ul className={`sub-mSidebar2 ${openDropdowns.includes(102) ? "show" : ""}`}>
-                                    <div className="sub-mSidebar2-sub-Maternal">
-                                        <li><Link to="/Prenatal">Prenatal</Link></li>
-                                        {/*<li><Link to="/">Intrapartum</Link></li>
-                                        <li><Link to="/">Postpartum</Link></li>*/}
-                                    </div>
-                                </ul>
-                            </li>
-                            <li><Link to="/Immunization">Immunization Records</Link></li>
-                            {/*<li><Link to="/AnimalBite">Animal Bite Incident Records</Link></li>*/}
-                        </div>
-                    </ul>
-                </li>
-                <li>
-                    <button className={`mSidebar-dropdown-btn ${openDropdowns.includes(2) ? "rotate" : ""}`} onClick={() => toggleDropdown(2)}>
-                        <span>Accounts</span>
-                        <BiChevronDown className="BiChevronDown mSidebarLogo" />
-                    </button>
-                    <ul className={`sub-mSidebar ${openDropdowns.includes(2) ? "show" : ""}`}>
-                        <div>
-                            <li><Link to="/Staff">Staff</Link></li>
-                            <li><Link to="/Doctors">Doctors</Link></li>
-                            <li><Link to="/Nurse">Nurse</Link></li>
-                            <li><Link to="/Patient">Patients</Link></li>
-                        </div>
-                    </ul>
-                </li>
+                )}
+
+                
+
+                {/* {hasPatientRecords && (
+                    <>
+                        <li>
+                            <button className={`mSidebar-dropdown-btn ${openDropdowns.includes(2) ? "rotate" : ""}`} onClick={() => toggleDropdown(2)}>
+                                <span>Accounts</span>
+                                <BiChevronDown className="BiChevronDown mSidebarLogo" />
+                            </button>
+                            <ul className={`sub-mSidebar ${openDropdowns.includes(2) ? "show" : ""}`}>
+                                <div>
+                                    {checkPermission(PERMISSIONS.HEALTH_RECORDS_VIEW) && (
+                                        <>
+                                            <li><Link to="/Staff">Staff</Link></li>
+                                            <li><Link to="/Doctors">Doctors</Link></li>
+                                            <li><Link to="/Nurse">Nurse</Link></li>
+                                            <li><Link to="/Patient">Patients</Link></li>
+                                        </>
+                                    )}
+                                </div>
+                            </ul>
+                        </li>
+                    </>
+                )} */}
                 <hr></hr>
-                <li>
-                    <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
-                        <BiBarChartAlt2 className="BiBarChartAlt2 mSidebarLogo" />
-                        <span className="mSidebar-General" >Reports</span>
-                    </Link>
-                </li>
-                <li className="sub-mSidebar-Nondropdown">
-                    {/*<Link to="/">Patient Health Record</Link>*/}
-                    <Link to="/DiseaseReport">Medical Report</Link>
-                    {/*<Link to="">Animal Bite Incident Report</Link>
-                    <Link to="">Maternal Care Report</Link>*/}
-                </li>
+                {hasReports && (
+                    <>
+                        <li>
+                            <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
+                                <BiBarChartAlt2 className="BiBarChartAlt2 mSidebarLogo" />
+                                <span className="mSidebar-General" >Reports</span>
+                            </Link>
+                        </li>
+                        <li className="sub-mSidebar-Nondropdown">
+                    {/*  */}
+                            <Link to="/DiseaseReport">Medical Report</Link>
+                            {/*<Link to="/AnimalBiteReport">Animal Bite Incident Report</Link>
+                            <Link to="/MaternalReport">Maternal Care Report</Link>*/}
+                        </li>
+                    </>
+                )}
 
                 <li className="mSidebar-logout">
                     
