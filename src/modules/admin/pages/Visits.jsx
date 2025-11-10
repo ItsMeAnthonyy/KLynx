@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import VisitModal from '../popups/VisitModal';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import Sidebar from '../../../components/sidebar';
 import '../../../components/css/GlobalContainer.css';
 import './Patients.css';
 import '../../../components/css/FileMaintenance.css'
 import '../../../pages/Admin/Doctors.css'
+import './Visits.css'
 import axios from 'axios';
 import React from 'react';  
-import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
+import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
-
-import AddPatientModal from '../popups/AddPatientModal';
-
 
 import { fetchPatientData } from "../services/patientService";
 
-const Patients = () => {
+const Visits = () => {
     const navigate = useNavigate();
-    const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
 
     const [allPatients, setAllPatients] = useState([]);
     const [allDoctors, setAllDoctors] = useState([]);
@@ -166,8 +164,8 @@ const Patients = () => {
     }
 
     function getConsultProfiles() {
-        axios.get('http://localhost/api/Patient.php').then(function(response){
-            console.log("Get All Patient Profiles: ", response.data);
+        axios.get('http://localhost/api/Patient_Visits.php').then(function(response){
+            console.log("Get All Consult Profiles: ", response.data);
             setDoctorsList(response.data);
             setConsultProfiles(response.data);
         });
@@ -322,14 +320,20 @@ const Patients = () => {
     const handleViewPatient = async (patient) => {
         setLoading(true);
         try {
-            navigate(`/patient/${patient.PatientID}/visits`, { state: { patient } });
+            navigate(`/patient/${patient.PatientID}/visits`);
         } finally {
             setLoading(false);
         }
     }
 
+    const handleBackToPatientList = () => {
+        navigate('/Patients');
+    };
 
-    
+    const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
+    const { patientId } = useParams();
+    const location = useLocation();
+    const patient = location.state?.patient;
 
     return (
         <div className="FileMaintenance-Container">
@@ -337,7 +341,7 @@ const Patients = () => {
             <main className="FileMaintenance-Content">
                 <div className="FileMaintenance-Header">
                     <div className="FileMaintenance-HeaderTitle">
-                        <h1>PATIENTS</h1>
+                        <h1>PREVIOUS VISIT LIST</h1>
                     </div>
                     <div className="FileMaintenance-HeaderSetting">
                         <BiSolidBell className="FileMaintenance-Icon" />
@@ -345,50 +349,14 @@ const Patients = () => {
                     </div>
                 </div>
                 {/*<hr></hr>*/}
-                <div className="Patients-Cards-Container">
-                    <div className="Patients-Card">
-                        <div className="Patients-CardTitle">
-                            <h4>Total Number of Patients</h4>
-                        </div>
-                        <div className="Patients-CardNumber">
-                            <h1>15</h1>
-                        </div>
-                    </div>
-                    <div className="Patients-Card">
-                        <div className="Patients-CardTitle">
-                            <h4>Active Patients</h4>
-                        </div>
-                        <div className="Patients-CardNumber">
-                            <h1>16</h1>
-                        </div>
-                    </div>
-                    <div className="Patients-Card">
-                        <div className="Patients-CardTitle">
-                            <h4>Inactive Patients</h4>
-                        </div>
-                        <div className="Patients-CardNumber">
-                            <h1>10</h1>
-                        </div>
-                    </div>
-                </div>
-                <div className="FileMaintenance-Filter-Container">
+                <div className="Visits-Filter-Container">
                     <div className="FileMaintenance-Entries">
-                        <span>SHOW</span>
-                        <select>
-                            <option hidden></option>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                        </select>
-                        <span>Entries</span>
+                        <button onClick={handleBackToPatientList} className="Visits-BackButton">
+                            <BiArrowBack/> Back to Patient List
+                        </button>
                     </div>
                     <div className="FileMaintenance-AddSearch">
-                            <button 
-                                title="Add new Patient" 
-                                onClick={() => setIsAddPatientModalOpen(true)}
-                                aria-label="Add new Patient"
-                            >
-                                +
-                            </button>
+                            <button onClick={() => setIsVisitModalOpen(true)}><BiPlus/></button>
                             <input type="text" placeholder="Search here..."/>
                     </div>
                 </div>
@@ -396,35 +364,42 @@ const Patients = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>Patient Name (Lastname, Firstname, Middle)</th>
-                                <th>Birthday</th>
-                                <th>Registration</th>
-                                <th>Queue</th>
-                                <th>Download Data</th>
+                                <th>No.</th>
+                                <th>Options</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Type of Consultation</th>
+                                <th colSpan="3">Record</th>
                             </tr>
                         </thead>
                         <tbody>
                             {consultProfiles.map((consProf, key) => (
                             <tr key={key}>
                                 <td>
-                                    <button
-                                        className="PatientNameButton"
-                                        onClick={() => handleViewPatient(consProf)}
-                                    >
-                                        {consProf.LastName}, {consProf.FirstName} {consProf.MiddleName}
-                                    </button>
+                                    1
                                 </td>
                                 <td>
-                                    {consProf.Birthdate}
+                                    {consProf.Birthday}
                                 </td>
                                 <td>
-                                    {consProf.DateCreated}
+                                    {consProf.consultation_date}
                                 </td>
                                 <td>
-                                    Add to Queue
+                                    {consProf.consultation_time}
                                 </td>
                                 <td>
-                                    Download Data
+                                    {consProf.consultation_type}
+                                </td>
+                                <td>
+                                    <button onClick={() => viewHistory(consProf.ConsultID) }>View History</button>
+                                </td>
+                                <td>
+                                    <button onClick={() => editDoctor(prenProf.PatientID) } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Edit" >
+                                    <BiSolidEdit className="FileMaintenance-TableIcon FileMaintenance-IconEdit" />  </button>
+                                </td>
+                                <td>
+                                    <button onClick={() => { setSelectedDoctor(consProf.ConsultID); setDeleteDoctorModal(true); } } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Delete" >
+                                    <BiSolidTrash className="FileMaintenance-TableIcon" />  </button>
                                 </td>
                             </tr>
                             ))}
@@ -432,11 +407,13 @@ const Patients = () => {
                     </table>
                 </div>
             </main>
-
-            <AddPatientModal 
-                isOpen={isAddPatientModalOpen} 
-                onClose={() => setIsAddPatientModalOpen(false)} 
+            
+            <VisitModal
+                isOpen={isVisitModalOpen}
+                onClose={() => setIsVisitModalOpen(false)}
+                patient={patient}
             />
+
 
             {/* MODALS SECTION */}
             {showModal && (
@@ -1518,4 +1495,4 @@ const Patients = () => {
     );
 }
 
-export default Patients;
+export default Visits;

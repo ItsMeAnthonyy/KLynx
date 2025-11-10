@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda:wght@400;800&display=swap');
+
+.Patients-Cards-Container{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 2.3rem;
+    color: #1114a3;
+    font-family: 'Coda', sans-serif;
+    color: #2D3748;
+}
+
+.Patients-Card{
+    display: flex;
+    flex: 1;
+    background-color: #ebeff3;
+    padding: 35px;
+    border-radius: 10px;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    transition: 0.5s ease-in-out;
+    width: 10px;
+    border: 1px solid #112250;
+    box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
+}
+
+.Patients-Card:hover{
+    transform: scale(1.04);
+}
+
+.Patients-CardTitle{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.Patients-CardNumber{
+    text-align: center;
+    font-size: 1.7rem;
+}
+
+
+.PatientNameButton{
+    background: none;
+    border: none;
+}

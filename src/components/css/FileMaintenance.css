@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda+Caption:wght@800&display=swap');
+
 /*
     min(30px, 7%); - Use 30px padding, unless the screen is small (width: 200px when minimize) — then use 7% of that 200px or less padding.
     So min choose whoever is the smallest.
@@ -37,36 +39,50 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-   
     background: #dde6ed;
+    
 }
 
 .FileMaintenance-Header{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1rem;
     background-color: #07598D;
-
+    padding: 1rem;
 }
 
+
+/*
 .FileMaintenance-Content hr{
     width: calc(100% + 3rem);
     border: none;
     height: 0.5px;
-    background-color: #1114a3;
+    background-color: #07598D;
+    margin: 0.1em 0;
     margin-left: -2rem;
     
 }
+*/
 
 .FileMaintenance-Content .FileMaintenance-Header .FileMaintenance-HeaderTitle h1{
     color: white;
+    font-family: 'Coda Caption', sans-serif;
+    font-weight: 800;
+    margin-left: 0.7em;
 }
 
 .FileMaintenance-HeaderSetting{
     display: flex;
     align-items: center;
     gap: 20px;
+    padding-right: 1.5rem;
+}
+
+.FileMaintenance-Icon{
+    font-size: 35px;
+    cursor: pointer;
+    transition: 0.5s ease-in-out;
+    color: white;
 }
 
 .FileMaintenance-HeaderSetting .emergency-button{
@@ -135,6 +151,14 @@
     color: #2D3748;
     align-items: center;
     justify-content: space-between;
+    padding-right: 2.3rem;
+    padding-left: 2.3rem;
+}
+
+.FileMaintenance-Filter-Container .FileMaintenance-Entries span{
+    font-family: 'Coda Caption', sans-serif;
+    font-weight: 800;
+    font-size: 1.5em;
     padding: 1rem 1rem;   
 }
 
@@ -146,7 +170,7 @@
 }
 
 .FileMaintenance-Entries select{
-    border-radius: 15px;
+    border-radius: 10px;
     border: none;
     border: 1px solid #07598D;
     padding: 3px 24px;
@@ -163,13 +187,13 @@
 }
 
 .FileMaintenance-AddSearch button{
-    border-radius: 15px;
+    border-radius: 20px;
     border: none;
     /*outline: none; how cursor pointer will look on button*/ 
-    background: #111250;
-    color: white;
-    padding: 4px 24px;
-    font-size: 0.9em;
+    background: #112250;
+    color: #ebeff3;
+    padding: 2px 9px;
+    font-size: 1.5em;
     transition: 0.5s ease-in-out;
 }
 
@@ -180,21 +204,22 @@
 }
 
 .FileMaintenance-AddSearch input{
-    border-radius: 11px;
+    border-radius: 10px;
     border: none;
-    border: 1px solid #07598D;
-    padding: 3px 7px;
+    border: 1px solid #112250;
+    padding: 13px 100px;
+    box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
 }
 
 .FileMaintenance-Content table{
     margin-top: 1rem;
     font-size: 0.8em;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
     width: 100%;
     text-align: center;
     transition: all 0.3s ease;
     table-layout: fixed;
-
 }
 
 .FileMaintenance-Content table td:nth-child(5) {
@@ -211,8 +236,14 @@
 }
 
 .FileMaintenance-TableWrapper{
-    width: calc(100% + 3rem);
-    margin-left: -2rem;
+    margin: 16px auto;
+    padding: 0.5rem 1.5rem;
+    width: 95%;
+    max-width: 1600px;
+    border-radius: 11px;
+    border: 1px solid #112250;
+    box-sizing: border-box;
+    box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
 }
 
 .FileMaintenance-Content table thead tr{
@@ -220,8 +251,11 @@
 }
 
 .FileMaintenance-Content table thead tr th{
+    font-family: 'Coda', sans-serif;
     font-weight: 600;
     color: #112250;
+    font-size: 14px;
+    color: #2D3748;
 }
 
 .FileMaintenance-Content table tbody td{
@@ -233,8 +267,46 @@
     background-color: #8e8e974e;
 }
 
-.FileMaintenance-Content table tbody tr:last-child td{
+.FileMaintenance-Content table tbody tr{
+    background-color: #ebeff3;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 
+        0 0 0 1px #112250,         /* crisp border-like shadow */
+        5px 5px 1px rgba(151, 151, 151, 0.15); /* soft offset shadow */
+}
+
+.FileMaintenance-Content table tbody td {
+    padding: 1rem;
+    font-family: 'Coda', sans-serif;
+    font-size: 1.3em;
+    color: #2D3748;
+}
+
+.FileMaintenance-Content table tbody td .PatientNameButton{
+    font-family: 'Coda', sans-serif;
+    font-size: 0.9em;
+    color: #2D3748;
+    text-decoration: underline;
+    transition: color 0.1s ease;
+    padding: 0;
+    background: none;
     border: none;
+    cursor: pointer;
+}
+
+.FileMaintenance-Content table tbody td .PatientNameButton:hover {
+    color: #E2E8F0;
+}
+
+.FileMaintenance-Content table tbody td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.FileMaintenance-Content table tbody td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .FileMaintenance-Content table tbody td:nth-child(7) button{

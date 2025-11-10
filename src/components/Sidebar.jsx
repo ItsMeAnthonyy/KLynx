@@ -79,7 +79,7 @@ const Sidebar = () => {
                 <li className="mSidebar-Active">
                     <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
                         <BiGridAlt className="BiGridAlt mSidebarLogo" />
-                        <span><strong>Main</strong></span>
+                        <span className="mSidebar-General" >Main</span>
                     </Link>
                 </li>
                 <li className="sub-mSidebar-Nondropdown">
@@ -93,13 +93,16 @@ const Sidebar = () => {
                         <li>
                             <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
                                 <BiFolder className="BiFolder mSidebarLogo" />
-                                <span><strong>File Maintenance</strong></span>
+                                <span className="mSidebar-General"><strong>File Maintenance</strong></span>
                             </Link>
                         </li>
                         <li className="sub-mSidebar-Nondropdown">
                             
+                            {/*{checkPermission(PERMISSIONS.ICD_VIEW) && (<Link to="/ICDManager2">ICD-10</Link>)}*/}
+
                             {checkPermission(PERMISSIONS.NURSE_NOTES_VIEW) && (
                                 <Link to="/NurseNotes">Nurse Notes</Link>
+                                
                             )}
                             {checkPermission(PERMISSIONS.USER_MANAGEMENT_VIEW) && (
                                 <Link to="/UserManagement">User Management</Link>
@@ -170,14 +173,14 @@ const Sidebar = () => {
                         <li>
                             <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); }}>
                                 <BiBarChartAlt2 className="BiBarChartAlt2 mSidebarLogo" />
-                                <span><strong>Reports</strong></span>
+                                <span className="mSidebar-General" >Reports</span>
                             </Link>
                         </li>
                         <li className="sub-mSidebar-Nondropdown">
-                      
+                    {/*  */}
                             <Link to="/DiseaseReport">Medical Report</Link>
-                            <Link to="/AnimalBiteReport">Animal Bite Incident Report</Link>
-                            <Link to="/MaternalReport">Maternal Care Report</Link>
+                            {/*<Link to="/AnimalBiteReport">Animal Bite Incident Report</Link>
+                            <Link to="/MaternalReport">Maternal Care Report</Link>*/}
                         </li>
                     </>
                 )}
@@ -186,7 +189,7 @@ const Sidebar = () => {
                     
                     <Link to="" onClick={() => { if (isSidebarClosed) setIsSidebarClosed(false); handleLogout(); }}>
                         <BiLogOut className="BiFolder mSidebarLogo" />
-                        <span><strong>Logout</strong></span>
+                        <span className="mSidebar-General" >Logout</span>
                     </Link>
                 
                 </li>
