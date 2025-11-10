@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import ProfileDropdown from '../../components/ProfileDropdown';
+import EmergencyButton from '../../components/EmergencyButton';
 import { Bar, Line } from "react-chartjs-2";
 import axios from 'axios';
 import 'chart.js/auto';
-import { BiError, BiDownload } from 'react-icons/bi';
+import { BiDownload } from 'react-icons/bi';
 import styles from './DiseaseReport.module.css';
 
 // Generate Disease PDF Report
@@ -483,10 +484,7 @@ return (
          
         </div>
         <div className={styles.headerRight}>
-          <button className={styles.emergencyButton}>
-            <BiError />
-            EMERGENCY MODE
-          </button>
+          <EmergencyButton />
           <ProfileDropdown 
             email="admin@klynx.com"
             name="Admin User"

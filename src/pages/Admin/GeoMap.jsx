@@ -5,7 +5,7 @@ import '@maptiler/sdk/dist/maptiler-sdk.css';
 import './Maps.css';
 import Sidebar from '../../components/Sidebar';
 import axios from 'axios';
-import { BiError } from 'react-icons/bi';
+import EmergencyButton from '../../components/EmergencyButton';
 import ProfileDropdown from '../../components/ProfileDropdown';
 
 /* 🔑 MapTiler key ------------------------------------------------ */
@@ -349,9 +349,7 @@ dbData.forEach(({ DiagnosisName }) => {
                </div>
      
                <div className="FileMaintenance-HeaderSetting">
-                 <button className="emergency-button">
-                   <BiError/>EMERGENCY MODE
-                 </button>
+                 <EmergencyButton />
                  <ProfileDropdown 
                    email="admin@klynx.com"
                    name="Admin User"

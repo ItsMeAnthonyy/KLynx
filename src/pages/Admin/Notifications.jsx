@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { BiPlus, BiTrash, BiSend, BiError } from 'react-icons/bi';
+import { BiPlus, BiTrash, BiSend } from 'react-icons/bi';
 import Sidebar from "../../components/Sidebar";
 import ProfileDropdown from '../../components/ProfileDropdown';
+import EmergencyButton from '../../components/EmergencyButton';
 import styles from './Notifications.module.css';
 
 const Notifications = () => {
@@ -110,10 +111,7 @@ const Notifications = () => {
            
           </div>
           <div className={styles.headerRight}>
-            <button className={styles.emergencyButton}>
-              <BiError />
-              EMERGENCY MODE
-            </button>
+            <EmergencyButton />
             <ProfileDropdown 
               email="admin@klynx.com"
               name="Admin User"

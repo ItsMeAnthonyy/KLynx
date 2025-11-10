@@ -1,16 +1,10 @@
-import { useEffect, useState } from 'react';
+    import { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
-import '../../components/css/GlobalContainer.css';
-import '../../components/css/DashboardAlt.css';
-import { BiError } from 'react-icons/bi';
+import EmergencyButton from '../../components/EmergencyButton';
 import ProfileDropdown from '../../components/ProfileDropdown';
-import '../../components/css/FileMaintenance.css'
+import styles from './DashboardAlt.module.css';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-
-
-
-import PieChartExample from '../../components/piechart';
+import { useNavigate } from 'react-router-dom';
 import {
   Chart as ChartJS,
   BarElement,
@@ -20,174 +14,324 @@ import {
   Legend
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+const DashboardAlt = () => {
+    const [patientCount, setPatientCount] = useState(0);
+    const [upcomingAppts] = useState(10);
+    const [todaysAppts] = useState(5);
+    const [medicalStaff, setMedicalStaff] = useState(0);
+    const [chartView, setChartView] = useState('month'); // 'month' or 'year'
+    const navigate = useNavigate();
+
     const data = {
-    labels: ['January', 'February', 'March', 'April'],
-    datasets: [
-        {
-        label: 'Disease Cases',
-        data: [1, 1, 3, 5],
-        backgroundColor: '#1114a3',
-        },
-    ],
+        labels: chartView === 'month' 
+            ? ['Week 1', 'Week 2', 'Week 3', 'Week 4']
+            : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+            {
+                label: 'Disease Cases',
+                data: chartView === 'month' 
+                    ? [12, 19, 15, 25]
+                    : [65, 59, 80, 81, 56, 55, 40, 45, 60, 70, 85, 90],
+                backgroundColor: '#07598D',
+                borderColor: '#27374D',
+                borderWidth: 1,
+            },
+        ],
     };
 
     const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-        display: false,
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            },
         },
-    },
+        scales: {
+            y: {
+                beginAtZero: true,
+            },
+        },
     };
 
-  
-const DashboardAlt = () => {
-
-    const [patientCount, setPatientCount] = useState(0);
-    const [consultCount, setConsultCount] = useState(0);
-    const navigate = useNavigate();
-
-    const [chartData, setChartData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
     useEffect(() => {
-        const todayISO = new Date().toISOString();
-        const dateParam = todayISO.split('T')[0];
-        const monthParam = dateParam.slice(0, 7);
-
-        fetch(`http://localhost/api/fetchHealthReport.php?date=${dateParam}&month=${monthParam}`)
-        .then(res => res.json())
-        .then(data => {
-            setChartData(data);
-            setLoading(false);
-        })
-        .catch(error => {
-            console.error('Failed to fetch diagnosis data:', error);
-            setLoading(false);
-        });
-
-  }, []);
-
-
-    useEffect(() => {
-        axios.get('http://localhost/api/Patient.php') // Replace with your actual endpoint
+        // Fetch patient count
+        axios.get('http://localhost/api/Patient.php')
             .then((res) => {
-            const data = res.data;
-            setPatientCount(data.length); // Count how many patients are in the list
+                const data = res.data;
+                setPatientCount(data.length);
             })
-                .catch((err) => {
+            .catch((err) => {
                 console.error('Error fetching patients:', err);
             });
 
-        axios.get('http://localhost/api/Patient_Consult_Visits.php') // Replace with your actual endpoint
-        .then((res) => {
-        const data = res.data;
-        setConsultCount(data.length); // Count how many patients are in the list
-        })
+        // Fetch medical staff count
+        axios.get('http://localhost/api/Staff.php')
+            .then((res) => {
+                const data = res.data;
+                setMedicalStaff(data.length);
+            })
             .catch((err) => {
-            console.error('Error fetching patients:', err);
-        });
-
+                console.error('Error fetching staff:', err);
+                // Set default if API doesn't exist
+                setMedicalStaff(15);
+            });
     }, []);
 
     return (
-        <div className="FileMaintenance-Container">
+        <div className={styles.container}>
             <Sidebar />
-            <main className="FileMaintenance-Content">
-                 <div className="FileMaintenance-Header">
-                          <div className="FileMaintenance-HeaderTitle">
-                            <h1>Dashboard</h1>
-                          </div>
-                
-                          <div className="FileMaintenance-HeaderSetting">
-                            <button className="emergency-button">
-                              <BiError/>EMERGENCY MODE
-                            </button>
-                            <ProfileDropdown 
-                              email="admin@klynx.com"
-                              name="Admin User"
-                            />
-                          </div>
+            <main className={styles.content}>
+                <div className={styles.header}>
+                    <div className={styles.headerLeft}>
+                        <h1 className={styles.title}>DASHBOARD</h1>
+                    </div>
+                    <div className={styles.headerRight}>
+                        <EmergencyButton />
+                        <ProfileDropdown 
+                            email="admin@klynx.com"
+                            name="Admin User"
+                        />
+                    </div>
+                </div>
+
+                {/* Stats Cards Row */}
+                <div className={styles.statsContainer}>
+                    <div className={styles.statCard}>
+                        <div className={styles.statCardTitle}>
+                            Total Number of Patients
                         </div>
-                <hr></hr>
-                <div className="DashboardAlt-Cards-Container">
-                    <div className="DashboardAlt-Card">
-                        <div className="DashboardAlt-CardTitle">
-                            <h4>Total Number of Patients</h4>
+                        <div className={styles.statCardNumber}>
+                            {patientCount}
                         </div>
-                        <div className="DashboardAlt-CardNumber">
-                            <h1>{patientCount}</h1>
-                        </div>
-                        <div className="DashboardAlt-CardButton">
+                        <div className={styles.statCardButton}>
                             <button onClick={() => navigate('/Patient')}>More</button>
                         </div>
                     </div>
-                    <div className="DashboardAlt-Card">
-                        <div className="DashboardAlt-CardTitle">
-                            <h4>Consultations</h4>
+
+                    <div className={styles.statCard}>
+                        <div className={styles.statCardTitle}>
+                            Medical Staff
                         </div>
-                        <div className="DashboardAlt-CardNumber">
-                            <h1>{consultCount}</h1>
+                        <div className={styles.statCardNumber}>
+                            {medicalStaff}
                         </div>
-                        <div className="DashboardAlt-CardButton">
-                            <button onClick={() => navigate('/Consultation')}>More</button>
-                        </div>
-                    </div>
-                    <div className="DashboardAlt-Card">
-                        <div className="DashboardAlt-CardTitle">
-                            <h4>Upcoming Appointments</h4>
-                        </div>
-                        <div className="DashboardAlt-CardNumber">
-                            <h1>10</h1>
-                        </div>
-                        <div className="DashboardAlt-CardButton">
-                            <button>More</button>
+                        <div className={styles.statCardButton}>
+                            <button onClick={() => navigate('/Staff')}>More</button>
                         </div>
                     </div>
-                    <div className="DashboardAlt-Card">
-                        <div className="DashboardAlt-CardTitle">
-                            <h4>Today&apos;s Appointments</h4>
+
+                    <div className={styles.statCard}>
+                        <div className={styles.statCardTitle}>
+                            Today&apos;s Appointments
                         </div>
-                        <div className="DashboardAlt-CardNumber">
-                            <h1>5</h1>
+                        <div className={styles.statCardNumber}>
+                            {todaysAppts}
                         </div>
-                        <div className="DashboardAlt-CardButton">
-                            <button>More</button>
+                        <div className={styles.statCardButton}>
+                            <button onClick={() => navigate('/Calendar')}>More</button>
+                        </div>
+                    </div>
+
+                    <div className={styles.statCard}>
+                        <div className={styles.statCardTitle}>
+                            Upcoming Appointments
+                        </div>
+                        <div className={styles.statCardNumber}>
+                            {upcomingAppts}
+                        </div>
+                        <div className={styles.statCardButton}>
+                            <button onClick={() => navigate('/Calendar')}>More</button>
                         </div>
                     </div>
                 </div>
-                <div className="DashboardAlt-CardsRow2">
-                    <div className="DashboardAlt-CardRow2Column1">
-                        <div className="DashboardAlt-CardTitle">
-                            <h4>Disease Statistics</h4>
-                        </div>
-                        <div className="DashboardAlt-CardButtonContainers">
-                            <div className="DashboardAlt-CardButton">
-                                <button>Month</button>
+
+                {/* Charts Row */}
+                <div className={styles.chartsRow}>
+                    {/* Disease Statistics Chart */}
+                    <div className={styles.chartCard}>
+                        <div className={styles.chartCardHeader}>
+                            <h3 className={styles.chartCardTitle}>Disease Statistics</h3>
+                            <div className={styles.chartButtonContainer}>
+                                <button 
+                                    className={`${styles.chartButton} ${chartView === 'month' ? styles.active : ''}`}
+                                    onClick={() => setChartView('month')}
+                                >
+                                    Month
+                                </button>
+                                <button 
+                                    className={`${styles.chartButton} ${chartView === 'year' ? styles.active : ''}`}
+                                    onClick={() => setChartView('year')}
+                                >
+                                    Year
+                                </button>
                             </div>
-                            <div className="DashboardAlt-CardButton">
-                                <button>Year</button>
-                            </div>    
                         </div>
-                        <div className="DashboardAlt-BarChart">
-                                <Bar data={data} options={options} />
+                        <div className={styles.chartWrapper}>
+                            <Bar data={data} options={options} />
+                        </div>
+                        <button className={styles.moreButton} onClick={() => navigate('/GeoMap')}>
+                            More
+                        </button>
+                    </div>
+
+                    {/* Quick Access Panel */}
+                    <div className={styles.quickAccessCard}>
+                        <h3 className={styles.quickAccessTitle}>Quick Access</h3>
+                        <div className={styles.quickAccessButtons}>
+                            <button 
+                                className={styles.quickAccessButton}
+                                onClick={() => navigate('/Patient')}
+                            >
+                                Add New Patient
+                            </button>
+                            <button 
+                                className={styles.quickAccessButton}
+                                onClick={() => navigate('/Calendar')}
+                            >
+                                Schedule Appointment
+                            </button>
+                            <button 
+                                className={styles.quickAccessButton}
+                                onClick={() => navigate('/DiseaseReport')}
+                            >
+                                Generate Report
+                            </button>
                         </div>
                     </div>
-                    <div className="DashboardAlt-CardRow2Column2">
-                        <div className="DashboardAlt-CardTitle">
-                            <h4>Top 10 Diseases</h4>
-                        </div>
-                        <div className="DashboardAlt-CardNumber">
-                             {loading ? <p>Loading...</p> : <PieChartExample data={chartData} />}
-                        </div>
-                        <div className="DashboardAlt-CardButton">
-                            <Link to="/GeoMap">
-                                  <button>More</button>
-                              </Link>
-                        </div>
-                    </div>    
                 </div>
+
+                     {/* Report Cards Section */}
+                <div className={styles.reportsSection}>
+                    {/* Top Row - 3 Report Cards */}
+                    <div className={styles.reportsRow}>
+                        <div className={styles.reportCard}>
+                            <h3 className={styles.reportCardTitle}>Prenatal Report</h3>
+                            <div className={styles.reportCardData}>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Total Patients:</span>
+                                    <span className={styles.reportDataValue}>45</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>This Month:</span>
+                                    <span className={styles.reportDataValue}>12</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>High Risk:</span>
+                                    <span className={styles.reportDataValue}>8</span>
+                                </div>
+                            </div>
+                            <button 
+                                className={styles.reportMoreButton}
+                                onClick={() => navigate('/MaternalReport')}
+                            >
+                                MORE
+                            </button>
+                        </div>
+
+                        <div className={styles.reportCard}>
+                            <h3 className={styles.reportCardTitle}>Antepartum</h3>
+                            <div className={styles.reportCardData}>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Active Cases:</span>
+                                    <span className={styles.reportDataValue}>28</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Check-ups Today:</span>
+                                    <span className={styles.reportDataValue}>5</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Complications:</span>
+                                    <span className={styles.reportDataValue}>3</span>
+                                </div>
+                            </div>
+                            <button 
+                                className={styles.reportMoreButton}
+                                onClick={() => navigate('/MaternalReport')}
+                            >
+                                MORE
+                            </button>
+                        </div>
+
+                        <div className={styles.reportCard}>
+                            <h3 className={styles.reportCardTitle}>Postpartum</h3>
+                            <div className={styles.reportCardData}>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Recent Deliveries:</span>
+                                    <span className={styles.reportDataValue}>18</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Follow-ups Due:</span>
+                                    <span className={styles.reportDataValue}>7</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Recovery Rate:</span>
+                                    <span className={styles.reportDataValue}>95%</span>
+                                </div>
+                            </div>
+                            <button 
+                                className={styles.reportMoreButton}
+                                onClick={() => navigate('/MaternalReport')}
+                            >
+                                MORE
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Bottom Row - 2 Report Cards */}
+                    <div className={styles.reportsRow}>
+                        <div className={styles.reportCard}>
+                            <h3 className={styles.reportCardTitle}>Animal Bite Report</h3>
+                            <div className={styles.reportCardData}>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Total Cases:</span>
+                                    <span className={styles.reportDataValue}>32</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>This Week:</span>
+                                    <span className={styles.reportDataValue}>6</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Rabies Vaccine Given:</span>
+                                    <span className={styles.reportDataValue}>29</span>
+                                </div>
+                            </div>
+                            <button 
+                                className={styles.reportMoreButton}
+                                onClick={() => navigate('/AnimalBiteReport')}
+                            >
+                                MORE
+                            </button>
+                        </div>
+
+                        <div className={styles.reportCard}>
+                            <h3 className={styles.reportCardTitle}>Animal Bite Location Report</h3>
+                            <div className={styles.reportCardData}>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Barangay Areas:</span>
+                                    <span className={styles.reportDataValue}>12</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>High Risk Zones:</span>
+                                    <span className={styles.reportDataValue}>4</span>
+                                </div>
+                                <div className={styles.reportDataItem}>
+                                    <span className={styles.reportDataLabel}>Dog Population:</span>
+                                    <span className={styles.reportDataValue}>Est. 250</span>
+                                </div>
+                            </div>
+                            <button 
+                                className={styles.reportMoreButton}
+                                onClick={() => navigate('/AnimalBiteReport')}
+                            >
+                                MORE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </main>
         </div>
     );

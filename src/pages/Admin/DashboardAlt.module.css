@@ -1,0 +1,405 @@
+/* Container */
+.container {
+    display: flex;
+    background-color: #f5f7fa;
+    min-height: 100vh;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #DDE6ED;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    background-color: #07598D;
+}
+
+.headerLeft {
+    flex: 1;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Stats Cards Container */
+.statsContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 2rem;
+}
+
+/* Individual Stat Card */
+.statCard {
+    background: white;
+    border: 2px solid #27374D;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.statCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(39, 55, 77, 0.2);
+}
+
+.statCardTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #27374D;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statCardNumber {
+    font-size: 48px;
+    font-weight: 800;
+    color: #07598D;
+    margin: 16px 0;
+    text-align: center;
+}
+
+.statCardButton {
+    margin-top: auto;
+}
+
+.statCardButton button {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #27374D;
+    border: 2px solid #27374D;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.statCardButton button:hover {
+    background-color: #1a2534;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 55, 77, 0.3);
+}
+
+/* Reports Section */
+.reportsSection {
+    padding: 0 2rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.reportsRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.reportsRow:last-child {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.reportCard {
+    background: white;
+    border: 2px solid #27374D;
+    border-radius: 12px;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 200px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reportCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(39, 55, 77, 0.2);
+}
+
+.reportCardTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #27374D;
+    margin: 0 0 20px 0;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.reportCardData {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.reportDataItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background-color: #f5f7fa;
+    border-radius: 6px;
+    border-left: 3px solid #07598D;
+}
+
+.reportDataLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #27374D;
+}
+
+.reportDataValue {
+    font-size: 18px;
+    font-weight: 800;
+    color: #07598D;
+}
+
+.reportMoreButton {
+    width: 100%;
+    padding: 12px 24px;
+    background-color: #27374D;
+    border: 2px solid #27374D;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    margin-top: 24px;
+}
+
+.reportMoreButton:hover {
+    background-color: #1a2534;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 55, 77, 0.3);
+}
+
+/* Bottom Row - Charts Section */
+.chartsRow {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+    padding: 0 2rem 2rem 2rem;
+}
+
+/* Disease Statistics Card */
+.chartCard {
+    background: white;
+    border: 2px solid #27374D;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chartCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chartCardTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #27374D;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chartButtonContainer {
+    display: flex;
+    gap: 8px;
+}
+
+.chartButton {
+    padding: 8px 20px;
+    background-color: #07598D;
+    border: 2px solid #07598D;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.chartButton:hover {
+    background-color: #054770;
+    transform: translateY(-2px);
+}
+
+.chartButton.active {
+    background-color: #27374D;
+    border-color: #27374D;
+}
+
+.chartWrapper {
+    height: 300px;
+    position: relative;
+}
+
+.moreButton {
+    width: 100%;
+    padding: 12px 24px;
+    background-color: #27374D;
+    border: 2px solid #27374D;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    margin-top: 16px;
+}
+
+.moreButton:hover {
+    background-color: #1a2534;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 55, 77, 0.3);
+}
+
+/* Quick Access Card */
+.quickAccessCard {
+    background: white;
+    border: 2px solid #27374D;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.quickAccessTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #27374D;
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.quickAccessButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quickAccessButton {
+    width: 100%;
+    padding: 14px 24px;
+    background-color: #27374D;
+    border: 2px solid #27374D;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quickAccessButton:hover {
+    background-color: #07598D;
+    border-color: #07598D;
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(39, 55, 77, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+    .statsContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reportsRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reportsRow:last-child {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .chartsRow {
+        grid-template-columns: 1fr;
+    }
+
+    .reportsRow {
+        grid-template-columns: 1fr;
+    }
+
+    .reportsRow:last-child {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .statsContainer {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+    
+    .chartsRow {
+        padding: 0 1rem 1rem 1rem;
+    }
+
+    .reportsSection {
+        padding: 0 1rem 1rem 1rem;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .statCardNumber {
+        font-size: 36px;
+    }
+
+    .reportCard {
+        min-height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 24px;
+    }
+    
+    .chartWrapper {
+        height: 250px;
+    }
+}

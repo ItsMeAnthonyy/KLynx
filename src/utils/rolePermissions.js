@@ -65,6 +65,13 @@ export const PERMISSIONS = {
     USER_MANAGEMENT_EDIT: 'user_management.edit',
     USER_MANAGEMENT_DELETE: 'user_management.delete',
     USER_MANAGEMENT_ARCHIVE: 'user_management.archive',
+
+    //Queue Management
+    QUEUE_MANAGEMENT_VIEW: 'queue_management.view',
+    QUEUE_MANAGEMENT_ADD: 'queue_management.add',
+    QUEUE_MANAGEMENT_EDIT: 'queue_management.edit',
+    QUEUE_MANAGEMENT_DELETE: 'queue_management.delete',
+    QUEUE_MANAGEMENT_ARCHIVE: 'queue_management.archive',
     
     // Individual User Account Actions (aliases for clarity)
     USERS_VIEW: 'user_management.view',
@@ -160,6 +167,13 @@ export const ROLE_PERMISSIONS = {
         PERMISSIONS.ICD_EDIT,
         PERMISSIONS.ICD_DELETE,
         PERMISSIONS.ICD_ARCHIVE,
+
+        // Queue Management (Add, Edit, Delete, Archive)
+        PERMISSIONS.QUEUE_MANAGEMENT_VIEW,
+        PERMISSIONS.QUEUE_MANAGEMENT_ADD,
+        PERMISSIONS.QUEUE_MANAGEMENT_EDIT,
+        PERMISSIONS.QUEUE_MANAGEMENT_DELETE,
+        PERMISSIONS.QUEUE_MANAGEMENT_ARCHIVE,
         
         // Nurse Notes (Add, Edit, Delete, Archive)
         PERMISSIONS.NURSE_NOTES_VIEW,
@@ -251,7 +265,11 @@ export const ROLE_PERMISSIONS = {
         PERMISSIONS.APPOINTMENTS_EDIT,
         PERMISSIONS.APPOINTMENTS_DELETE,
         PERMISSIONS.APPOINTMENTS_ARCHIVE,
-        
+
+        //Queue Management (View and Edit Only)
+        PERMISSIONS.QUEUE_MANAGEMENT_VIEW,
+        PERMISSIONS.QUEUE_MANAGEMENT_EDIT,
+
         // Notifications (Add, Edit, Delete)
         PERMISSIONS.NOTIFICATIONS_VIEW,
         PERMISSIONS.NOTIFICATIONS_ADD,
@@ -324,6 +342,10 @@ export const ROLE_PERMISSIONS = {
         PERMISSIONS.APPOINTMENTS_EDIT,
         PERMISSIONS.APPOINTMENTS_DELETE,
         PERMISSIONS.APPOINTMENTS_ARCHIVE,
+
+        // Queue Management (View and Edit Only)
+        PERMISSIONS.QUEUE_MANAGEMENT_VIEW,
+        PERMISSIONS.QUEUE_MANAGEMENT_EDIT,
         
         // Nurse Notes (Add, Edit, Delete, Archive)
         PERMISSIONS.NURSE_NOTES_VIEW,
@@ -401,6 +423,10 @@ export const ROLE_PERMISSIONS = {
         PERMISSIONS.APPOINTMENTS_EDIT,
         PERMISSIONS.APPOINTMENTS_DELETE,
         PERMISSIONS.APPOINTMENTS_ARCHIVE,
+
+        // Queue Management (View and Edit Only)
+        PERMISSIONS.QUEUE_MANAGEMENT_VIEW,
+        PERMISSIONS.QUEUE_MANAGEMENT_EDIT,
         
         // User Management - CANNOT ACCESS
         // NO USER MANAGEMENT PERMISSIONS FOR STAFF

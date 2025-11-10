@@ -1,0 +1,365 @@
+/* Container */
+.container {
+    display: flex;
+    background-color: #f5f7fa;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #dde6ed;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    background-color: #07598D;
+}
+
+.container .content .header h1 {
+    color: white;
+}
+
+.headerLeft {
+    flex: 1;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 8px 0;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Filters Section */
+.filtersSection {
+    background: white;
+    padding: 2rem;
+    margin: 2rem;
+    border-radius: 8px;
+    border: 3px solid #27374D;
+}
+
+.searchBar {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #999;
+}
+
+.searchInput {
+    width: 94%;
+    padding: 14px 14px 14px 48px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #07598D;
+}
+
+.filtersRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.filterSelect,
+.dateInput,
+.filterInput {
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    transition: all 0.2s;
+}
+
+.filterSelect:focus,
+.dateInput:focus,
+.filterInput:focus {
+    outline: none;
+    border-color: #07598D;
+}
+
+.filterSelect {
+    cursor: pointer;
+}
+
+/* Action Buttons Row */
+.actionsRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.selectedCount {
+    font-size: 16px;
+    font-weight: 700;
+    color: #27374D;
+    margin-right: auto;
+}
+
+.restoreButton,
+.exportButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid;
+}
+
+.restoreButton {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.restoreButton:hover:not(:disabled) {
+    background: #059669;
+    border-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.restoreButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.exportButton {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+.exportButton:hover:not(:disabled) {
+    background: #2563eb;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.exportButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Table Section */
+.tableSection {
+    background: white;
+    margin: 0 2rem 2rem 2rem;
+    border-radius: 8px;
+    border: 3px solid #27374D;
+    overflow: hidden;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.table td {
+    padding: 16px;
+    font-size: 14px;
+    color: #27374D;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #07598D;
+}
+
+/* Patient Name with Badge */
+.patientName {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.statusBadge {
+    padding: 4px 12px;
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Action Buttons */
+.actionButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.viewButton,
+.restoreIconButton {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.viewButton {
+    background: #07598D;
+    color: white;
+}
+
+.viewButton:hover {
+    background: #054770;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(7, 89, 141, 0.3);
+}
+
+.restoreIconButton {
+    background: #10b981;
+    color: white;
+}
+
+.restoreIconButton:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* No Results */
+.noResults {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: #27374D;
+}
+
+.noResults p {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+    .filtersRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .filtersSection {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .tableSection {
+        margin: 0 1rem 1rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .filtersRow {
+        grid-template-columns: 1fr;
+    }
+
+    .actionsRow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .selectedCount {
+        margin-bottom: 8px;
+    }
+
+    .restoreButton,
+    .exportButton {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .titleIcon {
+        font-size: 36px;
+    }
+
+    .table {
+        font-size: 12px;
+    }
+
+    .table th,
+    .table td {
+        padding: 12px 8px;
+    }
+}

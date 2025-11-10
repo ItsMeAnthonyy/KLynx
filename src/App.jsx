@@ -49,6 +49,8 @@ import ConsultationDetail from './Modules/Admin/Pages/ConsultationDetail';
 
 import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
+import QueueManagement from './modules/admin/pages/QueueManagement';
+import Archives from './modules/admin/pages/Archives';
 //import TotalPatients from './pages/Admin/TotalPatients';
 //import Notes from './pages/Admin/Note';
 //import Prescription from './pages/Admin/Prescription'
@@ -75,6 +77,7 @@ import IcdManager2 from './pages/Admin/IcdManager2';
 import NurseNotes from './pages/Admin/NurseNotes';
 import UserManagement from './modules/admin/pages/UserManagement';
 import StaffHealthRecord from './modules/admin/pages/StaffHealthRecord';
+
 
 function App() {
   return (
@@ -129,6 +132,8 @@ function App() {
                 <Route path='/ConsultationDetail' element={<ConsultationDetail />} />
                 <Route path='/StaffHealthRecord' element={<StaffHealthRecord />} />
                 
+                <Route path='/QueueManagement' element={<QueueManagement />} />
+                <Route path='/Archives' element={<Archives />} />
                 <Route path='/Staff' element={<Staff/>} />
                 <Route path='/Nurse' element={<Nurse/>} />
                 <Route path='/Doctors' element={<Doctors/>} />

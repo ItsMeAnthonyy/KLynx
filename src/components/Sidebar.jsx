@@ -124,8 +124,17 @@ const Sidebar = () => {
                                     <Link to="/PatientDetails">Patient List</Link>
                                 </li>
                             )}
+                            {checkPermission(PERMISSIONS.QUEUE_MANAGEMENT_VIEW) && (
+                                <li>
+
+                                    <Link to="/QueueManagement">Queue Management</Link>
+                                </li>
+                            )}
                             
-                    
+                            <li>
+
+                                    <Link to="/Archives">Archives</Link>
+                                </li>
                        
                     
                 </li>
