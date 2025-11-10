@@ -121,7 +121,7 @@ const Sidebar = () => {
                             {checkPermission(PERMISSIONS.HEALTH_RECORDS_VIEW) && (
                                 <li>
 
-                                    <Link to="/PatientDetails">Patient List</Link>
+                                    <Link to="/Patients">Patient List</Link>
                                 </li>
                             )}
                             {checkPermission(PERMISSIONS.QUEUE_MANAGEMENT_VIEW) && (

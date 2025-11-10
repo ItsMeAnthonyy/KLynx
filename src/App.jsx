@@ -77,6 +77,7 @@ import IcdManager2 from './pages/Admin/IcdManager2';
 import NurseNotes from './pages/Admin/NurseNotes';
 import UserManagement from './modules/admin/pages/UserManagement';
 import StaffHealthRecord from './modules/admin/pages/StaffHealthRecord';
+import Patients from './modules/admin/pages/Patients';
 
 
 function App() {
@@ -131,13 +132,14 @@ function App() {
                 <Route path='/Consultation' element={<Consultation />} />
                 <Route path='/ConsultationDetail' element={<ConsultationDetail />} />
                 <Route path='/StaffHealthRecord' element={<StaffHealthRecord />} />
+                <Route path='/Patients' element={<Patients />} />
                 
                 <Route path='/QueueManagement' element={<QueueManagement />} />
                 <Route path='/Archives' element={<Archives />} />
                 <Route path='/Staff' element={<Staff/>} />
                 <Route path='/Nurse' element={<Nurse/>} />
                 <Route path='/Doctors' element={<Doctors/>} />
-                <Route path='/Patient' element={<Patient/>} />
+                {/* <Route path='/Patient' element={<Patient/>} /> */}
 
                 <Route path='/AnimalBite' element={<AnimalBite/>} />
 
