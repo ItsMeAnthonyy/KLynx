@@ -1,0 +1,246 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, hsl(200 95% 40% / 0.05), hsl(185 90% 45% / 0.05));
+}
+
+.loginBox {
+  width: 100%;
+  max-width: 480px;
+  background: hsl(0 0% 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px hsl(215 25% 15% / 0.1);
+  padding: 2.5rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(200 95% 40%), hsl(200 95% 40% / 0.8));
+  color: hsl(0 0% 100%);
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: hsl(215 25% 15%);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: hsl(215 15% 50%);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(215 25% 15%);
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid hsl(210 25% 88%);
+  border-radius: 8px;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: hsl(200 95% 40%);
+  box-shadow: 0 0 0 3px hsl(200 95% 40% / 0.1);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: hsl(0 84.2% 60.2% / 0.1);
+  border: 1px solid hsl(0 84.2% 60.2% / 0.3);
+  border-radius: 8px;
+  color: hsl(0 84.2% 60.2%);
+  font-size: 0.875rem;
+}
+
+.success {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: hsl(142 71% 45% / 0.1);
+  border: 1px solid hsl(142 71% 45% / 0.3);
+  border-radius: 8px;
+  color: hsl(142 71% 45%);
+  font-size: 0.875rem;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: hsl(200 95% 40%);
+  color: hsl(0 0% 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: hsl(200 95% 40% / 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(200 95% 40% / 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggleMode {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid hsl(210 25% 88%);
+}
+
+.toggleMode p {
+  color: hsl(215 15% 50%);
+  font-size: 0.875rem;
+}
+
+.toggleButton {
+  margin-left: 0.5rem;
+  background: none;
+  border: none;
+  color: hsl(200 95% 40%);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.toggleButton:hover {
+  color: hsl(200 95% 40% / 0.8);
+}
+
+.demoSection {
+  border-top: 1px solid hsl(210 25% 88%);
+  padding-top: 2rem;
+}
+
+.demoTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(215 25% 15%);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.demoNote {
+  font-size: 0.875rem;
+  color: hsl(215 15% 50%);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.demoAccounts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.demoButton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: hsl(185 90% 45%);
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.demoButton:hover {
+  background: hsl(185 90% 45% / 0.8);
+  border-color: hsl(200 95% 40%);
+  transform: translateX(4px);
+}
+
+.demoButton > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.demoButton strong {
+  color: hsl(215 25% 15%);
+  font-size: 0.875rem;
+}
+
+.demoButton span {
+  color: hsl(215 15% 50%);
+  font-size: 0.75rem;
+}
+
+.demoPassword {
+  text-align: center;
+  font-size: 0.875rem;
+  color: hsl(215 15% 50%);
+  padding: 0.75rem;
+  background: hsl(210 30% 92% / 0.3);
+  border-radius: 6px;
+}
+
+.demoPassword strong {
+  color: hsl(215 25% 15%);
+}
+
+@media (max-width: 640px) {
+  .loginBox {
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}

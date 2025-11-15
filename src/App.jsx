@@ -44,6 +44,7 @@ import Staff from './pages/Admin/Staff';
 import Nurse from './pages/Admin/Nurse';
 import Patient from './pages/Admin/Patient';
 import AnimalBite from './pages/Admin/AnimalBite';
+import CreateUser from './modules/admin/pages/CreateUser';
 
 import ConsultationDetail from './Modules/Admin/Pages/ConsultationDetail';
 
@@ -138,6 +139,7 @@ function App() {
                 <Route path='/Nurse' element={<Nurse/>} />
                 <Route path='/Doctors' element={<Doctors/>} />
                 <Route path='/Patient' element={<Patient/>} />
+                <Route path='/CreateUser' element={<CreateUser/>} />
 
                 <Route path='/AnimalBite' element={<AnimalBite/>} />
 
