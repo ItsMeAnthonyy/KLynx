@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import VisitModal from '../popups/VisitModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import Sidebar from '../../../components/sidebar';
+import Sidebar from '../../../components/Sidebar';
 import '../../../components/css/GlobalContainer.css';
 import './Patients.css';
 import '../../../components/css/FileMaintenance.css'
 import '../../../pages/Admin/Doctors.css'
 import './Visits.css'
 import axios from 'axios';
-import React from 'react';  
+import { toast } from 'react-toastify';
+ 
 import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
@@ -330,6 +331,51 @@ const Visits = () => {
         navigate('/Patients');
     };
 
+    const handleAddToQueue = (visitPatient) => {
+        try {
+            // Get existing queue from localStorage
+            const savedQueue = localStorage.getItem('queueAppointments');
+            let queue = savedQueue ? JSON.parse(savedQueue) : [];
+            
+            // Check if patient is already in queue
+            const isAlreadyInQueue = queue.some(apt => apt.patientId === patient?.PatientID);
+            if (isAlreadyInQueue) {
+                toast.warning(`${patient?.FirstName} ${patient?.LastName} is already in the queue!`);
+                return;
+            }
+            
+            // Get the next queue number
+            const nextQueueNumber = queue.length > 0 
+                ? Math.max(...queue.map(apt => apt.queueNumber)) + 1 
+                : 1;
+            
+            // Create new appointment
+            const newAppointment = {
+                queueNumber: nextQueueNumber,
+                patientId: patient?.PatientID,
+                name: `${patient?.FirstName || ''} ${patient?.MiddleName || ''} ${patient?.LastName || ''}`.trim(),
+                phone: patient?.ContactNumber || 'N/A',
+                status: 'waiting',
+                complaint: visitPatient?.chiefComplaint || visitPatient?.chief_complaint || '',
+                addedAt: new Date().toISOString()
+            };
+            
+            // Add to queue
+            queue.push(newAppointment);
+            
+            // Save to localStorage
+            localStorage.setItem('queueAppointments', JSON.stringify(queue));
+            
+            // Show success message
+            toast.success(`Patient successfully added to queue! (Queue #${nextQueueNumber})`);
+            
+            console.log('Patient added to queue from visits:', newAppointment);
+        } catch (error) {
+            console.error('Error adding patient to queue:', error);
+            toast.error('Failed to add patient to queue');
+        }
+    };
+
     const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
     const { patientId } = useParams();
     const location = useLocation();
@@ -369,36 +415,54 @@ const Visits = () => {
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Type of Consultation</th>
+                                <th>Queue</th>
                                 <th colSpan="3">Record</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {consultProfiles.map((consProf, key) => (
+                            {consultProfiles.map((patient, key) => (
                             <tr key={key}>
                                 <td>
                                     1
                                 </td>
                                 <td>
-                                    {consProf.Birthday}
+                                    {patient.Birthday}
                                 </td>
                                 <td>
-                                    {consProf.consultation_date}
+                                    {patient.consultationDate}
                                 </td>
                                 <td>
-                                    {consProf.consultation_time}
+                                    {patient.consultationTime}
                                 </td>
                                 <td>
-                                    {consProf.consultation_type}
+                                    {patient.typeOfConsultation}
                                 </td>
                                 <td>
-                                    <button onClick={() => viewHistory(consProf.ConsultID) }>View History</button>
+                                    <button 
+                                        onClick={() => handleAddToQueue(patient)}
+                                        style={{
+                                            padding: '6px 12px',
+                                            backgroundColor: '#10b981',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '13px',
+                                            fontWeight: '500'
+                                        }}
+                                    >
+                                        Add to Queue
+                                    </button>
                                 </td>
                                 <td>
-                                    <button onClick={() => editDoctor(prenProf.PatientID) } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Edit" >
+                                    <button onClick={() => viewHistory(patient.ConsultID) }>View History</button>
+                                </td>
+                                <td>
+                                    <button onClick={() => editDoctor(patient.PatientID) } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Edit" >
                                     <BiSolidEdit className="FileMaintenance-TableIcon FileMaintenance-IconEdit" />  </button>
                                 </td>
                                 <td>
-                                    <button onClick={() => { setSelectedDoctor(consProf.ConsultID); setDeleteDoctorModal(true); } } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Delete" >
+                                    <button onClick={() => { setSelectedDoctor(patient.ConsultID); setDeleteDoctorModal(true); } } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Delete" >
                                     <BiSolidTrash className="FileMaintenance-TableIcon" />  </button>
                                 </td>
                             </tr>

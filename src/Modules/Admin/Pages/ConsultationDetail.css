@@ -22,6 +22,24 @@
     margin-bottom: 24px;
 }
 
+.Details-BackButton {
+    width:fit-content;
+    margin: 1rem;
+    padding: 13px 18px;
+    align-items: center;    
+    gap: 8px;
+    background-color: #ebeff3;
+    color: #2D3748;
+    border: 1px solid #112250;
+    border-radius: 10px;
+    cursor: pointer;
+   
+}
+
+.Details-BackButton:hover {
+  background-color: #8e8e974e;
+}
+
 .patient-avatar {
     width: 80px;
     height: 80px;

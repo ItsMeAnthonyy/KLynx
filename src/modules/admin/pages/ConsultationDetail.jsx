@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../../components/Sidebar';
 import './ConsultationDetail.css';
-import { BiError } from 'react-icons/bi';
+import { BiError, BiArrowBack } from 'react-icons/bi';
 import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 import AddRecordModal from '../../../modules/admin/popups/AddRecordModal';
 import { generatePrescriptionPDF } from '../../../../Utility/PrescriptionPDF';
+
 
 // Mock initial data
 const MOCK_PATIENT_DATA = {
@@ -124,6 +126,9 @@ const MOCK_INITIAL_RECORDS = [
 ];
 
 const ConsultationDetail = () => {
+
+  const navigate = useNavigate();
+
     const [patientData, setPatientData] = useState(null);
     const [consultationRecords, setConsultationRecords] = useState([]);
     const [archivedRecords, setArchivedRecords] = useState([]);
@@ -327,6 +332,10 @@ const ConsultationDetail = () => {
         record => record.type === activeTab
     );
 
+     const handleBackToPatientList = () => {
+        navigate('/Patients');
+    };
+
   return (
     <div className="FileMaintenance-Container">
       <Sidebar />
@@ -362,8 +371,13 @@ const ConsultationDetail = () => {
           </div>
         )}
 
+         <button onClick={handleBackToPatientList} className="Details-BackButton">
+            <BiArrowBack /> Back to Patient List
+          </button>
+
         {/* Patient Header Card */}
         <div className="patient-header-card">
+         
           <div className="patient-avatar-large">
             {patientData?.name ? patientData.name.charAt(0).toUpperCase() : '?'}
           </div>
@@ -390,14 +404,14 @@ const ConsultationDetail = () => {
                 <span className="info-label">Last Visit:</span>
                 <span className="info-value">October 21, 2024</span>
               </div>
-              <div className="info-item">
+              {/* <div className="info-item">
                 <span className="info-label">BP:</span>
                 <span className="info-value">120/80</span>
               </div>
               <div className="info-item">
                 <span className="info-label">Height/Weight:</span>
                 <span className="info-value">164.7cm / 55kg</span>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="patient-header-actions">

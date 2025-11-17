@@ -6,6 +6,8 @@ import Patientrecord from './pages/Admin/Patientrecord'
 /*import Dashboard from './pages/Admin/Dashboard'*/
 import { BrowserRouter, Routes, Route} from 'react-router-dom'
 //import Maps from './pages/Admin/GeoMapAdd'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Appointment from './pages/Patient/Appointment'
 import Dashboard2 from './pages/Patient/Dashboard2'
@@ -80,13 +82,23 @@ import Patients from './modules/admin/pages/Patients';
 import Visits from './modules/admin/pages/Visits';
 import UserManagement from './modules/admin/pages/UserManagement';
 import StaffHealthRecord from './modules/admin/pages/StaffHealthRecord';
-import Patients from './modules/admin/pages/Patients';
+
 
 
 function App() {
   return (
     <div>
-
+          <ToastContainer 
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <BrowserRouter>
 
             <Routes>

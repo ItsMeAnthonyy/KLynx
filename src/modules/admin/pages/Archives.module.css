@@ -43,7 +43,7 @@
 
 /* Filters Section */
 .filtersSection {
-    background: white;
+   
     padding: 2rem;
     margin: 2rem;
     border-radius: 8px;
@@ -173,7 +173,7 @@
 
 /* Table Section */
 .tableSection {
-    background: white;
+   
     margin: 0 2rem 2rem 2rem;
     border-radius: 8px;
     border: 3px solid #27374D;
