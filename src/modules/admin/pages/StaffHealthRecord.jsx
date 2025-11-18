@@ -4,8 +4,8 @@ import ProfileDropdown from '../../../components/ProfileDropdown';
 import { BiSearch, BiError  } from 'react-icons/bi';
 import {  FaEye, FaEdit, FaPlus} from 'react-icons/fa';
 import styles from './StaffHealthRecord.module.css';
-import PermissionGate from '../../../components/PermissionGate';
-import { PERMISSIONS } from '../../../utils/rolePermissions';
+//import PermissionGate from '../../../components/PermissionGate';
+//import { PERMISSIONS } from '../../../utils/rolePermissions';
 
 
 // Mock staff health data - Multiple records per staff member

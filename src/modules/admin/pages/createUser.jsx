@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { BiUser, BiUserCheck, BiMailSend, BiLock, BiErrorCircle } from "react-icons/bi";
 import styles from './CreateUser.module.css';
 import { createUser } from '../api/userApi';
+import { createUserProfile } from '../api/userProfileApi';
 
 
 const CreateUser = () => {
@@ -16,8 +17,6 @@ const CreateUser = () => {
     
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [middleName, setMiddleName] = useState('');
-    const [suffix, setSuffix] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +28,7 @@ const CreateUser = () => {
         setError('');
         setSuccess('');
 
-        if (!email || !password) {
+        if (!email || !password || !role || !firstName || !lastName) {
             setError('Please fill in required fields');
             return;
         }
@@ -41,22 +40,17 @@ const CreateUser = () => {
 
         setIsLoading(true);
         try {
-            const res = await createUser(email, password);
-            if (res.data.error) throw new Error(res.data.error);
-            const { success, user_id, error: userError } = res.data;
-            
-            if (!success) throw new Error(userError || "User creation failed");
+            const userRes = await createUser(role, email, password);
+            const { success: userSuccess, user_id, error: userError } = userRes.data;
+            if (!userSuccess) throw new Error(userError || "User creation failed");
 
-            const profileRes = await createProfile(user_id, firstName, lastName, middleName, suffix);
-            const { error: profileError } = profileRes.data;
-            if (profileError) throw new Error(profileError);
+            const userProfileRes = await createUserProfile(user_id, firstName, lastName);
+            const { success: profileSuccess, error: profileError } = userProfileRes.data;
+            if (!profileSuccess) throw new Error(profileError || "Profile creation failed");
             
-
-            if (success) {
-                console.log("New User ID:", user_id);
-                setSuccess('Account created successfully!');
-                setPassword('');
-            }
+            console.log("New User ID:", user_id);
+            setSuccess('Account with Profile created successfully!');
+            setPassword('');
 
         } catch(err) {
             setError(err.message || 'Failed to create user');
@@ -79,7 +73,7 @@ const CreateUser = () => {
                 </div>
 
                 <form onSubmit={handleCreateUser} className={styles.form}>
-                    {/* <div className={styles.formGroup}>
+                    <div className={styles.formGroup}>
                         <label htmlFor="firstName" className={styles.label}>
                             <BiUser size={18} />
                             First Name *
@@ -94,8 +88,8 @@ const CreateUser = () => {
                             autoComplete="given-name"
                             required
                         />
-                    </div> */}
-                    {/* <div className={styles.formGroup}>
+                    </div>
+                    <div className={styles.formGroup}>
                         <label htmlFor="lastName" className={styles.label}>
                             <BiUser size={18} />
                             Last Name *
@@ -110,7 +104,7 @@ const CreateUser = () => {
                             autoComplete="family-name"
                             required
                         />
-                    </div> */}
+                    </div>
                     {/* <div className={styles.formGroup}>
                         <label htmlFor="middleName" className={styles.label}>
                             <BiUser size={18} />

@@ -14,7 +14,8 @@ import GeoMap from './pages/Patient/GeoMap'
 //import Calendar from './pages/Admin/Calendar'
 
 import Register from './pages/Facepage/register'
-import Login from './pages/Facepage/login'
+import LoginOld from './pages/Facepage/login'
+import Login from './modules/facepage/pages/Login.jsx'
 import Logintwo from './pages/Facepage/logintwo'
 import ForgotPassword from './pages/Facepage/ForgotPassword'
 import Resetpass from './pages/Facepage/resetpass'  
@@ -46,7 +47,7 @@ import Patient from './pages/Admin/Patient';
 import AnimalBite from './pages/Admin/AnimalBite';
 import CreateUser from './modules/admin/pages/CreateUser';
 
-import ConsultationDetail from './Modules/Admin/Pages/ConsultationDetail';
+import ConsultationDetail from './modules/admin/pages/ConsultationDetail';
 
 import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
@@ -57,11 +58,21 @@ import Prenatal2 from './pages/Patient/Prenatal';
 import DiseaseReport from './pages/Reports/Diseasereport';
 import AnimalBiteReport from './pages/Reports/AnimalBiteReport';
 import MaternalReport from './pages/Reports/MaternalReport';
-const ROLES = {
-  'User': 2001,
-  'Editor': 1984,
-  'Admin': 5150
-}
+
+// const ROLES = {
+//   'User': 2001,
+//   'Editor': 1984,
+//   'Admin': 5150
+// }
+
+export const ROLES = {
+  USER: 'user',
+  EDITOR: 'editor',
+  ADMIN: 'admin',
+  DOCTOR: 'doctor',
+  NURSE: 'nurse'
+};
+
 /*
 import MaternalReport from '../Reports/Maternalreport.jsx'
 import DiseaseReport from '../Reports/Diseasereport.jsx'
@@ -85,7 +96,6 @@ function App() {
     <div>
 
           <BrowserRouter>
-
             <Routes>
 
 
@@ -100,6 +110,7 @@ function App() {
 
               <Route path='/Register' element={<Register/>} />
               <Route path='/Login' element={<Login/>} />
+              <Route path='/LoginOld' element={<LoginOld/>} />
               <Route path='/Logintwo' element={<Logintwo/>} />
               <Route path='/Forgot-Password' element={<ForgotPassword/>} />
               <Route path='/resetpass' element={<Resetpass/>} />
@@ -116,12 +127,12 @@ function App() {
               
               <Route path='/PrenatalRie' element={<PrenatalRie/>} />
 
-              <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+              <Route element={<RequireAuth allowedRoles={[ROLES.DOCTOR]} />}>
                 <Route path ='/Patients' element={<Patients />} />
                 <Route path="/patient/:id/visits" element={<Visits />} />
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
-                <Route path='/NurseNotes' element={<NurseNotes />} />
+                
                 <Route path='/UserManagement' element={<UserManagement />} />
                 <Route path='/Notifications' element={<Notifications />} />
                   <Route path='/Settings' element={<Settings />} />
@@ -150,25 +161,29 @@ function App() {
                 <Route path='/AnimalBiteReport' element={<AnimalBiteReport />} />
                 <Route path='/MaternalReport' element={<MaternalReport />} />
                 {/*<Route path='/Dashboard' element={<Dashboard />} />  */}
-            </Route>
+              </Route>
+              <Route element={<RequireAuth allowedRoles={[ROLES.NURSE]} />}>
+                <Route path='/NurseNotes' element={<NurseNotes />} />
+              </Route>
 
               <Route path='/Appointment' element={<Appointment />} />
               <Route path='/Patient-Dashboard' element={<Dashboard2/>} />
               <Route path='/Patient-Record' element={<Patientrecord2/>} />
-        
-             
+          
+              
               <Route path='/TestPage' element={<TestPage/>}/>
 
               <Route path="*" element={<Home />} />
-               <Route path="/" element={<Home />} />
-              
+              <Route path="/" element={<Home />} />
+                
               <Route path='/upcomingAppt' element={<UpcomingAppointment/>} />
+                
+              <Route path='/patientPage' element={<Patient1/>} />
+              <Route path='/staffPage1' element={<Staff1/>} />
+              <Route path='/nursePage' element={<Nurse1/>} />
               
-                <Route path='/patientPage' element={<Patient1/>} />
-                 <Route path='/staffPage1' element={<Staff1/>} />
-                  <Route path='/nursePage' element={<Nurse1/>} />
-              
-              </Routes>
+
+            </Routes>
           </BrowserRouter>
     </div>
   )

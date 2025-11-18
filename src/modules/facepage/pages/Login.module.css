@@ -1,0 +1,173 @@
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+
+  /* Background layering: gradient + image */
+  background-image: 
+    linear-gradient(135deg, hsl(200, 95%, 40%, 0.05), hsl(185, 90%, 45%, 0.05)),
+    url('../../../assets/picture/cityhall.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.loginPageBox{
+  width: 100%;
+  max-width: 480px;
+  background: hsl(0, 0%, 100%); /* card */
+  border-radius: 16px;
+  box-shadow: 0 4px 24px hsl(215, 25%, 15%, 0.1); /* foreground shadow */
+  padding: 2.5rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #07598D;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #5986a1;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #07598D;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid hsl(210 25% 88%);
+  border-radius: 8px;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #112250;
+  box-shadow: 0 0 0 3px hsl(200 95% 40% / 0.1);
+}
+
+.passwordWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.passwordWrapper .input {
+  padding-right: 3rem;
+}
+.eyeButton {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: hsl(215 15% 50%);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.eyeButton:hover {
+  color: #112250;
+}
+
+.eyeButton:focus {
+  outline: none;
+  color: #112250;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: #112250;
+  color: hsl(0 0% 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: hsl(203 70% 27% / 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(200 95% 40% / 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: hsl(0 84.2% 60.2% / 0.1);
+  border: 1px solid hsl(0 84.2% 60.2% / 0.3);
+  border-radius: 8px;
+  color: hsl(0 84.2% 60.2%);
+  font-size: 0.875rem;
+}
+
+.success {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: hsl(142 76% 36% / 0.1);
+  border: 1px solid hsl(142 76% 36% / 0.3);
+  border-radius: 8px;
+  color: hsl(142 76% 36%);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .loginPageBox {
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}

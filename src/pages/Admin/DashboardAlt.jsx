@@ -8,6 +8,8 @@ import '../../components/css/FileMaintenance.css'
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
+import useAuth from '../../hooks/useAuth';
+
 
 
 import PieChartExample from '../../components/piechart';
@@ -50,6 +52,8 @@ const DashboardAlt = () => {
 
     const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const { auth } = useAuth();
 
     useEffect(() => {
         const todayISO = new Date().toISOString();
@@ -105,8 +109,8 @@ const DashboardAlt = () => {
                               <BiError/>EMERGENCY MODE
                             </button>
                             <ProfileDropdown 
-                              email="admin@klynx.com"
-                              name="Admin User"
+                              email={auth.userEmail || "Email"}
+                              name= {auth.userFirstName + " " + auth.userLastName || "User"}
                             />
                           </div>
                         </div>

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import ProfileDropdown from '../../../components/ProfileDropdown';
-import PermissionGate from '../../../components/PermissionGate';
+//import PermissionGate from '../../../components/PermissionGate';
 import { BiError } from 'react-icons/bi';
 import { FaPlus, FaEye, FaEdit, FaTrash, FaRandom, FaSpinner } from 'react-icons/fa';
 import axios from 'axios';
 import styles from './UserManagement.module.css';
-import { PERMISSIONS, hasPermission } from '../../../utils/rolePermissions';
+//import { PERMISSIONS, hasPermission } from '../../../utils/rolePermissions';
 import useAuth from '../../../hooks/useAuth';
 
 // Mock user data

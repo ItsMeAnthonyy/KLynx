@@ -8,6 +8,8 @@ import axios from 'axios';
 import { BiError } from 'react-icons/bi';
 import ProfileDropdown from '../../components/ProfileDropdown';
 
+import useAuth from '../../hooks/useAuth';
+
 /* 🔑 MapTiler key ------------------------------------------------ */
 maptilersdk.config.apiKey = 'zKdOhGfQaGxspXOXk97Z';
 
@@ -257,10 +259,10 @@ const legendJSX = (
     const [showAddAdmin, setShowAddAdmin] = useState(false);
 
     const [generalDetails, setGeneralDetails] = useState({
-    name: '',
-    username: '',
-    contact: '',
-    password: ''
+      name: '',
+      username: '',
+      contact: '',
+      password: ''
 });
 
  // Admin Account Management
@@ -269,6 +271,8 @@ const legendJSX = (
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [adminAccounts, setAdminAccounts] = useState([]);
+
+    const { auth } = useAuth();
   
     const HandleAddAdmin = async () => {
       if (password !== confirmPassword) {
@@ -353,8 +357,8 @@ dbData.forEach(({ DiagnosisName }) => {
                    <BiError/>EMERGENCY MODE
                  </button>
                  <ProfileDropdown 
-                   email="admin@klynx.com"
-                   name="Admin User"
+                    email={auth.userEmail || "Email"}
+                    name= {auth.userFirstName + " " + auth.userLastName || "User"}
                  />
                </div>
              </div>

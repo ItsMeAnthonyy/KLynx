@@ -6,22 +6,30 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({});
-
     const [loading, setLoading] = useState(true);
+    
     useEffect(() => {
-        axios.get("http://localhost/api/get-session.php", { withCredentials: true })
+        axios.get("http://localhost/api/get_session.php", { withCredentials: true })
             .then(res => {
-                if (res.data?.adminID) {
-                setAuth({
-                    adminID: res.data.adminID,
-                    roles: [Number(res.data.roles)]
-                });
+                if (res.data?.logged_in) {
+                    setAuth({
+                        userRole: res.data.role
+                    });
                 }
+
+
+                // if (res.data?.adminID) {
+                    // setAuth({
+                    //     adminID: res.data.adminID,
+                    //     roles: [Number(res.data.roles)]
+                    // });
+                // }
             })
             .finally(() => setLoading(false));
-        }, []);
-        console.log("Login info:", auth);
-        if (loading) return <div>Loading...</div>;
+    }, []);
+    
+    console.log("Login info:", auth);
+    if (loading) return <div>Loading...</div>;
 
 
     return (
