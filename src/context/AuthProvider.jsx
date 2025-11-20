@@ -13,7 +13,11 @@ export const AuthProvider = ({ children }) => {
             .then(res => {
                 if (res.data?.logged_in) {
                     setAuth({
-                        userRole: res.data.role
+                        userId: res.data.user_id,
+                        userRole: res.data.role,
+                        userEmail: res.data.email,
+                        userFirstName: res.data.first_name,
+                        userLastName: res.data.last_name
                     });
                 }
 

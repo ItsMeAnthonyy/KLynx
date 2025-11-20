@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import ProfileDropdown from '../../../components/ProfileDropdown';
-import { BiSearch, BiError  } from 'react-icons/bi';
+import { BiSearch} from 'react-icons/bi';
 import {  FaEye, FaEdit, FaPlus} from 'react-icons/fa';
 import styles from './StaffHealthRecord.module.css';
 //import PermissionGate from '../../../components/PermissionGate';
 //import { PERMISSIONS } from '../../../utils/rolePermissions';
 
+import EmergencyButton from '../../../components/EmergencyButton';
 
 // Mock staff health data - Multiple records per staff member
 const MOCK_STAFF_DATA = [
@@ -383,10 +384,7 @@ function StaffHealthRecord() {
                     
                     </div>
                     <div className={styles.headerRight}>
-                        <button className={styles.emergencyButton}>
-                            <BiError size={20} />
-                            EMERGENCY MODE
-                        </button>
+                         <EmergencyButton />
                         <ProfileDropdown />
                     </div>
                 </div>

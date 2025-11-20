@@ -13,7 +13,7 @@ const Sidebar = () => {
     const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
 
-    const isAdmin  = auth?.role?.includes("admin");
+    const isAdmin  = auth?.userRole?.includes("admin");
 
     const handleLogout = async () => {
         try {
@@ -62,7 +62,8 @@ const Sidebar = () => {
                 <li className="sub-mSidebar-Nondropdown">
                     <Link to="/DashboardAlt">Dashboard</Link>
                     <Link to="/GeoMap">GeoMap</Link>
-                    <Link to="/Calendar">Calendar</Link>
+                    {/* <Link to="/Calendar">Calendar</Link> */}
+                    <Link to="/Appointments">Appointments</Link>
                 </li>
                 <hr></hr>
                 <li>

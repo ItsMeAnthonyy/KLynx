@@ -1,0 +1,241 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: hsl(0, 0%, 100%); /* white card background */
+  border-radius: 0.75rem;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); /* soft shadow */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid hsl(210, 15%, 80%); /* light gray border */
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(210, 10%, 15%); /* dark gray text */
+  margin: 0;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: hsl(210, 10%, 40%); /* muted gray-blue */
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.closeBtn:hover {
+  background: hsl(210, 20%, 95%); /* very light gray hover background */
+  color: hsl(210, 10%, 15%); /* dark gray text on hover */
+}
+
+.form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: hsl(210, 10%, 15%); /* dark gray text */
+  font-size: 0.9375rem;
+}
+
+.field label svg {
+  color: hsl(220, 90%, 60%); /* bright blue accent */
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid hsl(210, 15%, 80%); /* light gray border */
+    border-radius: 0.5rem;
+    background: hsl(0, 0%, 100%); /* white background */
+    color: hsl(210, 10%, 15%); /* dark gray text */
+    font-size: 0.9375rem;
+    font-family: inherit;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: hsl(220, 90%, 60%); /* bright blue focus border */
+}
+
+.select {
+    cursor: pointer;
+}
+
+.textarea {
+    resize: vertical;
+}
+
+.checking {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: hsl(210, 20%, 95%); /* very light gray-blue background */
+    border-radius: 0.5rem;
+    color: hsl(210, 10%, 40%); /* muted gray-blue text */
+    font-size: 0.9375rem;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.availableAlert,
+.unavailableAlert {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+}
+
+.availableAlert {
+  background: hsl(220, 90%, 60%, 0.1); /* light translucent blue background */
+  color: hsl(220, 90%, 60%); /* bright blue text */
+}
+
+.availableAlert svg {
+  color: hsl(220, 90%, 60%); /* bright blue icon */
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.availableAlert strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.availableAlert p {
+  margin: 0;
+  color: hsl(210, 10%, 15%); /* dark gray text */
+  font-size: 0.875rem;
+}
+
+.unavailableAlert {
+  background: hsl(0, 80%, 50%, 0.1); /* light translucent red background */
+  color: hsl(0, 80%, 50%); /* vibrant red text */
+}
+
+.unavailableAlert svg {
+  color: hsl(0, 80%, 50%); /* vibrant red icon */
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.unavailableAlert strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.unavailableAlert p {
+  margin: 0;
+  color: hsl(210, 10%, 15%); /* dark gray text */
+  font-size: 0.875rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.cancelBtn,
+.submitBtn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn {
+    background: hsl(210, 20%, 95%); /* very light gray background */
+    color: hsl(210, 10%, 40%); /* muted gray-blue text */
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background: hsl(210, 20%, 90%); /* slightly darker gray on hover */
+}
+
+.submitBtn {
+    background: hsl(220, 90%, 60%); /* bright blue primary */
+    color: hsl(0, 0%, 100%); /* white text */
+}
+
+.submitBtn:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.submitBtn:disabled,
+.cancelBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}

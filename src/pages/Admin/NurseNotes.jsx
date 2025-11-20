@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import ProfileDropdown from "../../components/ProfileDropdown";
-import { BiError, BiSearch } from "react-icons/bi";
+import { BiSearch } from "react-icons/bi";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import styles from "./NurseNotes.module.css";
+import EmergencyButton from "../../components/EmergencyButton";
 
 function NurseNotes() {
   const [newNote, setNewNote] = useState("");
@@ -118,10 +119,7 @@ function NurseNotes() {
             <p className={styles.subtitle}>Manage and organize nurse notes</p>
           </div>
           <div className={styles.headerRight}>
-            <button className={styles.emergencyButton}>
-              <BiError size={20} />
-              EMERGENCY MODE
-            </button>
+          <EmergencyButton />
             <ProfileDropdown />
           </div>
         </div>

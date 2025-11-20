@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import ProfileDropdown from '../../../components/ProfileDropdown';
+import EmergencyButton from '../../../components/EmergencyButton';
 //import PermissionGate from '../../../components/PermissionGate';
 import { BiError } from 'react-icons/bi';
 import { FaPlus, FaEye, FaEdit, FaTrash, FaRandom, FaSpinner } from 'react-icons/fa';
@@ -457,10 +458,7 @@ const UserManagement = () => {
 
                     </div>
                     <div className={styles.headerRight}>
-                        <button className={styles.emergencyButton}>
-                            <BiError size={20} />
-                            EMERGENCY MODE
-                        </button>
+                        <EmergencyButton />
                         {/* Temporarily removed PermissionGate for testing */}
                         <ProfileDropdown 
                             email={formData.email}

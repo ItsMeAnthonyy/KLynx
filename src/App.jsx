@@ -51,6 +51,8 @@ import ConsultationDetail from './modules/admin/pages/ConsultationDetail';
 
 import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
+import QueueManagement from './modules/admin/pages/QueueManagement';
+import Archives from './modules/admin/pages/Archives';
 //import TotalPatients from './pages/Admin/TotalPatients';
 //import Notes from './pages/Admin/Note';
 //import Prescription from './pages/Admin/Prescription'
@@ -90,6 +92,8 @@ import Patients from './modules/admin/pages/Patients';
 import Visits from './modules/admin/pages/Visits';
 import UserManagement from './modules/admin/pages/UserManagement';
 import StaffHealthRecord from './modules/admin/pages/StaffHealthRecord';
+import Appointments from './modules/admin/pages/appointment';
+
 
 function App() {
   return (
@@ -97,8 +101,6 @@ function App() {
 
           <BrowserRouter>
             <Routes>
-
-
 
               <Route path='/Patientrecord' element={<Patientrecord />} />
               <Route path='/Prenatal2' element={<Prenatal2 />}/>
@@ -127,7 +129,8 @@ function App() {
               
               <Route path='/PrenatalRie' element={<PrenatalRie/>} />
 
-              <Route element={<RequireAuth allowedRoles={[ROLES.DOCTOR]} />}>
+              <Route element={<RequireAuth allowedRoles={[ROLES.DOCTOR, ROLES.ADMIN]} />}>
+                <Route path='/Appointments' element={<Appointments />} />
                 <Route path ='/Patients' element={<Patients />} />
                 <Route path="/patient/:id/visits" element={<Visits />} />
                 <Route path='/IcdManager' element={<IcdManager />} />
@@ -146,6 +149,8 @@ function App() {
                 <Route path='/ConsultationDetail' element={<ConsultationDetail />} />
                 <Route path='/StaffHealthRecord' element={<StaffHealthRecord />} />
                 
+                <Route path='/QueueManagement' element={<QueueManagement />} />
+                <Route path='/Archives' element={<Archives />} />
                 <Route path='/Staff' element={<Staff/>} />
                 <Route path='/Nurse' element={<Nurse/>} />
                 <Route path='/Doctors' element={<Doctors/>} />

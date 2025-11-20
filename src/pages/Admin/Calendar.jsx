@@ -14,8 +14,8 @@ import getDay from 'date-fns/getDay';
 import enUS from 'date-fns/locale/en-US';
 import './Calendar.css';
 import Sidebar from '../../components/Sidebar';
-import { BiError } from 'react-icons/bi';
 import ProfileDropdown from '../../components/ProfileDropdown';
+import EmergencyButton from '../../components/EmergencyButton';
 
 const localizer = dateFnsLocalizer({
   format,
@@ -353,9 +353,7 @@ const handleSave = () => {
                      </div>
            
                      <div className="FileMaintenance-HeaderSetting">
-                       <button className="emergency-button">
-                         <BiError/>EMERGENCY MODE
-                       </button>
+                        <EmergencyButton />
                        <ProfileDropdown 
                          email="admin@klynx.com"
                          name="Admin User"

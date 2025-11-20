@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import ProfileDropdown from '../../components/ProfileDropdown';
+import EmergencyButton from '../../components/EmergencyButton';
 import { Bar, Line } from "react-chartjs-2";
 import axios from 'axios';
 import 'chart.js/auto';
-import { BiError, BiDownload } from 'react-icons/bi';
+import { BiDownload } from 'react-icons/bi';
 import styles from './MaternalReport.module.css';
 
 // Generate Maternal PDF Report
@@ -464,10 +465,7 @@ function MaternalReport() {
             <h1 className={styles.title}>Maternal Care Report</h1>
           </div>
           <div className={styles.headerRight}>
-            <button className={styles.emergencyButton}>
-              <BiError />
-              EMERGENCY MODE
-            </button>
+            <EmergencyButton />
             <ProfileDropdown 
               email="admin@klynx.com"
               name="Admin User"

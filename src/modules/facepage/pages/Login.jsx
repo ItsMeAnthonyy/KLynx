@@ -40,12 +40,13 @@ const Login = () => {
         setIsLoading(true);
         try {
             const loginRes = await loginUser(email, password);
-            const { success, error, user_role, user_email, first_name, last_name} = loginRes.data;
+            const { success, error, user_id, user_role, user_email, first_name, last_name} = loginRes.data;
             if (!success) {
                 throw new Error(error || "Login failed");
             }
 
             setAuth({
+                userId: user_id,
                 userRole: user_role,
                 userEmail: user_email,
                 userFirstName: first_name,
