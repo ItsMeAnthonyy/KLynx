@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../../../components/Sidebar';
 import './ConsultationDetail.css';
 import { BiError, BiArrowBack } from 'react-icons/bi';
@@ -7,6 +7,7 @@ import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 import AddRecordModal from '../../../modules/admin/popups/AddRecordModal';
 import { generatePrescriptionPDF } from '../../../../Utility/PrescriptionPDF';
+
 
 
 // Mock initial data
@@ -128,10 +129,18 @@ const MOCK_INITIAL_RECORDS = [
 const ConsultationDetail = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if coming from Visits page with specific visit data
+  const fromVisits = location.state?.fromVisits;
+  const visitData = location.state?.visitData;
+  const consultationType = location.state?.consultationType;
+  const patientDataFromVisits = location.state?.patientData;
 
     const [patientData, setPatientData] = useState(null);
     const [consultationRecords, setConsultationRecords] = useState([]);
     const [archivedRecords, setArchivedRecords] = useState([]);
+    const [currentVisitRecord, setCurrentVisitRecord] = useState(null); // Store visit data separately
    
     const [activeTab, setActiveTab] = useState('general');
     const [message, setMessage] = useState({ type: '', text: '' });
@@ -170,8 +179,35 @@ const ConsultationDetail = () => {
     };
 
     useEffect(() => {
-        initializeMockData();
-    }, []);
+        // If coming from Visits page, use that data instead
+        if (fromVisits && patientDataFromVisits) {
+            const formattedPatient = {
+                id: patientDataFromVisits.PatientID,
+                name: `${patientDataFromVisits.FirstName} ${patientDataFromVisits.MiddleName} ${patientDataFromVisits.LastName}`,
+                age: patientDataFromVisits.Age,
+                gender: patientDataFromVisits.Sex,
+                phone: patientDataFromVisits.ContactNumber || 'N/A',
+                dateOfBirth: patientDataFromVisits.Birthdate || 'N/A',
+                emergencyContact: 'N/A'
+            };
+            setPatientData(formattedPatient);
+            
+            // Set active tab based on consultation type
+            if (consultationType) {
+                setActiveTab(consultationType === 'animal-bite' ? 'animalBite' : consultationType);
+            }
+            
+            // If there's specific visit data, store it separately (don't add to consultation records)
+            if (visitData) {
+                setCurrentVisitRecord(visitData);
+            }
+            
+            // Initialize empty consultation records when coming from Visits
+            setConsultationRecords([]);
+        } else {
+            initializeMockData();
+        }
+    }, [fromVisits, visitData, consultationType, patientDataFromVisits]);
 
     const handleAddRecord = (recordData) => {
         try {
@@ -333,7 +369,18 @@ const ConsultationDetail = () => {
     );
 
      const handleBackToPatientList = () => {
-        navigate('/Patients');
+        // If coming from Visits, go back to Visits page
+        if (fromVisits && patientData?.id) {
+            navigate(`/patient/${patientData.id}/visits`, {
+                state: { patient: patientDataFromVisits }
+            });
+        } else if (patientData?.id) {
+            // Navigate back to the patient's visit list using the patient ID from patientData
+            navigate(`/patient/${patientData.id}/visits`);
+        } else {
+            // Fallback to Patients list if no patient ID available
+            navigate('/Patients');
+        }
     };
 
   return (
@@ -372,7 +419,7 @@ const ConsultationDetail = () => {
         )}
 
          <button onClick={handleBackToPatientList} className="Details-BackButton">
-            <BiArrowBack /> Back to Patient List
+            <BiArrowBack /> Back to Visit List
           </button>
 
         {/* Patient Header Card */}
@@ -453,74 +500,163 @@ const ConsultationDetail = () => {
           </div>
         </div>
 
+        {/* Visit Information Section - Only shown when coming from Visits */}
+        {fromVisits && currentVisitRecord && (
+          <div className="emergency-contact-section">
+            <div className="emergency-contact-container">
+              <div className="emergency-contact-card">
+                <h3>📋 Visit Information</h3>
+                <div className="emergency-details">
+                  <div className="emergency-info-row">
+                    <span className="emergency-label">Visit ID:</span>
+                    <span className="emergency-value">{currentVisitRecord.ConsultID || 'N/A'}</span>
+                  </div>
+                  <div className="emergency-info-row">
+                    <span className="emergency-label">Date:</span>
+                    <span className="emergency-value">{currentVisitRecord.consultation_date || 'N/A'}</span>
+                  </div>
+                  <div className="emergency-info-row">
+                    <span className="emergency-label">Time:</span>
+                    <span className="emergency-value">{currentVisitRecord.consultation_time || 'N/A'}</span>
+                  </div>
+                  <div className="emergency-info-row">
+                    <span className="emergency-label">Attending Provider:</span>
+                    <span className="emergency-value">{currentVisitRecord.attending_provider || 'N/A'}</span>
+                  </div>
+                  <div className="emergency-info-row">
+                    <span className="emergency-label">Chief Complaint:</span>
+                    <span className="emergency-value">{currentVisitRecord.chief_complaint || 'N/A'}</span>
+                  </div>
+                  <div className="emergency-info-row">
+                    <span className="emergency-label">Nature of Visit:</span>
+                    <span className="emergency-value">{currentVisitRecord.nature_of_visit || 'N/A'}</span>
+                  </div>
+                  <div className="emergency-info-row">
+                    <span className="emergency-label">Consultation Type:</span>
+                    <span className="emergency-value">{currentVisitRecord.consultation_type || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Medical Records Tabs */}
-        <div className="consultation-tabs-new">
-          <button 
-            className={`tab-item ${activeTab === 'general' ? 'active' : ''}`}
-            onClick={() => setActiveTab('general')}
-          >
-            <span className="tab-icon">📋</span>
-            <div className="tab-content">
-              <div className="tab-title">General Checkup</div>
-              <div className="tab-subtitle">Medical records</div>
-            </div>
-          </button>
-          
-          <button 
-            className={`tab-item ${activeTab === 'prenatal' ? 'active' : ''}`}
-            onClick={() => setActiveTab('prenatal')}
-          >
-            <span className="tab-icon">🤰</span>
-            <div className="tab-content">
-              <div className="tab-title">Prenatal</div>
-              <div className="tab-subtitle">Maternal care</div>
-            </div>
-          </button>
-          
-          <button 
-            className={`tab-item ${activeTab === 'dental' ? 'active' : ''}`}
-            onClick={() => setActiveTab('dental')}
-          >
-            <span className="tab-icon">🦷</span>
-            <div className="tab-content">
-              <div className="tab-title">Dental</div>
-              <div className="tab-subtitle">Oral health</div>
-            </div>
-          </button>
+        {fromVisits ? (
+          /* Show only specific consultation type tab when coming from Visits */
+          <div className="consultation-tabs-new">
+            <button 
+              className={`tab-item ${activeTab !== 'prescription' ? 'active' : ''}`}
+              onClick={() => setActiveTab(consultationType)}
+              style={{ flex: 1 }}
+            >
+              <span className="tab-icon">
+                {consultationType === 'general' ? '📋' : 
+                 consultationType === 'prenatal' ? '🤰' :
+                 consultationType === 'dental' ? '🦷' :
+                 consultationType === 'animalBite' ? '🐕' :
+                 consultationType === 'immunization' ? '💉' : '📋'}
+              </span>
+              <div className="tab-content">
+                <div className="tab-title">
+                  {consultationType === 'general' ? 'General Checkup' : 
+                   consultationType === 'prenatal' ? 'Prenatal' :
+                   consultationType === 'dental' ? 'Dental' :
+                   consultationType === 'animalBite' ? 'Animal Bite' :
+                   consultationType === 'immunization' ? 'Immunization' : 'Consultation'}
+                </div>
+                <div className="tab-subtitle">
+                  {consultationType === 'general' ? 'Medical records' : 
+                   consultationType === 'prenatal' ? 'Maternal care' :
+                   consultationType === 'dental' ? 'Oral health' :
+                   consultationType === 'animalBite' ? 'Bite treatment' :
+                   consultationType === 'immunization' ? 'Vaccine records' : 'Medical records'}
+                </div>
+              </div>
+            </button>
+            
+            <button 
+              className={`tab-item ${activeTab === 'prescription' ? 'active' : ''}`}
+              onClick={() => setActiveTab('prescription')}
+              style={{ flex: 1 }}
+            >
+              <span className="tab-icon">📝</span>
+              <div className="tab-content">
+                <div className="tab-title">Doctor&apos;s Prescription</div>
+                <div className="tab-subtitle">Prescription records</div>
+              </div>
+            </button>
+          </div>
+        ) : (
+          /* Show all tabs for normal use */
+          <div className="consultation-tabs-new">
+            <button 
+              className={`tab-item ${activeTab === 'general' ? 'active' : ''}`}
+              onClick={() => setActiveTab('general')}
+            >
+              <span className="tab-icon">📋</span>
+              <div className="tab-content">
+                <div className="tab-title">General Checkup</div>
+                <div className="tab-subtitle">Medical records</div>
+              </div>
+            </button>
+            
+            <button 
+              className={`tab-item ${activeTab === 'prenatal' ? 'active' : ''}`}
+              onClick={() => setActiveTab('prenatal')}
+            >
+              <span className="tab-icon">🤰</span>
+              <div className="tab-content">
+                <div className="tab-title">Prenatal</div>
+                <div className="tab-subtitle">Maternal care</div>
+              </div>
+            </button>
+            
+            <button 
+              className={`tab-item ${activeTab === 'dental' ? 'active' : ''}`}
+              onClick={() => setActiveTab('dental')}
+            >
+              <span className="tab-icon">🦷</span>
+              <div className="tab-content">
+                <div className="tab-title">Dental</div>
+                <div className="tab-subtitle">Oral health</div>
+              </div>
+            </button>
 
-          <button 
-            className={`tab-item ${activeTab === 'animalBite' ? 'active' : ''}`}
-            onClick={() => setActiveTab('animalBite')}
-          >
-            <span className="tab-icon">🐕</span>
-            <div className="tab-content">
-              <div className="tab-title">Animal Bite</div>
-              <div className="tab-subtitle">Bite treatment</div>
-            </div>
-          </button>
+            <button 
+              className={`tab-item ${activeTab === 'animalBite' ? 'active' : ''}`}
+              onClick={() => setActiveTab('animalBite')}
+            >
+              <span className="tab-icon">🐕</span>
+              <div className="tab-content">
+                <div className="tab-title">Animal Bite</div>
+                <div className="tab-subtitle">Bite treatment</div>
+              </div>
+            </button>
 
-          <button 
-            className={`tab-item ${activeTab === 'immunization' ? 'active' : ''}`}
-            onClick={() => setActiveTab('immunization')}
-          >
-            <span className="tab-icon">💉</span>
-            <div className="tab-content">
-              <div className="tab-title">Immunization</div>
-              <div className="tab-subtitle">Vaccine records</div>
-            </div>
-          </button>
+            <button 
+              className={`tab-item ${activeTab === 'immunization' ? 'active' : ''}`}
+              onClick={() => setActiveTab('immunization')}
+            >
+              <span className="tab-icon">💉</span>
+              <div className="tab-content">
+                <div className="tab-title">Immunization</div>
+                <div className="tab-subtitle">Vaccine records</div>
+              </div>
+            </button>
 
-          <button 
-            className={`tab-item ${activeTab === 'prescription' ? 'active' : ''}`}
-            onClick={() => setActiveTab('prescription')}
-          >
-            <span className="tab-icon">📝</span>
-            <div className="tab-content">
-              <div className="tab-title">Doctor&apos;s Prescription</div>
-              <div className="tab-subtitle">Prescription records</div>
-            </div>
-          </button>
-        </div>
+            <button 
+              className={`tab-item ${activeTab === 'prescription' ? 'active' : ''}`}
+              onClick={() => setActiveTab('prescription')}
+            >
+              <span className="tab-icon">📝</span>
+              <div className="tab-content">
+                <div className="tab-title">Doctor&apos;s Prescription</div>
+                <div className="tab-subtitle">Prescription records</div>
+              </div>
+            </button>
+          </div>
+        )}
 
         <div className="ConsultationDetail-Content">
 

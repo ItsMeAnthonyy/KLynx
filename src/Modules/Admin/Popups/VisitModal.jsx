@@ -3,7 +3,7 @@ import { BiX } from "react-icons/bi";
 import VisitForm from './VisitForm';
 import styles from './VisitModal.module.css';
 
-const VisitModal = ({ isOpen, onClose, patient }) => {
+const VisitModal = ({ isOpen, onClose, onSuccess, patient }) => {
     useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -53,7 +53,7 @@ const VisitModal = ({ isOpen, onClose, patient }) => {
           </p>
         </div>
 
-        <VisitForm onSuccess={onClose} onCancel={onClose} patient={patient} />
+        <VisitForm onSuccess={onSuccess || onClose} onCancel={onClose} patient={patient} />
       </div>
     </div>
 

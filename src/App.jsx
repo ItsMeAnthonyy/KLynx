@@ -53,6 +53,8 @@ import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
 import QueueManagement from './modules/admin/pages/QueueManagement';
 import Archives from './modules/admin/pages/Archives';
+
+
 //import TotalPatients from './pages/Admin/TotalPatients';
 //import Notes from './pages/Admin/Note';
 //import Prescription from './pages/Admin/Prescription'
