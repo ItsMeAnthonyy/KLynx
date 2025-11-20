@@ -1,21 +1,28 @@
 import { useEffect, useState } from 'react';
 import VisitModal from '../popups/VisitModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import Sidebar from '../../../components/sidebar';
+import Sidebar from '../../../components/Sidebar';
 import '../../../components/css/GlobalContainer.css';
 import './Patients.css';
 import '../../../components/css/FileMaintenance.css'
 import '../../../pages/Admin/Doctors.css'
 import './Visits.css'
+import './ConsultationDetail.css'
 import axios from 'axios';
-import React from 'react';  
-import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus } from 'react-icons/bi';
+import { toast } from 'react-toastify';
+import ProfileDropdown from '../../../components/ProfileDropdown';
+
+ 
+import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
 import { fetchPatientData } from "../services/patientService";
 
 const Visits = () => {
     const navigate = useNavigate();
+    const { patientId } = useParams();
+    const location = useLocation();
+    const patient = location.state?.patient;
 
     const [allPatients, setAllPatients] = useState([]);
     const [allDoctors, setAllDoctors] = useState([]);
@@ -36,11 +43,20 @@ const Visits = () => {
     const [addHistoryModal, setAddHistoryModal] = useState(false);
     const [consultVisits, setConsultVisits] = useState([]);
     const [addHistoryInputs, setAddHistoryInputs] = useState({});
+    const [currentConsultationType, setCurrentConsultationType] = useState('');
+    const [currentVisitData, setCurrentVisitData] = useState(null);
+    const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+    const [selectedPrescription, setSelectedPrescription] = useState(null);
     const [editDoctorModal, setEditDoctorModal] = useState(false);
     const [deleteDoctorModal, setDeleteDoctorModal] = useState(false);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
 
+    const [editVisitModal, setEditVisitModal] = useState(false);
+    const [deleteVisitModal, setDeleteVisitModal] = useState(false);
+    const [selectedVisit, setSelectedVisit] = useState(null);
+
     const [loading, setLoading] = useState(false);
+    const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
 
     const handleModalOpen = () =>{
         setShowModal(true);
@@ -163,21 +179,49 @@ const Visits = () => {
 
     }
 
-    function getConsultProfiles() {
+    function getConsultProfiles(filterPatientId = null) {
         axios.get('http://localhost/api/Patient_Visits.php').then(function(response){
             console.log("Get All Consult Profiles: ", response.data);
             setDoctorsList(response.data);
-            setConsultProfiles(response.data);
+            
+            // Filter by patientId if provided (use patient object's PatientID as fallback)
+            const patientIdToFilter = filterPatientId || patient?.PatientID;
+            
+            if (patientIdToFilter) {
+                console.log('Filtering for patientId:', patientIdToFilter);
+                console.log('Sample visit data:', response.data[0]);
+                
+                const filteredData = response.data.filter(visit => {
+                    // Check all possible field name variations
+                    const match = String(visit.PatientID) === String(patientIdToFilter) || 
+                           String(visit.patientID) === String(patientIdToFilter) ||
+                           String(visit.patientId) === String(patientIdToFilter) ||
+                           String(visit.patient_id) === String(patientIdToFilter);
+                    
+                    if (match) {
+                        console.log('Match found:', visit);
+                    }
+                    return match;
+                });
+                
+                console.log("Filtered visits for patient:", patientIdToFilter, filteredData);
+                setConsultProfiles(filteredData);
+            } else {
+                console.log('No patientId to filter, showing all visits');
+                setConsultProfiles(response.data);
+            }
         });
     }
 
     useEffect( () => {
-            getConsultProfiles();
+            const idToUse = patientId || patient?.PatientID;
+            console.log('useEffect - Loading visits for patient:', idToUse);
+            getConsultProfiles(idToUse);
             setAddHistoryInputs((prev) => ({
     ...prev,
     consult_date_visit: new Date().toISOString().split("T")[0]
   }));
-    }, []);
+    }, [patientId, patient]);
 
 
 
@@ -240,13 +284,16 @@ const Visits = () => {
         }
     };
 
-    const viewHistory = async (id) => {
-        const response = await axios.get(`http://localhost/api/Patient_Consult_Visits.php?id=${id}`);
-        setConsultVisits(response.data);
-        setViewHistoryModal(true);
-        console.log("Consult Visits List: ", response.data);
-        
-        setAddHistoryInputs((values) => ({ ...values, ConsultID: id }));
+    const viewHistory = async (visitData) => {
+        // Navigate to ConsultationDetail page with visit data
+        navigate('/ConsultationDetail', {
+            state: {
+                visitData: visitData,
+                consultationType: visitData.consultation_type || 'general',
+                patientData: patient,
+                fromVisits: true
+            }
+        });
     }
 
 
@@ -330,24 +377,202 @@ const Visits = () => {
         navigate('/Patients');
     };
 
-    const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
-    const { patientId } = useParams();
-    const location = useLocation();
-    const patient = location.state?.patient;
+    const handleAddToQueue = (visitPatient) => {
+        try {
+            // Get existing queue from localStorage
+            const savedQueue = localStorage.getItem('queueAppointments');
+            let queue = savedQueue ? JSON.parse(savedQueue) : [];
+            
+            // Check if patient is already in queue
+            const isAlreadyInQueue = queue.some(apt => apt.patientId === patient?.PatientID);
+            if (isAlreadyInQueue) {
+                toast.warning(`${patient?.FirstName} ${patient?.LastName} is already in the queue!`);
+                return;
+            }
+            
+            // Get the next queue number
+            const nextQueueNumber = queue.length > 0 
+                ? Math.max(...queue.map(apt => apt.queueNumber)) + 1 
+                : 1;
+            
+            // Create new appointment
+            const newAppointment = {
+                queueNumber: nextQueueNumber,
+                patientId: patient?.PatientID,
+                name: `${patient?.FirstName || ''} ${patient?.MiddleName || ''} ${patient?.LastName || ''}`.trim(),
+                phone: patient?.ContactNumber || 'N/A',
+                status: 'waiting',
+                complaint: visitPatient?.chiefComplaint || visitPatient?.chief_complaint || '',
+                addedAt: new Date().toISOString()
+            };
+            
+            // Add to queue
+            queue.push(newAppointment);
+            
+            // Save to localStorage
+            localStorage.setItem('queueAppointments', JSON.stringify(queue));
+            
+            // Show success message
+            toast.success(`Patient successfully added to queue! (Queue #${nextQueueNumber})`);
+            
+            console.log('Patient added to queue from visits:', newAppointment);
+        } catch (error) {
+            console.error('Error adding patient to queue:', error);
+            toast.error('Failed to add patient to queue');
+        }
+    };
+
+    const handleVisitSuccess = () => {
+        setIsVisitModalOpen(false);
+        const idToUse = patientId || patient?.PatientID;
+        console.log('Refreshing visits after save for patient:', idToUse);
+        getConsultProfiles(idToUse); // Refresh the visits list for this patient
+    };
+
+    const handleEditVisitChange = (e) => {
+        const { name, value } = e.target;
+        setSelectedVisit(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleEditVisitSubmit = (e) => {
+        e.preventDefault();
+        
+        const visitId = selectedVisit.visit_id || selectedVisit.VisitID || selectedVisit.id;
+        
+        if (!visitId) {
+            toast.error('Visit ID not found');
+            return;
+        }
+
+        const updateData = {
+            id: visitId,
+            chief_complaint: selectedVisit.chief_complaint,
+            attending_provider: selectedVisit.attending_provider
+        };
+
+        console.log('Attempting to update visit:', { visitId, updateData, fullRecord: selectedVisit });
+        
+        axios.put('http://localhost/api/Patient_Visits.php', updateData)
+            .then(function(response){
+                console.log('Update response:', response.data);
+                
+                // Check if backend confirmed success
+                const backendSuccess = response.data && (response.data.status === 1 || response.data.message?.includes('success'));
+                
+                // Frontend fallback: Update the local state immediately
+                setConsultProfiles(prev => prev.map(visit => {
+                    const currentVisitId = visit.visit_id || visit.VisitID || visit.id;
+                    if (String(currentVisitId) === String(visitId)) {
+                        return {
+                            ...visit,
+                            chief_complaint: selectedVisit.chief_complaint,
+                            attending_provider: selectedVisit.attending_provider
+                        };
+                    }
+                    return visit;
+                }));
+                
+                if (backendSuccess) {
+                    toast.success('Visit updated successfully');
+                } else {
+                    toast.warning('Visit updated in display (check backend logs)');
+                }
+                setEditVisitModal(false);
+                setSelectedVisit(null);
+            })
+            .catch(function(error){
+                console.error('Update error:', error);
+                console.error('Error response:', error.response?.data);
+                
+                // Frontend fallback even on error: Still update the UI
+                setConsultProfiles(prev => prev.map(visit => {
+                    const currentVisitId = visit.visit_id || visit.VisitID || visit.id;
+                    if (String(currentVisitId) === String(visitId)) {
+                        return {
+                            ...visit,
+                            chief_complaint: selectedVisit.chief_complaint,
+                            attending_provider: selectedVisit.attending_provider
+                        };
+                    }
+                    return visit;
+                }));
+                
+                toast.warning('Visit updated in display (backend update may have failed)');
+                setEditVisitModal(false);
+                setSelectedVisit(null);
+            });
+    };
+
+    const handleDeleteVisit = () => {
+        const visitId = selectedVisit.visit_id || selectedVisit.VisitID || selectedVisit.id;
+        
+        if (!visitId) {
+            toast.error('Visit ID not found');
+            return;
+        }
+
+        console.log('Attempting to delete visit:', { visitId, fullRecord: selectedVisit });
+
+        axios.delete(`http://localhost/api/Patient_Visits.php?id=${visitId}`)
+            .then(function(response){
+                console.log('Delete response:', response.data);
+                
+                // Check if backend confirmed success
+                const backendSuccess = response.data && (response.data.status === 1 || response.data.message?.includes('success'));
+                
+                // Frontend fallback: Remove from local state immediately
+                setConsultProfiles(prev => prev.filter(visit => {
+                    const currentVisitId = visit.visit_id || visit.VisitID || visit.id;
+                    return String(currentVisitId) !== String(visitId);
+                }));
+                
+                if (backendSuccess) {
+                    toast.success('Visit deleted successfully');
+                } else {
+                    toast.warning('Visit removed from display (check backend logs)');
+                }
+                setDeleteVisitModal(false);
+                setSelectedVisit(null);
+            })
+            .catch(function(error){
+                console.error('Delete error:', error);
+                console.error('Error response:', error.response?.data);
+                
+                // Frontend fallback even on error: Still remove from UI
+                setConsultProfiles(prev => prev.filter(visit => {
+                    const currentVisitId = visit.visit_id || visit.VisitID || visit.id;
+                    return String(currentVisitId) !== String(visitId);
+                }));
+                
+                toast.warning('Visit removed from display (backend deletion may have failed)');
+                setDeleteVisitModal(false);
+                setSelectedVisit(null);
+            });
+    };
+
+    // Ensure patient object has PatientID for the VisitForm
+    const patientData = patient || { PatientID: patientId };
+    
+    console.log('Visits Page - Patient Data:', { patientId, patient, patientData });
 
     return (
         <div className="FileMaintenance-Container">
-            <Sidebar />
-            <main className="FileMaintenance-Content">
-                <div className="FileMaintenance-Header">
-                    <div className="FileMaintenance-HeaderTitle">
-                        <h1>PREVIOUS VISIT LIST</h1>
+             <Sidebar />
+                  <main className="FileMaintenance-Content">
+                    <div className="FileMaintenance-Header">
+                      <div className="FileMaintenance-HeaderTitle">
+                        <h1>Consultation Details</h1>
+                      </div>
+                      <div className="FileMaintenance-HeaderSetting">
+                        <button className="emergency-button">
+                          <BiError/>EMERGENCY MODE
+                        </button>
+                        <ProfileDropdown 
+                          email="admin@klynx.com"
+                          name="Admin User"
+                        />
+                      </div>
                     </div>
-                    <div className="FileMaintenance-HeaderSetting">
-                        <BiSolidBell className="FileMaintenance-Icon" />
-                        <BiSolidCog className="FileMaintenance-Icon" />
-                    </div>
-                </div>
                 {/*<hr></hr>*/}
                 <div className="Visits-Filter-Container">
                     <div className="FileMaintenance-Entries">
@@ -365,41 +590,107 @@ const Visits = () => {
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Options</th>
-                                <th>Date</th>
+                                <th>Date</th> 
                                 <th>Time</th>
                                 <th>Type of Consultation</th>
+                                <th>Chief Complaint</th>
+                                <th>Healthcare Provider</th>
+                                
                                 <th colSpan="3">Record</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {consultProfiles.map((consProf, key) => (
+                            {consultProfiles.map((patient, key) => (
                             <tr key={key}>
                                 <td>
-                                    1
+                                    {key + 1}
+                                </td> 
+                                <td>
+                                    {patient.consultation_date || 'N/A'}
                                 </td>
                                 <td>
-                                    {consProf.Birthday}
+                                    { patient.consultation_time || 'N/A'}
+                                </td>
+                               
+                                <td>
+                                    { patient.consultation_type || 'N/A'}
+                                </td> 
+                                <td>
+                                    { patient.chief_complaint || 'N/A'}
                                 </td>
                                 <td>
-                                    {consProf.consultation_date}
+                                    { patient.attending_provider || 'N/A'}
                                 </td>
                                 <td>
-                                    {consProf.consultation_time}
+                                    <button 
+                                        onClick={() => viewHistory(patient)} 
+                                        style={{
+                                            padding: '5px 5px',
+                                            backgroundColor: '#3b82f6',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '13px',
+                                            fontWeight: '500'
+                                        }}
+                                    >
+                                        View History
+                                    </button>
                                 </td>
                                 <td>
-                                    {consProf.consultation_type}
+                                    <button 
+                                        onClick={() => { setSelectedVisit(patient); setEditVisitModal(true); }} 
+                                        style={{ 
+                                            backgroundColor: 'transparent',
+                                            border: '1px solid #e5e7eb',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer', 
+                                            padding: '8px',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.2s'
+                                        }} 
+                                        title="Edit"
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                            e.currentTarget.style.borderColor = '#d1d5db';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'transparent';
+                                            e.currentTarget.style.borderColor = '#e5e7eb';
+                                        }}
+                                    >
+                                        <BiSolidEdit style={{ fontSize: '18px', color: '#282a2eff' }} />
+                                    </button>
                                 </td>
                                 <td>
-                                    <button onClick={() => viewHistory(consProf.ConsultID) }>View History</button>
-                                </td>
-                                <td>
-                                    <button onClick={() => editDoctor(prenProf.PatientID) } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Edit" >
-                                    <BiSolidEdit className="FileMaintenance-TableIcon FileMaintenance-IconEdit" />  </button>
-                                </td>
-                                <td>
-                                    <button onClick={() => { setSelectedDoctor(consProf.ConsultID); setDeleteDoctorModal(true); } } style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} title="Delete" >
-                                    <BiSolidTrash className="FileMaintenance-TableIcon" />  </button>
+                                    <button 
+                                        onClick={() => { setSelectedVisit(patient); setDeleteVisitModal(true); }} 
+                                        style={{ 
+                                            backgroundColor: 'transparent',
+                                            border: '1px solid #e5e7eb',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer', 
+                                            padding: '8px',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.2s'
+                                        }} 
+                                        title="Delete"
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor = '#fee2e2';
+                                            e.currentTarget.style.borderColor = '#fca5a5';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'transparent';
+                                            e.currentTarget.style.borderColor = '#e5e7eb';
+                                        }}
+                                    >
+                                        <BiSolidTrash style={{ fontSize: '18px', color: '#ef4444' }} />
+                                    </button>
                                 </td>
                             </tr>
                             ))}
@@ -411,7 +702,8 @@ const Visits = () => {
             <VisitModal
                 isOpen={isVisitModalOpen}
                 onClose={() => setIsVisitModalOpen(false)}
-                patient={patient}
+                onSuccess={handleVisitSuccess}
+                patient={patientData}
             />
 
 
@@ -1151,6 +1443,85 @@ const Visits = () => {
                 </div>
             </div>
             )}
+
+            {editVisitModal && selectedVisit && (
+                <div className="add-doctors-popup-overlay">
+                    <div className="add-doctors-popup-content">
+                        <button className="doctors-popup-close-button" onClick={() => { setEditVisitModal(false); setSelectedVisit(null); }}>X</button>
+                        <h2>Edit Visit Record</h2>
+                        <form className="add-doctors-form" onSubmit={handleEditVisitSubmit}>
+                            <div className="add-doctors-column">
+                                <div className="add-doctors-input-box">
+                                    <label>Date:</label>
+                                    <input type="text" className="add-doctors-shaded-input" readOnly value={selectedVisit.consultation_date || 'N/A'} />
+                                </div>
+                                <div className="add-doctors-input-box">
+                                    <label>Time:</label>
+                                    <input type="text" className="add-doctors-shaded-input" readOnly value={selectedVisit.consultation_time || 'N/A'} />
+                                </div>
+                            </div>
+                            <div className="add-doctors-column">
+                                <div className="add-doctors-input-box">
+                                    <label>Type of Consultation:</label>
+                                    <input type="text" className="add-doctors-shaded-input" readOnly value={selectedVisit.consultation_type || 'N/A'} />
+                                </div>
+                            </div>
+                            <div className="add-doctors-column">
+                                <div className="add-doctors-input-box">
+                                    <label htmlFor="edit-chief-complaint">Chief Complaint: <span style={{color: 'red'}}>*</span></label>
+                                    <textarea 
+                                        id="edit-chief-complaint"
+                                        name="chief_complaint" 
+                                        value={selectedVisit.chief_complaint || ''} 
+                                        onChange={handleEditVisitChange}
+                                        rows="4"
+                                        style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="add-doctors-column">
+                                <div className="add-doctors-input-box">
+                                    <label htmlFor="edit-attending-provider">Healthcare Provider: <span style={{color: 'red'}}>*</span></label>
+                                    <input 
+                                        type="text" 
+                                        id="edit-attending-provider"
+                                        name="attending_provider" 
+                                        value={selectedVisit.attending_provider || ''} 
+                                        onChange={handleEditVisitChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="add-doctors-buttons">
+                                <button type="submit" className="add-doctors-save-button">Save Changes</button>
+                                <button type="button" className="add-doctors-cancel-button" onClick={() => { setEditVisitModal(false); setSelectedVisit(null); }}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {deleteVisitModal && selectedVisit && (
+                <div className="add-doctors-popup-overlay">
+                    <div className="add-doctors-popup-content">
+                        <button className="doctors-popup-close-button" onClick={() => { setDeleteVisitModal(false); setSelectedVisit(null); }}>X</button>
+                        <h2>Confirm Delete</h2>
+                        <h4>Are you sure you want to delete this visit record?</h4>
+                        <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
+                            <p style={{ margin: '5px 0' }}><strong>Date:</strong> {selectedVisit.consultation_date || 'N/A'}</p>
+                            <p style={{ margin: '5px 0' }}><strong>Time:</strong> {selectedVisit.consultation_time || 'N/A'}</p>
+                            <p style={{ margin: '5px 0' }}><strong>Type:</strong> {selectedVisit.consultation_type || 'N/A'}</p>
+                            <p style={{ margin: '5px 0' }}><strong>Chief Complaint:</strong> {selectedVisit.chief_complaint || 'N/A'}</p>
+                        </div>
+                        <div className="delete-doctors-buttons">
+                            <button className="add-doctors-save-button" onClick={handleDeleteVisit} style={{ backgroundColor: '#ef4444' }}>Delete</button>
+                            <button className="add-doctors-cancel-button" onClick={() => { setDeleteVisitModal(false); setSelectedVisit(null); }}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {viewHistoryModal && (
                 <div className="add-doctors-popup-overlay">
                     <div className="view-Prenatal-History-popup-content">

@@ -72,10 +72,17 @@ const Sidebar = () => {
                         <span className="mSidebar-General"><strong>File Maintenance</strong></span>
                     </Link>
                 </li>
+                <li className='sub-mSidebar-Nondropdown'>
+                    <li>
+                        <Link to="/Patients">Patient List</Link>
+                        <Link to="/QueueManagement">Queue Management</Link>
+                        <Link to="/Archives">Archive Management</Link>
+                    </li>             
+                </li>
                 <li className="sub-mSidebar-Nondropdown">
                     {/*{checkPermission(PERMISSIONS.ICD_VIEW) && (<Link to="/ICDManager2">ICD-10</Link>)}*/}
                         {isAdmin && (
-                            <>
+                            <>   
                                 <Link to="/NurseNotes">Nurse Notes</Link>                 
                                 <Link to="/UserManagement">User Management</Link>
                             </>
@@ -83,12 +90,6 @@ const Sidebar = () => {
                         <Link to="/Notifications">Notifications</Link>
                         <Link to="/StaffHealthRecord">Medical Staff Health Record</Link>
 
-                </li>
-
-                <li className='sub-mSidebar-Nondropdown'>
-                    <li>
-                        <Link to="/Patients">Patient List</Link>
-                    </li>             
                 </li>
 
                 

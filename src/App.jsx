@@ -6,6 +6,8 @@ import Patientrecord from './pages/Admin/Patientrecord'
 /*import Dashboard from './pages/Admin/Dashboard'*/
 import { BrowserRouter, Routes, Route} from 'react-router-dom'
 //import Maps from './pages/Admin/GeoMapAdd'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Appointment from './pages/Patient/Appointment'
 import Dashboard2 from './pages/Patient/Dashboard2'
@@ -53,6 +55,8 @@ import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
 import QueueManagement from './modules/admin/pages/QueueManagement';
 import Archives from './modules/admin/pages/Archives';
+
+
 //import TotalPatients from './pages/Admin/TotalPatients';
 //import Notes from './pages/Admin/Note';
 //import Prescription from './pages/Admin/Prescription'
@@ -98,7 +102,17 @@ import Appointments from './modules/admin/pages/appointment';
 function App() {
   return (
     <div>
-
+          <ToastContainer 
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <BrowserRouter>
             <Routes>
 
@@ -161,14 +175,11 @@ function App() {
 
                 <Route path='/Patientrecord' element={<Patientrecord />} />
                 <Route path='/Calendar' element={<Calendar />} />
-                
+                <Route path='/NurseNotes' element={<NurseNotes />} />
                 <Route path='/DiseaseReport' element={<DiseaseReport />} />
                 <Route path='/AnimalBiteReport' element={<AnimalBiteReport />} />
                 <Route path='/MaternalReport' element={<MaternalReport />} />
                 {/*<Route path='/Dashboard' element={<Dashboard />} />  */}
-              </Route>
-              <Route element={<RequireAuth allowedRoles={[ROLES.NURSE]} />}>
-                <Route path='/NurseNotes' element={<NurseNotes />} />
               </Route>
 
               <Route path='/Appointment' element={<Appointment />} />

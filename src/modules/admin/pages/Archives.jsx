@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BiSearch, BiRefresh, BiExport, BiShow, BiUndo } from 'react-icons/bi';
 import Sidebar from '../../../components/Sidebar';
 import ProfileDropdown from '../../../components/ProfileDropdown';
@@ -12,31 +12,31 @@ const Archives = () => {
     const [endDate, setEndDate] = useState('');
     const [archivedBy, setArchivedBy] = useState('');
     const [selectedItems, setSelectedItems] = useState([]);
-
-    const [archivedPatients, setArchivedPatients] = useState([
-        {
-            id: 'FAM-002',
-            name: 'Michael Chen',
-            dob: '1985-08-22',
-            archivedOn: '11/6/2025',
-            reason: 'Transferred',
-            notes: 'Moving to another city',
-            archivedBy: 'Anthony',
-            status: 'Archived'
-        },
-        {
-            id: 'FAM-004',
-            name: 'David Kim',
-            dob: '1988-11-30',
-            archivedOn: '11/4/2025',
-            reason: 'Deceased',
-            notes: 'Passed away due to illness',
-            archivedBy: 'Coleen',
-            status: 'Archived'
-        }
-    ]);
+    const [archivedPatients, setArchivedPatients] = useState([]);
 
     const reasons = ['All Reasons', 'Transferred', 'Deceased', 'Duplicate Record', 'Moved Away', 'Other'];
+
+    // Load archived patients from localStorage on component mount
+    useEffect(() => {
+        const loadArchivedPatients = () => {
+            const stored = localStorage.getItem('archivedPatients');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    setArchivedPatients(parsed);
+                } catch (error) {
+                    console.error('Error loading archived patients:', error);
+                    setArchivedPatients([]);
+                }
+            }
+        };
+        
+        loadArchivedPatients();
+        
+        // Set up an interval to check for changes (in case another tab makes changes)
+        const interval = setInterval(loadArchivedPatients, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Handle select all checkbox
     const handleSelectAll = (e) => {
@@ -63,9 +63,22 @@ const Archives = () => {
             return;
         }
         if (window.confirm(`Are you sure you want to restore ${selectedItems.length} selected patient(s)?`)) {
-            setArchivedPatients(archivedPatients.filter(patient => !selectedItems.includes(patient.id)));
+            // Filter out selected patients from archived list
+            const updatedArchived = archivedPatients.filter(patient => !selectedItems.includes(patient.id));
+            
+            // Update state
+            setArchivedPatients(updatedArchived);
+            
+            // Update localStorage
+            localStorage.setItem('archivedPatients', JSON.stringify(updatedArchived));
+            
+            // Clear selection
             setSelectedItems([]);
+            
             alert('Selected patients have been restored successfully');
+            
+            // Note: You would need to also restore these patients to your backend database
+            // Example: await axios.post('/api/patients/restore', { patientIds: selectedItems });
         }
     };
 
@@ -75,7 +88,75 @@ const Archives = () => {
             alert('Please select at least one patient to export');
             return;
         }
-        alert(`Exporting ${selectedItems.length} selected patient(s)...`);
+
+        // Helper function to escape CSV values
+        const escapeCSV = (value) => {
+            if (value === null || value === undefined) return '';
+            const stringValue = String(value);
+            // Escape double quotes and wrap in quotes if contains comma, quote, or newline
+            if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+                return `"${stringValue.replace(/"/g, '""')}"`;
+            }
+            return stringValue;
+        };
+
+        // Get selected patients
+        const selectedPatients = archivedPatients.filter(patient => 
+            selectedItems.includes(patient.id)
+        );
+
+        // Create CSV content
+        const csvRows = [];
+        
+        // Add title
+        csvRows.push(`ARCHIVED PATIENTS EXPORT - ${new Date().toLocaleDateString()}`);
+        csvRows.push(`Total Records: ${selectedPatients.length}`);
+        csvRows.push('');
+        
+        // Add headers
+        csvRows.push('Patient ID,Patient Name,Date of Birth,Archived On,Reason,Notes,Archived By,Status');
+        
+        // Add data rows
+        selectedPatients.forEach(patient => {
+            // Get original patient data if available
+            const originalData = patient.originalData || {};
+            
+            csvRows.push([
+                escapeCSV(patient.id),
+                escapeCSV(patient.name),
+                escapeCSV(patient.Birthdate || originalData.Birthdate || originalData.Birthday || ''),
+                escapeCSV(patient.archivedOn),
+                escapeCSV(patient.reason),
+                escapeCSV(patient.notes),
+                escapeCSV(patient.archivedBy),
+                escapeCSV(patient.status)
+            ].join(','));
+        });
+            // Archive Information
+
+        // Convert to CSV string
+        const csvContent = csvRows.join('\n');
+        
+        // Create blob and download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create filename with date
+        const dateStr = new Date().toISOString().split('T')[0];
+        const exportFileName = `archived_patients_${dateStr}.csv`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', url);
+        linkElement.setAttribute('download', exportFileName);
+        linkElement.style.display = 'none';
+        document.body.appendChild(linkElement);
+        linkElement.click();
+        document.body.removeChild(linkElement);
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+        
+        alert(`Successfully exported ${selectedPatients.length} patient(s) to ${exportFileName}`);
     };
 
     // Handle view patient
@@ -86,8 +167,19 @@ const Archives = () => {
     // Handle restore individual patient
     const handleRestorePatient = (id, name) => {
         if (window.confirm(`Are you sure you want to restore ${name}?`)) {
-            setArchivedPatients(archivedPatients.filter(patient => patient.id !== id));
+            // Filter out the patient from archived list
+            const updatedArchived = archivedPatients.filter(patient => patient.id !== id);
+            
+            // Update state
+            setArchivedPatients(updatedArchived);
+            
+            // Update localStorage
+            localStorage.setItem('archivedPatients', JSON.stringify(updatedArchived));
+            
             alert(`${name} has been restored successfully`);
+            
+            // Note: You would need to also restore this patient to your backend database
+            // Example: await axios.post('/api/patients/restore', { patientId: id });
         }
     };
 
@@ -210,7 +302,7 @@ const Archives = () => {
                                         />
                                     </th>
                                     <th>PATIENT NAME</th>
-                                    <th>DOB</th>
+                                    <th>Birthdate</th>
                                     <th>PATIENT ID</th>
                                     <th>ARCHIVED ON</th>
                                     <th>REASON</th>
@@ -236,7 +328,7 @@ const Archives = () => {
                                                 <span className={styles.statusBadge}>{patient.status}</span>
                                             </div>
                                         </td>
-                                        <td>{patient.dob}</td>
+                                        <td>{patient.Birthdate}</td>
                                         <td>{patient.id}</td>
                                         <td>{patient.archivedOn}</td>
                                         <td>{patient.reason}</td>

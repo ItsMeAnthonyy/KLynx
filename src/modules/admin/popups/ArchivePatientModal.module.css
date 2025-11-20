@@ -1,0 +1,319 @@
+/* Modal Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Container */
+.modal {
+    background: white;
+    border: 3px solid #27374D;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Header */
+.header {
+    background-color: #07598D;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 5px 5px 0 0;
+    position: relative;
+}
+
+.headerIcon {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    flex: 1;
+}
+
+.closeButton {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Warning Banner */
+.warningBanner {
+    background-color: #fef3c7;
+    border: 2px solid #fbbf24;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1.5rem 1.5rem 1rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.warningIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.warningText {
+    margin: 0;
+    color: #92400e;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Patient Information Section */
+.patientInfo {
+    padding: 0 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+    color: #27374D;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #dde6ed;
+    padding-bottom: 0.5rem;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.infoLabel {
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.infoValue {
+    color: #27374D;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Form */
+.form {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.formGroup {
+    margin-bottom: 1.25rem;
+}
+
+.label {
+    display: block;
+    color: #27374D;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.required {
+    color: #dc2626;
+}
+
+.select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #dde6ed;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #27374D;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.select:focus {
+    outline: none;
+    border-color: #07598D;
+}
+
+.select:hover {
+    border-color: #07598D;
+}
+
+.textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #dde6ed;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #27374D;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: #07598D;
+}
+
+.textarea::placeholder {
+    color: #9ca3af;
+}
+
+.errorText {
+    display: block;
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+}
+
+.cancelButton,
+.confirmButton {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cancelButton {
+    background-color: #e5e7eb;
+    color: #27374D;
+}
+
+.cancelButton:hover {
+    background-color: #d1d5db;
+}
+
+.confirmButton {
+    background-color: #dc2626;
+    color: white;
+}
+
+.confirmButton:hover {
+    background-color: #b91c1c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .header {
+        padding: 0.75rem;
+    }
+
+    .warningBanner {
+        margin: 1rem;
+        padding: 0.75rem;
+    }
+
+    .patientInfo {
+        padding: 0 1rem;
+    }
+
+    .form {
+        padding: 0 1rem 1rem 1rem;
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+
+    .cancelButton,
+    .confirmButton {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.1rem;
+    }
+
+    .warningText {
+        font-size: 0.85rem;
+    }
+
+    .infoValue {
+        font-size: 0.9rem;
+    }
+}

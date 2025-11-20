@@ -27,9 +27,9 @@ const Home = () => {
         <button className="home-admin-button" onClick={() => navigate("/login")}>
           Admin
         </button>
-        <button className="home-patient-button" onClick={() => navigate("/logintwo")}>
+        {/* <button className="home-patient-button" onClick={() => navigate("/logintwo")}>
           Patient
-        </button>
+        </button> */}
       </div>
     </div>
   );

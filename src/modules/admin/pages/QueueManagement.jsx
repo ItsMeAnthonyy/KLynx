@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BiCalendar, BiUser, BiTime, BiCheckCircle, BiLoaderAlt } from 'react-icons/bi';
 import Sidebar from '../../../components/Sidebar';
 import ProfileDropdown from '../../../components/ProfileDropdown';
@@ -6,29 +6,41 @@ import EmergencyButton from '../../../components/EmergencyButton';
 import styles from './QueueManagement.module.css';
 
 const QueueManagement = () => {
-    const [appointments, setAppointments] = useState([
-        {
-            queueNumber: 1,
-            name: 'Rie Mabitado',
-            phone: '09667034802',
-            status: 'completed',
-            complaint: ''
-        },
-        {
-            queueNumber: 2,
-            name: 'Eli Austria',
-            phone: '0957456612',
-            status: 'in-progress',
-            complaint: ''
-        },
-        {
-            queueNumber: 3,
-            name: 'John Doe',
-            phone: '0965613213',
-            status: 'waiting',
-            complaint: 'headache'
+    // Initialize appointments from localStorage or use mock data
+    const [appointments, setAppointments] = useState(() => {
+        const savedQueue = localStorage.getItem('queueAppointments');
+        if (savedQueue) {
+            return JSON.parse(savedQueue);
         }
-    ]);
+        return [
+            {
+                queueNumber: 1,
+                name: 'Rie Mabitado',
+                phone: '09667034802',
+                status: 'completed',
+                complaint: ''
+            },
+            {
+                queueNumber: 2,
+                name: 'Eli Austria',
+                phone: '0957456612',
+                status: 'in-progress',
+                complaint: ''
+            },
+            {
+                queueNumber: 3,
+                name: 'John Doe',
+                phone: '0965613213',
+                status: 'waiting',
+                complaint: 'headache'
+            }
+        ];
+    });
+
+    // Save appointments to localStorage whenever they change
+    useEffect(() => {
+        localStorage.setItem('queueAppointments', JSON.stringify(appointments));
+    }, [appointments]);
 
     // Calculate stats
     const totalToday = appointments.length;

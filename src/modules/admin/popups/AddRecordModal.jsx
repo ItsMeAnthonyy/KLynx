@@ -210,7 +210,7 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     let submitData = {
@@ -227,11 +227,16 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
       submitData.prescduration = medications.map(m => m.duration).join(', ');
     }
     
-    onSubmit(submitData);
+    const createdRecord = await onSubmit(submitData);
+
     onClose();
     
     // Reset medications state
     setMedications([{ medicationName: '', dosage: '', frequency: '', duration: '' }]);
+
+    if (createdRecord?.id) {
+      navigate(`/visits/${createdRecord.id}`);
+    }
   };
 
    const [selectedBodyPart, setSelectedBodyPart] = useState("");

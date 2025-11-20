@@ -17,6 +17,8 @@ const consultationTypeOptions = [
   { value: 'general', label: 'General' },
   { value: 'prenatal', label: 'Prenatal' },
   { value: 'immunization', label: 'Immunization' },
+  { value: 'animal-bite', label: 'Animal Bite' },
+  { value: 'dental', label: 'Dental' },
 ];
 
 const transactionModeOptions = [
@@ -41,7 +43,8 @@ const VisitForm = ({ onSuccess, onCancel, patient }) => {
     attendingProvider: '',
     chiefComplaint: '',
     patientConsent: '',
-    patientId: patient.PatientID,
+    PatientID: patient?.PatientID || '',
+    patientId: patient?.PatientID || '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConsentForm, setShowConsentForm] = useState(false);
@@ -114,7 +117,12 @@ const VisitForm = ({ onSuccess, onCancel, patient }) => {
     }
 
     setIsSubmitting(true);
-    console.log({formData, patientId: patient.PatientID});
+    console.log('Submitting visit data:', {
+      formData, 
+      PatientID: formData.PatientID,
+      patientId: formData.patientId,
+      patient: patient
+    });
 
     try {
       // Simulate API call
@@ -222,32 +230,6 @@ const VisitForm = ({ onSuccess, onCancel, patient }) => {
               min="0"
             />
             <span className={styles.ageLabel}>Years</span>
-          </div>
-          <div className={styles.ageField}>
-            <input
-              type="number"
-              name="ageMonths"
-              className={styles.input}
-              value={formData.ageMonths}
-              onChange={handleChange}
-              placeholder="Months"
-              min="0"
-              max="11"
-            />
-            <span className={styles.ageLabel}>Months</span>
-          </div>
-          <div className={styles.ageField}>
-            <input
-              type="number"
-              name="ageDays"
-              className={styles.input}
-              value={formData.ageDays}
-              onChange={handleChange}
-              placeholder="Days"
-              min="0"
-              max="30"
-            />
-            <span className={styles.ageLabel}>Days</span>
           </div>
         </div>
       </div>

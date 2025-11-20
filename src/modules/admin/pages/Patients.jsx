@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../../../components/sidebar';
+import Sidebar from '../../../components/Sidebar';
 import '../../../components/css/GlobalContainer.css';
 import './Patients.css';
 import '../../../components/css/FileMaintenance.css'
 import '../../../pages/Admin/Doctors.css'
-import axios from 'axios';
-import React from 'react';  
-import { BiSolidCog, BiSolidBell, BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
+import axios from 'axios'; 
+import { FaDownload, FaArchive } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+
+import EmergencyButton from '../../../components/EmergencyButton';
+import ProfileDropdown from '../../../components/ProfileDropdown';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
 import AddPatientModal from '../popups/AddPatientModal';
+import ArchivePatientModal from '../popups/ArchivePatientModal';
 
 
 import { fetchPatientData } from "../services/patientService";
@@ -43,6 +47,10 @@ const Patients = () => {
     const [selectedDoctor, setSelectedDoctor] = useState(null);
 
     const [loading, setLoading] = useState(false);
+    
+    // Archive modal states
+    const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+    const [selectedPatientToArchive, setSelectedPatientToArchive] = useState(null);
 
     const handleModalOpen = () =>{
         setShowModal(true);
@@ -168,8 +176,14 @@ const Patients = () => {
     function getConsultProfiles() {
         axios.get('http://localhost/api/Patient.php').then(function(response){
             console.log("Get All Patient Profiles: ", response.data);
-            setDoctorsList(response.data);
-            setConsultProfiles(response.data);
+            
+            // Filter out archived patients
+            const archivedPatients = JSON.parse(localStorage.getItem('archivedPatients') || '[]');
+            const archivedPatientIds = archivedPatients.map(ap => ap.id);
+            const activePatients = response.data.filter(patient => !archivedPatientIds.includes(patient.PatientID));
+            
+            setDoctorsList(activePatients);
+            setConsultProfiles(activePatients);
         });
     }
 
@@ -186,7 +200,15 @@ const Patients = () => {
     /* Fetches All Patient Info from Patient Creation Page */
     useEffect(() => {
         axios.get("http://localhost/api/Patient.php")
-            .then(res => { setAllPatients(res.data); console.log(res.data); })
+            .then(res => { 
+                // Filter out archived patients
+                const archivedPatients = JSON.parse(localStorage.getItem('archivedPatients') || '[]');
+                const archivedPatientIds = archivedPatients.map(ap => ap.id);
+                const activePatients = res.data.filter(patient => !archivedPatientIds.includes(patient.PatientID));
+                
+                setAllPatients(activePatients); 
+                console.log(activePatients); 
+            })
             .catch(err => console.error(err));
     }, []);
 
@@ -328,6 +350,108 @@ const Patients = () => {
         }
     }
 
+    const handleArchivePatient = (patient) => {
+        setSelectedPatientToArchive(patient);
+        setIsArchiveModalOpen(true);
+    };
+
+    const handleConfirmArchive = ({ reason, notes }) => {
+        if (!selectedPatientToArchive) return;
+
+        // Create archived patient object
+        const archivedPatient = {
+            id: selectedPatientToArchive.PatientID,
+            name: `${selectedPatientToArchive.FirstName} ${selectedPatientToArchive.MiddleName || ''} ${selectedPatientToArchive.LastName}`.trim(),
+            Birthdate: selectedPatientToArchive.Birthdate,
+            archivedOn: new Date().toLocaleDateString('en-US'),
+            reason: reason,
+            notes: notes || '',
+            archivedBy: 'Admin User', // You can get this from auth context
+            status: 'Archived',
+            originalData: selectedPatientToArchive // Store original patient data for restoration
+        };
+        
+        // Get existing archived patients from localStorage
+        const existingArchived = JSON.parse(localStorage.getItem('archivedPatients') || '[]');
+        
+        // Add new archived patient
+        existingArchived.push(archivedPatient);
+        
+        // Save to localStorage
+        localStorage.setItem('archivedPatients', JSON.stringify(existingArchived));
+        
+        // Remove from consultProfiles
+        setConsultProfiles(consultProfiles.filter(p => p.PatientID !== selectedPatientToArchive.PatientID));
+        
+        alert(`${selectedPatientToArchive.FirstName} ${selectedPatientToArchive.LastName} has been archived successfully!`);
+    };
+
+    const handleDownloadData = (patient) => {
+        // Create a CSV or JSON export of patient data
+        const patientData = {
+            'Patient ID': patient.PatientID,
+            'Name': `${patient.FirstName} ${patient.MiddleName || ''} ${patient.LastName}`,
+            'Birthday': patient.Birthday,
+            'Registration Date': patient.RegistrationDate || new Date().toLocaleDateString()
+        };
+        
+        // Convert to JSON string
+        const dataStr = JSON.stringify(patientData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        // Create download link
+        const exportFileDefaultName = `patient_${patient.PatientID}_data.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    };
+
+    const handleAddToQueue = (patient) => {
+        try {
+            // Get existing queue from localStorage
+            const savedQueue = localStorage.getItem('queueAppointments');
+            let queue = savedQueue ? JSON.parse(savedQueue) : [];
+            
+            // Check if patient is already in queue
+            const isAlreadyInQueue = queue.some(apt => apt.patientId === patient.PatientID);
+            if (isAlreadyInQueue) {
+                toast.warning(`${patient.FirstName} ${patient.LastName} is already in the queue!`);
+                return;
+            }
+            
+            // Get the next queue number
+            const nextQueueNumber = queue.length > 0 
+                ? Math.max(...queue.map(apt => apt.queueNumber)) + 1 
+                : 1;
+            
+            // Create new appointment
+            const newAppointment = {
+                queueNumber: nextQueueNumber,
+                patientId: patient.PatientID,
+                name: `${patient.FirstName} ${patient.MiddleName || ''} ${patient.LastName}`.trim(),
+                phone: patient.ContactNumber || 'N/A',
+                status: 'waiting',
+                complaint: '',
+                addedAt: new Date().toISOString()
+            };
+            
+            // Add to queue
+            queue.push(newAppointment);
+            
+            // Save to localStorage
+            localStorage.setItem('queueAppointments', JSON.stringify(queue));
+            
+            // Show success message
+            toast.success(`${patient.FirstName} ${patient.LastName} added to queue (Queue #${nextQueueNumber})`);
+            
+            console.log('Patient added to queue:', newAppointment);
+        } catch (error) {
+            console.error('Error adding patient to queue:', error);
+            toast.error('Failed to add patient to queue');
+        }
+    };
 
     
 
@@ -340,8 +464,11 @@ const Patients = () => {
                         <h1>PATIENTS</h1>
                     </div>
                     <div className="FileMaintenance-HeaderSetting">
-                        <BiSolidBell className="FileMaintenance-Icon" />
-                        <BiSolidCog className="FileMaintenance-Icon" />
+                      <EmergencyButton />
+                        <ProfileDropdown 
+                            email="admin@klynx.com"
+                            name="Admin User"
+                        />
                     </div>
                 </div>
                 {/*<hr></hr>*/}
@@ -400,7 +527,8 @@ const Patients = () => {
                                 <th>Birthday</th>
                                 <th>Registration</th>
                                 <th>Queue</th>
-                                <th>Download Data</th>
+                                <th colSpan="2">Actions</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -421,10 +549,32 @@ const Patients = () => {
                                     {consProf.DateCreated}
                                 </td>
                                 <td>
-                                    Add to Queue
+                                    <button 
+                                        className="queue-button" 
+                                        onClick={() => handleAddToQueue(consProf)}
+                                        style={{
+                                            padding: '6px 12px',
+                                            backgroundColor: '#10b981',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: '500'
+                                        }}
+                                    >
+                                        Add to Queue
+                                    </button>
                                 </td>
                                 <td>
-                                    Download Data
+                                    <button className="download-button" onClick={() => handleDownloadData(consProf)}>
+                                        <FaDownload />
+                                    </button>
+                                </td>
+                                <td>
+                                    <button className="archive-button" onClick={() => handleArchivePatient(consProf)}>
+                                        <FaArchive />
+                                    </button>
                                 </td>
                             </tr>
                             ))}
@@ -1513,6 +1663,17 @@ const Patients = () => {
                 </div>
 
             )}
+
+            {/* Archive Patient Modal */}
+            <ArchivePatientModal
+                isOpen={isArchiveModalOpen}
+                onClose={() => {
+                    setIsArchiveModalOpen(false);
+                    setSelectedPatientToArchive(null);
+                }}
+                patient={selectedPatientToArchive}
+                onConfirm={handleConfirmArchive}
+            />
 
         </div>
     );

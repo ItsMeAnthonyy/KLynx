@@ -66,7 +66,7 @@
 
 .FileMaintenance-Content .FileMaintenance-Header .FileMaintenance-HeaderTitle h1{
     color: white;
-    font-family: 'Coda Caption', sans-serif;
+ 
     font-weight: 800;
     margin-left: 0.7em;
 }
@@ -156,7 +156,7 @@
 }
 
 .FileMaintenance-Filter-Container .FileMaintenance-Entries span{
-    font-family: 'Coda Caption', sans-serif;
+    
     font-weight: 800;
     font-size: 1.5em;
     padding: 1rem 1rem;   
@@ -246,13 +246,24 @@
     box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
 }
 
+.FileMaintenance-TableWrapper .download-button,
+.FileMaintenance-TableWrapper .archive-button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #112250;
+    transition: 0.3s ease-in-out;
+}
+
 .FileMaintenance-Content table thead tr{
     border-bottom: 1px solid #112250;
 }
 
 .FileMaintenance-Content table thead tr th{
-    font-family: 'Coda', sans-serif;
-    font-weight: 600;
+    text-transform: uppercase;
+    
+    font-weight: bolder;
     color: #112250;
     font-size: 14px;
     color: #2D3748;
@@ -278,13 +289,13 @@
 
 .FileMaintenance-Content table tbody td {
     padding: 1rem;
-    font-family: 'Coda', sans-serif;
+ 
     font-size: 1.3em;
     color: #2D3748;
 }
 
 .FileMaintenance-Content table tbody td .PatientNameButton{
-    font-family: 'Coda', sans-serif;
+
     font-size: 0.9em;
     color: #2D3748;
     text-decoration: underline;
