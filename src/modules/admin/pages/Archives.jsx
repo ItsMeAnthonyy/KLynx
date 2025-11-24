@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BiSearch, BiRefresh, BiExport, BiShow, BiUndo } from 'react-icons/bi';
 import Sidebar from '../../../components/Sidebar';
 import ProfileDropdown from '../../../components/ProfileDropdown';
@@ -6,6 +7,7 @@ import EmergencyButton from '../../../components/EmergencyButton';
 import styles from './Archives.module.css';
 
 const Archives = () => {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [reasonFilter, setReasonFilter] = useState('all');
     const [startDate, setStartDate] = useState('');
@@ -161,7 +163,24 @@ const Archives = () => {
 
     // Handle view patient
     const handleViewPatient = (id) => {
-        alert(`Viewing patient ${id}`);
+        const patient = archivedPatients.find(p => p.id === id);
+        if (patient && patient.originalData) {
+            // Navigate to visits page with archived flag
+            navigate(`/patient/${id}/visits`, { 
+                state: { 
+                    patient: patient.originalData,
+                    isArchived: true,
+                    archiveInfo: {
+                        reason: patient.reason,
+                        notes: patient.notes,
+                        archivedOn: patient.archivedOn,
+                        archivedBy: patient.archivedBy
+                    }
+                } 
+            });
+        } else {
+            alert('Patient data not available');
+        }
     };
 
     // Handle restore individual patient

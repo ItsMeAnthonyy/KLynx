@@ -14,6 +14,7 @@ import {
   Legend
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend as RechartsLegend, BarChart, Bar as RechartsBar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 const DashboardAlt = () => {
@@ -22,7 +23,28 @@ const DashboardAlt = () => {
     const [todaysAppts] = useState(5);
     const [medicalStaff, setMedicalStaff] = useState(0);
     const [chartView, setChartView] = useState('month'); // 'month' or 'year'
+    const [selectedDisease, setSelectedDisease] = useState('all'); // For disease filter
     const navigate = useNavigate();
+
+    // Disease data for different conditions
+    const diseaseData = {
+        all: {
+            month: [12, 19, 15, 25],
+            year: [65, 59, 80, 81, 56, 55, 40, 45, 60, 70, 85, 90]
+        },
+        hypertension: {
+            month: [5, 8, 6, 10],
+            year: [25, 22, 30, 28, 20, 18, 15, 18, 22, 25, 30, 35]
+        },
+        diabetes: {
+            month: [3, 10, 4, 17],
+            year: [18, 15, 22, 20, 15, 12, 10, 12, 15, 18, 22, 25]
+        },
+        respiratory: {
+            month: [4, 6, 5, 8],
+            year: [22, 22, 28, 33, 21, 25, 15, 15, 23, 27, 33, 30]
+        }
+    };
 
     const data = {
         labels: chartView === 'month' 
@@ -30,10 +52,12 @@ const DashboardAlt = () => {
             : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         datasets: [
             {
-                label: 'Disease Cases',
+                label: selectedDisease === 'all' ? 'All Disease Cases' : 
+                       selectedDisease === 'hypertension' ? 'Hypertension Cases' :
+                       selectedDisease === 'diabetes' ? 'Diabetes Cases' : 'Respiratory Cases',
                 data: chartView === 'month' 
-                    ? [12, 19, 15, 25]
-                    : [65, 59, 80, 81, 56, 55, 40, 45, 60, 70, 85, 90],
+                    ? diseaseData[selectedDisease].month
+                    : diseaseData[selectedDisease].year,
                 backgroundColor: '#07598D',
                 borderColor: '#27374D',
                 borderWidth: 1,
@@ -155,6 +179,27 @@ const DashboardAlt = () => {
                         <div className={styles.chartCardHeader}>
                             <h3 className={styles.chartCardTitle}>Disease Statistics</h3>
                             <div className={styles.chartButtonContainer}>
+                                <select 
+                                    value={selectedDisease}
+                                    onChange={(e) => setSelectedDisease(e.target.value)}
+                                    style={{
+                                        padding: '8px 16px',
+                                        backgroundColor: '#07598D',
+                                        border: '2px solid #07598D',
+                                        borderRadius: '6px',
+                                        color: 'white',
+                                        fontWeight: '600',
+                                        fontSize: '13px',
+                                        cursor: 'pointer',
+                                        textTransform: 'uppercase',
+                                        marginRight: '8px'
+                                    }}
+                                >
+                                    <option value="all">All Diseases</option>
+                                    <option value="hypertension">Hypertension</option>
+                                    <option value="diabetes">Diabetes</option>
+                                    <option value="respiratory">Respiratory</option>
+                                </select>
                                 <button 
                                     className={`${styles.chartButton} ${chartView === 'month' ? styles.active : ''}`}
                                     onClick={() => setChartView('month')}
@@ -209,19 +254,31 @@ const DashboardAlt = () => {
                     <div className={styles.reportsRow}>
                         <div className={styles.reportCard}>
                             <h3 className={styles.reportCardTitle}>Prenatal Report</h3>
-                            <div className={styles.reportCardData}>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Total Patients:</span>
-                                    <span className={styles.reportDataValue}>45</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>This Month:</span>
-                                    <span className={styles.reportDataValue}>12</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>High Risk:</span>
-                                    <span className={styles.reportDataValue}>8</span>
-                                </div>
+                            <p style={{ fontSize: '14px', color: '#666', textAlign: 'center', marginBottom: '16px' }}>Distribution by trimester</p>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px' }}>
+                                <ResponsiveContainer width="100%" height={220}>
+                                    <PieChart>
+                                        <Pie
+                                            data={[
+                                                { name: 'First Trimester', value: 32 },
+                                                { name: 'Second Trimester', value: 41 },
+                                                { name: 'Third Trimester', value: 27 }
+                                            ]}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name.split(' ')[0]} Trimester: ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={80}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            <Cell fill="#3b82f6" />
+                                            <Cell fill="#4ade80" />
+                                            <Cell fill="#22c55e" />
+                                        </Pie>
+                                        <RechartsTooltip />
+                                    </PieChart>
+                                </ResponsiveContainer>
                             </div>
                             <button 
                                 className={styles.reportMoreButton}
@@ -232,20 +289,30 @@ const DashboardAlt = () => {
                         </div>
 
                         <div className={styles.reportCard}>
-                            <h3 className={styles.reportCardTitle}>Antepartum</h3>
-                            <div className={styles.reportCardData}>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Active Cases:</span>
-                                    <span className={styles.reportDataValue}>28</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Check-ups Today:</span>
-                                    <span className={styles.reportDataValue}>5</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Complications:</span>
-                                    <span className={styles.reportDataValue}>3</span>
-                                </div>
+                            <h3 className={styles.reportCardTitle}>Antepartum & Postpartum</h3>
+                            <p style={{ fontSize: '14px', color: '#666', textAlign: 'center', marginBottom: '16px' }}>Monthly comparison</p>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                                <ResponsiveContainer width="100%" height={220}>
+                                    <BarChart
+                                        data={[
+                                            { month: 'Jan', Antepartum: 12, Postpartum: 8 },
+                                            { month: 'Feb', Antepartum: 15, Postpartum: 10 },
+                                            { month: 'Mar', Antepartum: 18, Postpartum: 12 },
+                                            { month: 'Apr', Antepartum: 14, Postpartum: 9 },
+                                            { month: 'May', Antepartum: 16, Postpartum: 11 },
+                                            { month: 'Jun', Antepartum: 20, Postpartum: 14 }
+                                        ]}
+                                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="month" style={{ fontSize: '12px' }} />
+                                        <YAxis style={{ fontSize: '12px' }} />
+                                        <RechartsTooltip />
+                                        <RechartsLegend wrapperStyle={{ fontSize: '12px' }} />
+                                        <RechartsBar dataKey="Antepartum" fill="#3b82f6" />
+                                        <RechartsBar dataKey="Postpartum" fill="#4ade80" />
+                                    </BarChart>
+                                </ResponsiveContainer>
                             </div>
                             <button 
                                 className={styles.reportMoreButton}
@@ -255,48 +322,35 @@ const DashboardAlt = () => {
                             </button>
                         </div>
 
-                        <div className={styles.reportCard}>
-                            <h3 className={styles.reportCardTitle}>Postpartum</h3>
-                            <div className={styles.reportCardData}>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Recent Deliveries:</span>
-                                    <span className={styles.reportDataValue}>18</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Follow-ups Due:</span>
-                                    <span className={styles.reportDataValue}>7</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Recovery Rate:</span>
-                                    <span className={styles.reportDataValue}>95%</span>
-                                </div>
-                            </div>
-                            <button 
-                                className={styles.reportMoreButton}
-                                onClick={() => navigate('/MaternalReport')}
-                            >
-                                MORE
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Bottom Row - 2 Report Cards */}
-                    <div className={styles.reportsRow}>
                         <div className={styles.reportCard}>
                             <h3 className={styles.reportCardTitle}>Animal Bite Report</h3>
-                            <div className={styles.reportCardData}>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Total Cases:</span>
-                                    <span className={styles.reportDataValue}>32</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>This Week:</span>
-                                    <span className={styles.reportDataValue}>6</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Rabies Vaccine Given:</span>
-                                    <span className={styles.reportDataValue}>29</span>
-                                </div>
+                            <p style={{ fontSize: '14px', color: '#666', textAlign: 'center', marginBottom: '16px' }}>Cases by animal type</p>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '16px' }}>
+                                <ResponsiveContainer width="100%" height={220}>
+                                    <PieChart>
+                                        <Pie
+                                            data={[
+                                                { name: 'Dogs', value: 45 },
+                                                { name: 'Cats', value: 25 },
+                                                { name: 'Rats', value: 15 },
+                                                { name: 'Others', value: 15 }
+                                            ]}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={80}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            <Cell fill="#3b82f6" />
+                                            <Cell fill="#4ade80" />
+                                            <Cell fill="#22c55e" />
+                                            <Cell fill="#facc15" />
+                                        </Pie>
+                                        <RechartsTooltip />
+                                    </PieChart>
+                                </ResponsiveContainer>
                             </div>
                             <button 
                                 className={styles.reportMoreButton}
@@ -307,20 +361,26 @@ const DashboardAlt = () => {
                         </div>
 
                         <div className={styles.reportCard}>
-                            <h3 className={styles.reportCardTitle}>Animal Bite Location Report</h3>
-                            <div className={styles.reportCardData}>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Barangay Areas:</span>
-                                    <span className={styles.reportDataValue}>12</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>High Risk Zones:</span>
-                                    <span className={styles.reportDataValue}>4</span>
-                                </div>
-                                <div className={styles.reportDataItem}>
-                                    <span className={styles.reportDataLabel}>Dog Population:</span>
-                                    <span className={styles.reportDataValue}>Est. 250</span>
-                                </div>
+                            <h3 className={styles.reportCardTitle}>Bite Location</h3>
+                            <p style={{ fontSize: '14px', color: '#666', textAlign: 'center', marginBottom: '16px' }}>Distribution by body part</p>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                                <ResponsiveContainer width="100%" height={220}>
+                                    <BarChart
+                                        data={[
+                                            { location: 'Arm', cases: 25 },
+                                            { location: 'Leg', cases: 36 },
+                                            { location: 'Hand', cases: 20 },
+                                            { location: 'Other', cases: 15 }
+                                        ]}
+                                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="location" style={{ fontSize: '12px' }} />
+                                        <YAxis style={{ fontSize: '12px' }} />
+                                        <RechartsTooltip />
+                                        <RechartsBar dataKey="cases" fill="#22c55e" />
+                                    </BarChart>
+                                </ResponsiveContainer>
                             </div>
                             <button 
                                 className={styles.reportMoreButton}

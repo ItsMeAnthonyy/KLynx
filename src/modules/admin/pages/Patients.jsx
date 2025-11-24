@@ -51,6 +51,11 @@ const Patients = () => {
     // Archive modal states
     const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
     const [selectedPatientToArchive, setSelectedPatientToArchive] = useState(null);
+    
+    // Pagination states
+    const [entriesPerPage, setEntriesPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleModalOpen = () =>{
         setShowModal(true);
@@ -408,6 +413,38 @@ const Patients = () => {
         linkElement.click();
     };
 
+    // Filter patients based on search term
+    const filteredPatients = consultProfiles.filter(patient => {
+        const fullName = `${patient.LastName} ${patient.FirstName} ${patient.MiddleName}`.toLowerCase();
+        const searchLower = searchTerm.toLowerCase();
+        return fullName.includes(searchLower) || 
+               patient.Birthdate?.includes(searchTerm) ||
+               patient.DateCreated?.includes(searchTerm);
+    });
+
+    // Calculate pagination
+    const totalPages = Math.ceil(filteredPatients.length / entriesPerPage);
+    const startIndex = (currentPage - 1) * entriesPerPage;
+    const endIndex = startIndex + entriesPerPage;
+    const currentPatients = filteredPatients.slice(startIndex, endIndex);
+
+    // Handle entries per page change
+    const handleEntriesChange = (e) => {
+        setEntriesPerPage(Number(e.target.value));
+        setCurrentPage(1); // Reset to first page
+    };
+
+    // Handle page change
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    // Handle search
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1); // Reset to first page when searching
+    };
+
     const handleAddToQueue = (patient) => {
         try {
             // Get existing queue from localStorage
@@ -478,7 +515,7 @@ const Patients = () => {
                             <h4>Total Number of Patients</h4>
                         </div>
                         <div className="Patients-CardNumber">
-                            <h1>15</h1>
+                            <h1>{allPatients.length + JSON.parse(localStorage.getItem('archivedPatients') || '[]').length}</h1>
                         </div>
                     </div>
                     <div className="Patients-Card">
@@ -486,7 +523,7 @@ const Patients = () => {
                             <h4>Active Patients</h4>
                         </div>
                         <div className="Patients-CardNumber">
-                            <h1>16</h1>
+                            <h1>{consultProfiles.length}</h1>
                         </div>
                     </div>
                     <div className="Patients-Card">
@@ -494,17 +531,18 @@ const Patients = () => {
                             <h4>Inactive Patients</h4>
                         </div>
                         <div className="Patients-CardNumber">
-                            <h1>10</h1>
+                            <h1>{JSON.parse(localStorage.getItem('archivedPatients') || '[]').length}</h1>
                         </div>
                     </div>
                 </div>
                 <div className="FileMaintenance-Filter-Container">
                     <div className="FileMaintenance-Entries">
                         <span>SHOW</span>
-                        <select>
-                            <option hidden></option>
+                        <select value={entriesPerPage} onChange={handleEntriesChange}>
                             <option value="5">5</option>
                             <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
                         </select>
                         <span>Entries</span>
                     </div>
@@ -516,7 +554,12 @@ const Patients = () => {
                             >
                                 +
                             </button>
-                            <input type="text" placeholder="Search here..."/>
+                            <input 
+                                type="text" 
+                                placeholder="Search here..." 
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                            />
                     </div>
                 </div>
                 <div className="FileMaintenance-TableWrapper">
@@ -532,8 +575,8 @@ const Patients = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {consultProfiles.map((consProf, key) => (
-                            <tr key={key}>
+                            {currentPatients.map((consProf, key) => (
+                            <tr key={key} onClick={() => handleViewPatient(consProf)}>
                                 <td>
                                     <button
                                         className="PatientNameButton"
@@ -580,6 +623,64 @@ const Patients = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+                
+                {/* Pagination Controls */}
+                <div className="FileMaintenance-Pagination" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '20px',
+                    marginTop: '10px'
+                }}>
+                    <div style={{ fontSize: '14px', color: '#666' }}>
+                        Showing {startIndex + 1} to {Math.min(endIndex, filteredPatients.length)} of {filteredPatients.length} entries
+                    </div>
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            style={{
+                                padding: '8px 12px',
+                                border: '1px solid #ddd',
+                                backgroundColor: currentPage === 1 ? '#f5f5f5' : '#fff',
+                                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                                borderRadius: '4px'
+                            }}
+                        >
+                            Previous
+                        </button>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <button
+                                key={index + 1}
+                                onClick={() => handlePageChange(index + 1)}
+                                style={{
+                                    padding: '8px 12px',
+                                    border: '1px solid #ddd',
+                                    backgroundColor: currentPage === index + 1 ? '#07598D' : '#fff',
+                                    color: currentPage === index + 1 ? '#fff' : '#333',
+                                    cursor: 'pointer',
+                                    borderRadius: '4px',
+                                    fontWeight: currentPage === index + 1 ? 'bold' : 'normal'
+                                }}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            style={{
+                                padding: '8px 12px',
+                                border: '1px solid #ddd',
+                                backgroundColor: currentPage === totalPages ? '#f5f5f5' : '#fff',
+                                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                                borderRadius: '4px'
+                            }}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
             </main>
 

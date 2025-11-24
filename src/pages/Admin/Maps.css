@@ -1,12 +1,34 @@
 .map-wrap {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .gmap {
   width: 100%;
   height: 100%;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #07598D;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #054a75;
 }
 
 .legend-box {
@@ -47,9 +69,9 @@
   top: 10px;
   left: 10px;
   width: 25%;
-  background: #2323a7;
+  background: #07598D;
   color: white;
-  border-radius: 32px;
+  border-radius: 10px;
   padding: 5px 20px;
   font-size: 20px;
   font-weight: 600;
@@ -64,13 +86,13 @@
   background: transparent;
   border: none;
   color: #fff;
-  font-size: 20px;
+  font-size: 15px;
   outline: none;
   width: 100%;
 }
 
 .search-bar .fa-filter {
-  font-size: 20px;
+  font-size: 15px;
   margin-left: 12px;
   cursor: pointer;
 }
@@ -178,34 +200,84 @@
 
 .bhc-main-content {
   display: flex;
-  gap: 10px;
-  margin: 0 10px 10px 10px;
+  gap: 20px;
+  margin: 0 16px 16px 16px;
 }
+
 .bhc-map-container {
-  flex: 2;
+  flex: 2.5;
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 16px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  padding: 0;
+  overflow: hidden;
 }
+
 .bhc-sidebar {
   flex: 1;
   background: #fff;
   border-radius: 16px;
-  padding: 24px;
-  max-height: 600px;
+  padding: 20px;
+  max-height: 700px;
   overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
+
+/* Custom scrollbar for sidebar */
+.bhc-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bhc-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.bhc-sidebar::-webkit-scrollbar-thumb {
+  background: #2323a7;
+  border-radius: 10px;
+}
+
+.bhc-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #1a1a7a;
+}
+
 .bhc-sidebar-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #2323a7;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #2323a7;
 }
+
 .bhc-sidebar-row {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #d0f0ea;
-  font-size: 1.1rem;
+  padding: 12px 8px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.bhc-sidebar-row:hover {
+  background-color: #f5f5ff;
+  transform: translateX(5px);
+}
+
+@media (max-width: 1200px) {
+  .bhc-main-content {
+    flex-direction: column;
+  }
+  
+  .bhc-map-container {
+    flex: 1;
+  }
+  
+  .bhc-sidebar {
+    max-height: 400px;
+  }
 }
