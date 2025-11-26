@@ -3,6 +3,7 @@ import Sidebar from '../../../components/Sidebar';
 import EmergencyButton from '../../../components/EmergencyButton';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 import AppointmentCalendar from './appointmentCalendar';
+import AppointmentModal from '../popups/appointmentModal';
 import AppointmentBookingModal from '../popups/appointmentBookingModal';
 import { getAppointments, getProviders } from '../api/patientAppointmentApi';
 
@@ -19,23 +20,31 @@ const Appointment = () => {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [showBookingModal, setShowBookingModal] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
-    //const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const [viewMode, setViewMode] = useState('week');
     const [lateAppointments, setLateAppointments] = useState([]);
 
     const { auth } = useAuth();
-    const isAdmin  = auth?.userRole?.includes("admin");
+    //const isAdmin  = auth?.userRole?.includes("admin");
 
     useEffect(() => {
-        //checkUser();
+        checkUser();
         fetchProviders();
     }, []);
 
     useEffect(() => {
-        if (!auth.userRole) return;
-        fetchAppointments();
-    }, []);
+        if (currentUser) {
+            fetchAppointments();
+        }
+    }, [currentDate, selectedProvider, currentUser, viewMode]);
+
+    const checkUser = async () => {
+        if (auth.userId) {
+            setCurrentUser(auth.userId);
+            setIsAdmin(auth?.userRole?.includes("admin"));
+        }
+    };
 
     const fetchProviders = async () => {
         try {
@@ -153,11 +162,21 @@ const Appointment = () => {
                     onViewChange={setViewMode}
                 />
 
+                {selectedAppointment && (
+                    <AppointmentModal
+                        appointment={selectedAppointment}
+                        onClose={() => setSelectedAppointment(null)}
+                        onUpdate={fetchAppointments}
+                        currentUserId={currentUser}
+                        isAdmin={isAdmin}
+                    />
+                )}
+
                 {showBookingModal && (
                     <AppointmentBookingModal
                         onClose={() => setShowBookingModal(false)}
                         onSuccess={fetchAppointments}
-                        currentUserId={currentUser?.id}
+                        currentUserId={currentUser}
                     />
                 )}
                 

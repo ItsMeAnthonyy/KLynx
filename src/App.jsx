@@ -1,4 +1,4 @@
-
+import { Toaster } from "./components/toaster";
 import React from 'react';  
 import Consultation2 from './pages/Admin/Consultation2'
 import Consultation from './pages/Admin/Consultation'
@@ -53,6 +53,7 @@ import ConsultationDetail from './modules/admin/pages/ConsultationDetail';
 
 import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
+import QueueManagement2 from './modules/admin/pages/QueueManagement2';
 import QueueManagement from './modules/admin/pages/QueueManagement';
 import Archives from './modules/admin/pages/Archives';
 
@@ -113,6 +114,7 @@ function App() {
             draggable
             pauseOnHover
           />
+          <Toaster />
           <BrowserRouter>
             <Routes>
 
@@ -164,6 +166,8 @@ function App() {
                 <Route path='/StaffHealthRecord' element={<StaffHealthRecord />} />
                 
                 <Route path='/QueueManagement' element={<QueueManagement />} />
+                <Route path='/QueueManagement2' element={<QueueManagement2 />} />
+
                 <Route path='/Archives' element={<Archives />} />
                 <Route path='/Staff' element={<Staff/>} />
                 <Route path='/Nurse' element={<Nurse/>} />

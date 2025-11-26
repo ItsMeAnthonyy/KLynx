@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import medikablue from "../../assets/picture/medikablue.svg";
+import KLynx from "../../assets/picture/klynx.png";
+
 import './Frontpage.css'
 
 const Home = () => {
@@ -15,8 +16,9 @@ const Home = () => {
 
       {/* Logo */}
       <div className="home-logo-container">
+        <h1>KLynx</h1>
         <img
-          src={medikablue}
+          src={KLynx}
           alt="Logo"
           className="home-logo"
         />
@@ -25,7 +27,7 @@ const Home = () => {
       {/* Buttons */}
       <div className="home-button-container">
         <button className="home-admin-button" onClick={() => navigate("/login")}>
-          Admin
+          Login
         </button>
         {/* <button className="home-patient-button" onClick={() => navigate("/logintwo")}>
           Patient

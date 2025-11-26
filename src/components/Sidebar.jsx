@@ -73,11 +73,9 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className='sub-mSidebar-Nondropdown'>
-                    <li>
                         <Link to="/Patients">Patient List</Link>
                         <Link to="/QueueManagement">Queue Management</Link>
-                        <Link to="/Archives">Archive Management</Link>
-                    </li>             
+                        <Link to="/Archives">Archive Management</Link>          
                 </li>
                 <li className="sub-mSidebar-Nondropdown">
                     {/*{checkPermission(PERMISSIONS.ICD_VIEW) && (<Link to="/ICDManager2">ICD-10</Link>)}*/}

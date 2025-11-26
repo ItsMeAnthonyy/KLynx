@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, addDays, subDays, startOfDay, isToday } from 'date-fns';
+import { format, addDays, subDays, startOfDay, isToday, parse } from 'date-fns';
 import styles from './dayViewPanel.module.css';
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
@@ -11,12 +11,35 @@ const STATUS_COLORS = {
   cancelled: '#EF4444'
 };
 
+
+
 const dayViewPanel = ({ appointments, selectedDate, onDateChange, onAppointmentClick }) => {
+    const parseDBDate = (str) => {
+        return parse(str, "yyyy-MM-dd HH:mm:ss", new Date());
+    };
+
+    const roundTo30 = (date) => {
+        const d = new Date(date);
+        const mins = d.getMinutes();
+
+        if (mins < 15) d.setMinutes(0);
+        else if (mins < 45) d.setMinutes(30);
+        else {
+            d.setMinutes(0);
+            d.setHours(d.getHours() + 1);
+        }
+
+        d.setSeconds(0);
+        d.setMilliseconds(0);
+        return d;
+    };
+
     const dayAppointments = appointments.filter(apt => {
-        const aptDate = startOfDay(new Date(apt.scheduled_time));
+        const parsed = parseDBDate(apt.scheduled_time);
+        const aptDate = startOfDay(parsed);
         const selected = startOfDay(selectedDate);
         return aptDate.getTime() === selected.getTime();
-    }).sort((a, b) => new Date(a.scheduled_time) - new Date(b.scheduled_time));
+    });
 
     const handlePrevDay = () => {
         onDateChange(subDays(selectedDate, 1));
@@ -30,22 +53,30 @@ const dayViewPanel = ({ appointments, selectedDate, onDateChange, onAppointmentC
         onDateChange(new Date());
     };
 
-    // Generate time slots from 7am to 7pm
+    // Generate time slots from 7am to 7pm in 12-hour format
     const generateTimeSlots = () => {
         const slots = [];
         for (let hour = 7; hour < 19; hour++) {
-            slots.push(`${hour.toString().padStart(2, '0')}:00`);
-            slots.push(`${hour.toString().padStart(2, '0')}:30`);
+
+            // Create a date object for this hour to ensure consistent formatting
+            const hourDate = new Date();
+            hourDate.setHours(hour, 0, 0, 0);
+            slots.push(format(hourDate, 'h:mma'));
+
+            hourDate.setMinutes(30);
+            slots.push(format(hourDate, 'h:mma'));
         }
         return slots;
     };
 
     const timeSlots = generateTimeSlots();
 
-    const getAppointmentForSlot = (timeSlot) => {
-        return dayAppointments.find(apt => {
-            const aptTime = format(new Date(apt.scheduled_time), 'HH:mm');
-            return aptTime === timeSlot;
+    const getAppointmentForSlot = (slot) => {
+        return dayAppointments.find((apt) => {
+            const parsed = parseDBDate(apt.scheduled_time);
+            const rounded = roundTo30(parsed);
+            const aptTime = format(rounded, "h:mma");
+            return aptTime === slot;
         });
     };
 
@@ -73,6 +104,7 @@ const dayViewPanel = ({ appointments, selectedDate, onDateChange, onAppointmentC
 
             <div className={styles.timetable}>
                 {timeSlots.map((slot) => {
+
                     const appointment = getAppointmentForSlot(slot);
                     return (
                         <div key={slot} className={styles.timeSlot}>

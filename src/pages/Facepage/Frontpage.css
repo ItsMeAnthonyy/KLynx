@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda+Caption:wght@800&display=swap');
+
 /* THIS IS THE DESIGN FOR THE FRONTPAGE.JSX */
 
 .home-page {
@@ -41,23 +43,26 @@
 
 /* Logo styles */
 .home-logo-container {
-  margin-top: 30px;
+  display: flex;
+  align-items: center;       /* vertically center */
+  gap: 10px;
+                 /* spacing between h1 and logo */
+}
+
+.home-logo-container h1 {
+  font-family: 'Coda Caption', sans-serif;
+  font-weight: 800;       /* Extra Bold */
+  color: #07598D;         /* your blue color */
+  margin: 0;              /* optional, removes default h1 spacing */
+  font-size: 6rem;        /* adjust size as needed */
 }
 
 .home-logo {
-  align-items: center;
-  justify-content: center;
-  width: 400px;
-  height: auto;
-  
+  max-height: 100px;  /* try 30px, 35px, 40px */
+  width: auto;              /* makes image same height as the font size of h1 */
 }
 
 /* Buttons container */
-.home-button-container {
-  margin-top: 20px;
-  display: flex;
-  gap: 50px;
-}
 
 .home-button-container button {
   padding: 15px 30px;
@@ -78,14 +83,15 @@
   color: white;
   padding: 10px 20px;
   margin: 20px;
-  background-color:#003399;
+  background-color:#112250;
   cursor: pointer;
   width: 200px;
   height: 50px;
 }
 
 .home-admin-button:hover {
-  background-color:#0246ce;
+  background: hsl(203 70% 27% / 0.9);
+  box-shadow: 0 4px 12px hsl(200 95% 40% / 0.3);
 }
 
 /* Patient button styles */

@@ -1,0 +1,356 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: hsl(0 0% 100%);
+  border-radius: 0.75rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid hsl(210 25% 88%);
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(215 25% 15%);
+  margin: 0;
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    color: hsl(215 15% 50%);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s;
+}
+
+.closeBtn:hover {
+    background: hsl(210 30% 92%);
+    color: hsl(215 25% 15%);
+}
+
+.content {
+    padding: 1.5rem;
+}
+
+.statusBadge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+.section {
+    margin-bottom: 1.5rem;
+}
+
+.field {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.field svg {
+  color: hsl(200 95% 40%);
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(215 15% 50%);
+  margin-bottom: 0.25rem;
+}
+
+.field p {
+  margin: 0;
+  color: hsl(215 25% 15%);
+  font-size: 1rem;
+}
+
+.consultationType {
+  text-transform: capitalize;
+}
+
+/* .alert {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: hsl(0 84.2% 60.2% / 0.1);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert svg {
+  color: hsl(0 84.2% 60.2%);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.alert strong {
+  display: block;
+  color: hsl(0 84.2% 60.2%);
+  margin-bottom: 0.25rem;
+}
+
+.alert p {
+  margin: 0;
+  color: hsl(215 25% 15%);
+  font-size: 0.875rem;
+} */
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.confirmBtn,
+.queueBtn,
+.cancelBtn,
+.submitCancelBtn,
+.cancelCancelBtn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.confirmBtn {
+  background: hsl(200 95% 40%);
+  color: hsl(0 0% 100%);
+}
+
+.confirmBtn:hover {
+  opacity: 0.9;
+}
+
+.queueBtn {
+  background: hsl(240 4.8% 95.9%);
+  color: hsl(240 5.9% 10%);
+}
+
+.queueBtn:hover {
+  opacity: 0.9;
+}
+
+.cancelBtn {
+  background: hsl(0 84.2% 60.2%);
+  color: hsl(0 0% 100%);
+}
+
+.cancelBtn:hover {
+  opacity: 0.9;
+}
+
+.cancelSection {
+  margin-top: 1.5rem;
+}
+
+.cancelSection label {
+  display: block;
+  font-weight: 500;
+  color: hsl(215 25% 15%);
+  margin-bottom: 0.5rem;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 0.5rem;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: hsl(200 95% 40%);
+}
+
+.cancelActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.submitCancelBtn {
+  flex: 1;
+  background: hsl(0 84.2% 60.2%);
+  color: hsl(0 0% 100%);
+}
+
+.submitCancelBtn:hover {
+  opacity: 0.9;
+}
+
+.cancelCancelBtn {
+  flex: 1;
+  background: hsl(210 30% 92%);
+  color: hsl(215 15% 50%);
+}
+
+.cancelCancelBtn:hover {
+  background: hsl(210 30% 92% / 0.8);
+}
+
+.queueForm {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.infoBox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: hsl(200 95% 40% / 0.1); /* translucent blue background */
+  border: 1px solid hsl(200 95% 40% / 0.2); /* subtle blue border */
+  border-radius: 0.5rem;
+  color: hsl(200 95% 40%); /* vibrant blue text */
+  font-size: 0.875rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formField label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: hsl(215 25% 15%);
+  font-size: 0.875rem;
+}
+
+.formField label svg {
+  color: hsl(200 95% 40%);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 0.5rem;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: hsl(200 95% 40%);
+}
+
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.backBtn,
+.submitBtn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backBtn {
+  background: hsl(210 30% 92%);
+  color: hsl(215 15% 50%);
+}
+
+.backBtn:hover:not(:disabled) {
+  background: hsl(210 30% 92% / 0.8);
+}
+
+.backBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submitBtn {
+  background: hsl(200 95% 40%);
+  color: hsl(0 0% 100%);
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .actions {
+    gap: 0.5rem;
+  }
+
+  .cancelActions {
+    flex-direction: column;
+  }
+}
+

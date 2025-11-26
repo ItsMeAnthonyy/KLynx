@@ -62,3 +62,33 @@ export const getAppointments = async (startDate, endDate, providerId = null) => 
         return [];
   }
 }
+
+export const updateAppointment = async (id, updates) => {
+    try {
+        const { data } = await axios.post(
+            `http://localhost/api/update_appointment.php?id=${id}`,
+            updates,
+        );
+
+        if (!data.success) throw new Error(data.message || "Failed to update appointment");
+    } catch (err) {
+        console.error("Error updating appointment:", err);
+        throw err;
+    }
+}
+
+export const confirmAppointment = async (id, confirmedBy) => {
+    return updateAppointment(id, {
+        status: 'scheduled',
+        confirmed_by: confirmedBy
+    });
+};
+
+export const cancelAppointment = async (id, cancelledBy, cancelReason) => {
+    return updateAppointment(id, {
+        status: 'cancelled',
+        cancelled_by: cancelledBy,
+        cancel_reason: cancelReason
+        // cancelled_at removed, PHP will set it
+    });
+}

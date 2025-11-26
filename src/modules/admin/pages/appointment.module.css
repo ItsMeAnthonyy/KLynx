@@ -53,6 +53,7 @@
     gap: 1rem;
     flex-wrap: nowrap;
     margin-left: auto;
+    margin-top: 0.5rem;
 }
 
 .filters {

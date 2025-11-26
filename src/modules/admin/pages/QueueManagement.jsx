@@ -1,236 +1,318 @@
-import { useState, useEffect } from 'react';
-import { BiCalendar, BiUser, BiTime, BiCheckCircle, BiLoaderAlt } from 'react-icons/bi';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Sidebar';
-import ProfileDropdown from '../../../components/ProfileDropdown';
 import EmergencyButton from '../../../components/EmergencyButton';
+import ProfileDropdown from '../../../components/ProfileDropdown';
+// import { User, Clock, AlertCircle, Filter, Search, Plus, AlertTriangle } from 'lucide-react';
+import { BiUser, BiTime, BiErrorCircle, BiSearch, BiPlus, BiErrorAlt } from "react-icons/bi";
+import { useToast } from '../../../hooks/use-toast';
+import { getQueue/*, updateQueueStatus, removeFromQueue*/ } from '../api/queueManagementApi';
+// import { checkQueueLimits, startQueueLimitMonitor } from '@/services/queueLimitService';
+import AddWalkInModal from '../popups/addWalkInModal';
 import styles from './QueueManagement.module.css';
+import useAuth from '../../../hooks/useAuth';
+
+const STATUS_COLORS = {
+    waiting: '#F59E0B',
+    in_service: '#10B981',
+    finished_service: '#6B7280'
+};
+
+const PRIORITY_COLORS = {
+    routine: '#6B7280',
+    urgent: '#F97316',
+    emergency: '#EF4444'
+};
 
 const QueueManagement = () => {
-    // Initialize appointments from localStorage or use mock data
-    const [appointments, setAppointments] = useState(() => {
-        const savedQueue = localStorage.getItem('queueAppointments');
-        if (savedQueue) {
-            return JSON.parse(savedQueue);
-        }
-        return [
-            {
-                queueNumber: 1,
-                name: 'Rie Mabitado',
-                phone: '09667034802',
-                status: 'completed',
-                complaint: ''
-            },
-            {
-                queueNumber: 2,
-                name: 'Eli Austria',
-                phone: '0957456612',
-                status: 'in-progress',
-                complaint: ''
-            },
-            {
-                queueNumber: 3,
-                name: 'John Doe',
-                phone: '0965613213',
-                status: 'waiting',
-                complaint: 'headache'
-            }
-        ];
-    });
+    const [queueItems, setQueueItems] = useState([]);
+    const [filteredItems, setFilteredItems] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showWalkInModal, setShowWalkInModal] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [queueWarnings, setQueueWarnings] = useState([]);
+    const { toast } = useToast();
+    const { auth } = useAuth();
 
-    // Save appointments to localStorage whenever they change
     useEffect(() => {
-        localStorage.setItem('queueAppointments', JSON.stringify(appointments));
-    }, [appointments]);
+        checkUser();
+    }, []);
 
-    // Calculate stats
-    const totalToday = appointments.length;
-    const waiting = appointments.filter(apt => apt.status === 'waiting').length;
-    const inProgress = appointments.filter(apt => apt.status === 'in-progress').length;
-    const completed = appointments.filter(apt => apt.status === 'completed').length;
+    useEffect(() => {
+        if (currentUser) {
+            fetchQueue();
+            // checkLimits();
+        }
+    }, [currentUser]);
 
-    // Get current date
-    const getCurrentDate = () => {
-        const today = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return today.toLocaleDateString('en-US', options);
-    };
+    useEffect(() => {
+        applyFilters();
+    }, [queueItems, statusFilter, searchTerm]);
 
-    const handleStart = (queueNumber) => {
-        setAppointments(appointments.map(apt => 
-            apt.queueNumber === queueNumber ? { ...apt, status: 'in-progress' } : apt
-        ));
-    };
-
-    const handleComplete = (queueNumber) => {
-        setAppointments(appointments.map(apt => 
-            apt.queueNumber === queueNumber ? { ...apt, status: 'completed' } : apt
-        ));
-    };
-
-    const handleCancel = (queueNumber) => {
-        if (window.confirm('Are you sure you want to cancel this appointment?')) {
-            setAppointments(appointments.filter(apt => apt.queueNumber !== queueNumber));
+    const checkUser = async () => {
+        if (auth.userId) {
+            setCurrentUser(auth.userId);
+            setIsAdmin(auth?.userRole?.includes("admin"));
         }
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'completed':
-                return styles.statusCompleted;
-            case 'in-progress':
-                return styles.statusInProgress;
-            case 'waiting':
-                return styles.statusWaiting;
-            default:
-                return '';
+    const fetchQueue = async () => {
+        try {
+            const providerId = isAdmin ? null : currentUser;
+            const data = await getQueue(providerId);
+            setQueueItems(data);
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: 'Failed to load queue',
+                variant: 'destructive',
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
-    const getStatusText = (status) => {
-        switch (status) {
-            case 'completed':
-                return 'COMPLETED';
-            case 'in-progress':
-                return 'IN-PROGRESS';
-            case 'waiting':
-                return 'WAITING';
-            default:
-                return '';
+    const applyFilters = () => {
+        let filtered = queueItems;
+        console.log("FILTERED",filtered);
+
+        if (statusFilter !== 'all') {
+            filtered = filtered.filter(item => item.status === statusFilter);
         }
+
+        if (searchTerm) {
+            filtered = filtered.filter(item => {
+                const fullName = `${item.patient_last_name}, ${item.patient_first_name}`;
+                return fullName.toLowerCase().includes(searchTerm.toLowerCase());
+            });
+        }
+
+        setFilteredItems(filtered);
     };
 
-    return (
+    // const handleStatusChange = async (id, newStatus) => {
+    //     try {
+    //         await updateQueueStatus(id, newStatus);
+    //         toast({ title: 'Status updated' });
+    //         fetchQueue();
+    //     } catch (error) {
+    //     toast({
+    //         title: 'Error',
+    //         description: error.message,
+    //         variant: 'destructive',
+    //     });
+    //     }
+    // };
+
+    // const handleCancel = async (id) => {
+    //     if (!window.confirm('Cancel this queue entry?')) return;
+
+    //     try {
+    //     await removeFromQueue(id, currentUser.id, 'Cancelled by staff');
+    //     toast({ title: 'Queue entry cancelled' });
+    //     fetchQueue();
+    //     } catch (error) {
+    //     toast({
+    //         title: 'Error',
+    //         description: error.message,
+    //         variant: 'destructive',
+    //     });
+    //     }
+    // };
+
+    const calculateWaitingTime = (addedAt) => {
+        const minutes = Math.floor((new Date() - new Date(addedAt)) / 60000);
+        if (minutes < 60) return `${minutes}m`;
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        return `${hours}h ${remainingMinutes}m`;
+    };
+
+    if (loading) {
+        return <div className={styles.loading}>Loading queue...</div>;
+    }
+
+    return(
         <div className={styles.container}>
             <Sidebar />
             <main className={styles.content}>
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
-                        <h1 className={styles.title}>QUEUE MANAGEMENT</h1>
+                        <h1 className={styles.title}>Queue Management</h1>
                     </div>
                     <div className={styles.headerRight}>
                         <EmergencyButton />
                         <ProfileDropdown 
-                            email="admin@klynx.com"
-                            name="Admin User"
+                            email={auth.userEmail || "Email"}
+                            name= {auth.userFirstName + " " + auth.userLastName || "User"}
                         />
                     </div>
                 </div>
 
-                {/* Stats Cards */}
-                <div className={styles.statsContainer}>
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <BiUser />
-                        </div>
-                        <div className={styles.statInfo}>
-                            <p className={styles.statLabel}>Total Today</p>
-                            <h2 className={styles.statValue}>{totalToday}</h2>
-                        </div>
-                    </div>
-
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <BiTime />
-                        </div>
-                        <div className={styles.statInfo}>
-                            <p className={styles.statLabel}>Waiting</p>
-                            <h2 className={styles.statValue}>{waiting}</h2>
-                        </div>
-                    </div>
-
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <BiLoaderAlt />
-                        </div>
-                        <div className={styles.statInfo}>
-                            <p className={styles.statLabel}>In Progress</p>
-                            <h2 className={styles.statValue}>{inProgress}</h2>
-                        </div>
-                    </div>
-
-                    <div className={styles.statCard}>
-                        <div className={styles.statIcon}>
-                            <BiCheckCircle />
-                        </div>
-                        <div className={styles.statInfo}>
-                            <p className={styles.statLabel}>Completed</p>
-                            <h2 className={styles.statValue}>{completed}</h2>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Today's Appointments */}
-                <div className={styles.appointmentsSection}>
-                    <div className={styles.sectionHeader}>
-                        <BiCalendar className={styles.sectionIcon} />
-                        <div>
-                            <h2 className={styles.sectionTitle}>Today&apos;s Appointments</h2>
-                            <p className={styles.sectionDate}>{getCurrentDate()}</p>
-                        </div>
-                    </div>
-
-                    <div className={styles.appointmentsList}>
-                        {appointments.map((appointment) => (
-                            <div key={appointment.queueNumber} className={styles.appointmentCard}>
-                                <div className={styles.appointmentLeft}>
-                                    <div className={styles.appointmentNumber}>
-                                        {appointment.queueNumber}
+                <div className={styles.header2}>
+                    <div>
+                        <div></div>
+                        {queueWarnings.length > 0 && (
+                            <div className={styles.warningsContainer}>
+                                {queueWarnings.map(warning => (
+                                    <div 
+                                        key={warning.providerId} 
+                                        className={`${styles.warningBanner} ${styles[warning.level]}`}
+                                    >
+                                        <BiErrorAlt size={20} />
+                                        <span>
+                                            <strong>{warning.providerName}</strong> has {warning.count} patients queued
+                                        </span>
                                     </div>
-                                    <div className={styles.appointmentInfo}>
-                                        <h3 className={styles.appointmentName}>{appointment.name}</h3>
-                                        <p className={styles.appointmentPhone}>{appointment.phone}</p>
-                                        {appointment.complaint && (
-                                            <p className={styles.appointmentComplaint}>&quot;{appointment.complaint}&quot;</p>
-                                        )}
-                                    </div>
-                                </div>
+                                ))}
+                            </div>
+                        )}
 
-                                <div className={styles.appointmentRight}>
-                                    <span className={`${styles.statusBadge} ${getStatusColor(appointment.status)}`}>
-                                        {getStatusText(appointment.status)}
-                                    </span>
-                                    <div className={styles.appointmentActions}>
-                                        {appointment.status === 'waiting' && (
-                                            <>
-                                                <button 
-                                                    className={styles.startButton}
-                                                    onClick={() => handleStart(appointment.queueNumber)}
-                                                >
-                                                    Start
-                                                </button>
-                                                <button 
-                                                    className={styles.cancelButton}
-                                                    onClick={() => handleCancel(appointment.queueNumber)}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </>
-                                        )}
-                                        {appointment.status === 'in-progress' && (
-                                            <>
-                                                <button 
-                                                    className={styles.completeButton}
-                                                    onClick={() => handleComplete(appointment.queueNumber)}
-                                                >
-                                                    Complete
-                                                </button>
-                                                <button 
-                                                    className={styles.cancelButton}
-                                                    onClick={() => handleCancel(appointment.queueNumber)}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
+                        <div className={styles.stats}>
+                            <div className={styles.statCard}>
+                                <div className={styles.statLabel}>Waiting</div>
+                                <div className={styles.statValue}>
+                                    {queueItems.filter(i => i.status === 'waiting').length}
                                 </div>
                             </div>
-                        ))}
+                            <div className={styles.statCard}>
+                                <div className={styles.statLabel}>In Service</div>
+                                <div className={styles.statValue}>
+                                    {queueItems.filter(i => i.status === 'in_service').length}
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    {isAdmin && (
+                        <button onClick={() => setShowWalkInModal(true)} className={styles.newBtn}>
+                            <BiPlus size={20} />
+                            Add Walk-In
+                        </button>
+                    )}
+                </div>
+
+                <div className={styles.controls}>
+                    <div className={styles.searchContainer}>
+                        <BiSearch className={styles.searchIcon} size={20} />
+                        <input
+                            type="text"
+                            placeholder="Search patient..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className={styles.searchInput}
+                        />
+                    </div>
+
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className={styles.select}
+                    >
+                        <option value="all">All Status</option>
+                        <option value="waiting">Waiting</option>
+                        <option value="in_service">In Service</option>
+                        <option value="finished_service">Finished</option>
+                    </select>
+                </div>
+
+                <div className={styles.queueList}>
+                    {filteredItems.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <BiErrorCircle size={48} />
+                            <p>No patients in queue</p>
+                        </div>
+                    ) : (
+                        <div className={styles.table}>
+                            <div className={styles.tableHeader}>
+                                <div>Patient</div>
+                                <div>Provider</div>
+                                <div>Type</div>
+                                <div>Priority</div>
+                                <div>Waiting Time</div>
+                                <div>Status</div>
+                                <div>Actions</div>
+                            </div>
+
+                            {filteredItems.map((item) => (
+                                <div key={item.id} className={styles.tableRow}>
+                                    <div className={styles.patientCell}>
+                                        <BiUser size={18} className={styles.icon} />
+                                        <span>{item.patient_last_name}, {item.patient_first_name}</span>
+                                    </div>
+
+                                    <div>
+                                        {item.provider_last_name && item.provider_first_name
+                                        ? `${item.provider_last_name}, ${item.provider_first_name}`
+                                        : 'Unassigned'}
+                                    </div>
+
+                                    <div className={styles.typeCell}>
+                                        {item.consultation_type?.replace('_', ' ')}
+                                    </div>
+
+                                    <div>
+                                        <span
+                                            className={styles.priorityBadge}
+                                            style={{ backgroundColor: PRIORITY_COLORS[item.priority] }}
+                                        >
+                                            {item.priority}
+                                        </span>
+                                    </div>
+
+                                    <div className={styles.timeCell}>
+                                        <BiTime size={16} />
+                                        {calculateWaitingTime(item.added_at)}
+                                    </div>
+
+                                    <div>
+                                        <span
+                                            className={styles.statusBadge}
+                                            style={{ backgroundColor: STATUS_COLORS[item.status] }}
+                                        >
+                                            {item.status.replace('_', ' ')}
+                                        </span>
+                                    </div>
+
+                                    <div className={styles.actionsCell}>
+                                        {item.status === 'waiting' && (
+                                            <button
+                                                onClick={() => handleStatusChange(item.id, 'in_service')}
+                                                className={styles.actionBtn}
+                                            >
+                                                Start Service
+                                            </button>
+                                        )}
+
+                                        {isAdmin && item.status !== 'finished_service' && (
+                                            <button
+                                                onClick={() => handleCancel(item.id)}
+                                                className={styles.cancelBtn}
+                                            >
+                                                Cancel
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </main>
+
+            {showWalkInModal && (
+                <AddWalkInModal
+                    onClose={() => setShowWalkInModal(false)}
+                    //onSuccess={fetchQueue}
+                    currentUserId={currentUser}
+                />
+            )}
         </div>
+
     );
+
 };
 
 export default QueueManagement;
