@@ -23,3 +23,7 @@
 .FileMaintenance-Entries .Visits-BackButton:hover {
   background-color: #8e8e974e;
 }
+
+.FileMaintenance-TableWrapper {
+  text-transform: capitalize;
+}

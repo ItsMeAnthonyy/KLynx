@@ -26,11 +26,15 @@ const transactionModeOptions = [
 ];
 
 const VisitForm = ({ onSuccess, onCancel, patient }) => {
+  const now = new Date();
+  const defaultDate = now.toISOString().split("T")[0]; // YYYY-MM-DD
+  const defaultTime = now.toTimeString().slice(0, 5);
+
   const [formData, setFormData] = useState({
     natureOfVisit: '',
     typeOfConsultation: '',
-    consultationDate: '',
-    consultationTime: '',
+    consultationDate: defaultDate,
+    consultationTime: defaultTime,
     ageYears: '',
     ageMonths: '',
     ageDays: '',

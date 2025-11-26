@@ -1,7 +1,23 @@
+import { DragRotateHandler } from "@maptiler/sdk";
 import axios from "axios";
+
+
+
+export const createVisitShell = async (visitData) => {
+    try{
+        console.log("Creating visit shell with data:", visitData);
+        const { data } = await axios.post("http://localhost/api/create_visit_shell.php", visitData);
+        if (!data.success) throw new Error(data.message);
+        return data.visit_id;
+    } catch (error) {
+        console.error("Error creating visit shell:", error);
+        throw error;
+    }
+};
 
 export const addToQueue = async (queueData) => {
     try {
+        console.log("Adding to queue with data:", queueData);
         const { data } = await axios.post("http://localhost/api/add_to_queue.php", queueData);
         console.log(data.success);
 

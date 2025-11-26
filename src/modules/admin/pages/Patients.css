@@ -46,3 +46,91 @@
     background: none;
     border: none;
 }
+
+.filterCheckbox input[type='checkbox'] {
+    cursor: pointer;
+    width: 50px;
+    height: 18px;
+}
+
+.filterCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #374151;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+
+.searchSection {
+  padding: 1.5rem;
+}
+
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.searchInputContainer {
+  position: relative;
+  flex: 1;
+}
+
+.searchInput {
+  width: 400px;
+  padding: 0.75rem 1rem 0.75rem 2.5rem; /* left padding for icon */
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.loadingState,
+.emptyState {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.addPatientButton {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.addPatientButton:hover {
+  background-color: #2563eb;
+}

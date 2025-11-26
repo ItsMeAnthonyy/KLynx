@@ -8,6 +8,7 @@ import '../../../pages/Admin/Doctors.css'
 import axios from 'axios'; 
 import { FaDownload, FaArchive } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { BiSearch } from 'react-icons/bi';
 
 import EmergencyButton from '../../../components/EmergencyButton';
 import ProfileDropdown from '../../../components/ProfileDropdown';
@@ -47,6 +48,8 @@ const Patients = () => {
     const [selectedDoctor, setSelectedDoctor] = useState(null);
 
     const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [filteredPatients, setFilteredPatients] = useState([]);
     
     // Archive modal states
     const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
@@ -199,6 +202,7 @@ const Patients = () => {
 
     /* Fetches All Patient Info from Patient Creation Page */
     useEffect(() => {
+        setIsLoading(false);
         axios.get("http://localhost/api/Patient.php")
             .then(res => { 
                 // Filter out archived patients
@@ -508,7 +512,7 @@ const Patients = () => {
                         </select>
                         <span>Entries</span>
                     </div>
-                    <div className="FileMaintenance-AddSearch">
+                    {/* <div className="FileMaintenance-AddSearch">
                             <button 
                                 title="Add new Patient" 
                                 onClick={() => setIsAddPatientModalOpen(true)}
@@ -517,8 +521,56 @@ const Patients = () => {
                                 +
                             </button>
                             <input type="text" placeholder="Search here..."/>
-                    </div>
+                            <input
+                                type="checkbox"
+                                //checked={includeArchived}
+                                //onChange={(e) => setIncludeArchived(e.target.checked)}
+                            />
+                            <span>Include Archived Patients</span>
+                    </div> */}
+                    
+                        <div className="searchSection">
+                            
+                            <div className="searchRow">
+                                <button
+                                className="addPatientButton"
+                                title="Add new Patient"
+                                onClick={() => setIsAddPatientModalOpen(true)}
+                                aria-label="Add new Patient"
+                                >
+                                    + Add Patient
+                                </button>
+                                <div className="searchInputContainer">
+                                    <BiSearch className="searchIcon" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by name or patient ID..."
+                                        // value={searchQuery}
+                                        // onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="searchInput"
+                                    />
+                                </div>
+                                <label className="filterCheckbox">
+                                    <input
+                                        type="checkbox"
+                                        // checked={includeArchived}
+                                        // onChange={(e) => setIncludeArchived(e.target.checked)}
+                                    />
+                                    <span>Include Archived Patients</span>
+                                </label>
+                            </div>
+                        </div>
+                        
                 </div>
+
+                {isLoading ? (
+                    <div className="loadingState">Loading patients...</div>
+                ) : (
+                // ) : filteredPatients.length === 0 ? (
+                //     <div className="emptyState">
+                //         <p>No patients found</p>
+                //     </div>
+                // ) : (
                 <div className="FileMaintenance-TableWrapper">
                     <table>
                         <thead>
@@ -581,6 +633,7 @@ const Patients = () => {
                         </tbody>
                     </table>
                 </div>
+                )}
             </main>
 
             <AddPatientModal 

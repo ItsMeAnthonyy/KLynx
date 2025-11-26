@@ -858,7 +858,7 @@ const AddPatientForm = ({ onSuccess, onCancel }) => {
                         disabled={isSubmitting}
                         aria-busy={isSubmitting}
                     >
-                        {isSubmitting ? 'Scheduling...' : 'Schedule Consultation'}
+                        {isSubmitting ? 'Submitting...' : 'Create Patient Profile'}
                     </button>
                 </div>
                 

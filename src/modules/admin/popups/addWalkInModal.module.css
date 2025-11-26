@@ -130,6 +130,20 @@
   resize: vertical;
 }
 
+.radioRow {
+  display: flex;
+  gap: 2rem; /* space between Yes and No */
+  align-items: center;
+}
+
+.radioRow label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: hsl(215 25% 15%);
+}
+
 .actions {
   display: flex;
   gap: 0.75rem;

@@ -214,23 +214,23 @@ const Visits = () => {
     }
 
     useEffect( () => {
-            const idToUse = patientId || patient?.PatientID;
-            console.log('useEffect - Loading visits for patient:', idToUse);
-            getConsultProfiles(idToUse);
-            setAddHistoryInputs((prev) => ({
-    ...prev,
-    consult_date_visit: new Date().toISOString().split("T")[0]
-  }));
+        const idToUse = patientId || patient?.PatientID;
+        console.log('useEffect - Loading visits for patient:', idToUse);
+        getConsultProfiles(idToUse);
+        setAddHistoryInputs((prev) => ({
+            ...prev,
+            consult_date_visit: new Date().toISOString().split("T")[0]
+        }));
     }, [patientId, patient]);
 
 
 
-    /* Fetches All Patient Info from Patient Creation Page */
-    useEffect(() => {
-        axios.get("http://localhost/api/Patient.php")
-            .then(res => { setAllPatients(res.data); console.log(res.data); })
-            .catch(err => console.error(err));
-    }, []);
+    // /* Fetches All Patient Info from Patient Creation Page */
+    // useEffect(() => {
+    //     axios.get("http://localhost/api/Patient.php")
+    //         .then(res => { setAllPatients(res.data); console.log(res.data); })
+    //         .catch(err => console.error(err));
+    // }, []);
 
     useEffect(() => {
         axios.get("http://localhost/api/Doctors.php")
@@ -561,7 +561,7 @@ const Visits = () => {
                   <main className="FileMaintenance-Content">
                     <div className="FileMaintenance-Header">
                       <div className="FileMaintenance-HeaderTitle">
-                        <h1>Consultation Details</h1>
+                        <h1>Previous Visit List</h1>
                       </div>
                       <div className="FileMaintenance-HeaderSetting">
                         <button className="emergency-button">
@@ -606,20 +606,20 @@ const Visits = () => {
                                     {key + 1}
                                 </td> 
                                 <td>
-                                    {patient.consultation_date || 'N/A'}
+                                    {patient.visit_date_time ? patient.visit_date_time.split(',')[0]?.trim() : 'Pending'}
                                 </td>
                                 <td>
-                                    { patient.consultation_time || 'N/A'}
+                                    {patient.visit_date_time ? patient.visit_date_time.split(',')[1]?.trim() : 'Pending'}
                                 </td>
                                
                                 <td>
                                     { patient.consultation_type || 'N/A'}
                                 </td> 
-                                <td>
+                                <td title={patient.chief_complaint || 'N/A'}>
                                     { patient.chief_complaint || 'N/A'}
                                 </td>
                                 <td>
-                                    { patient.attending_provider || 'N/A'}
+                                    { patient.attending_provider || 'Not Assigned Yet'}
                                 </td>
                                 <td>
                                     <button 

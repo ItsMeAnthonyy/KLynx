@@ -305,7 +305,7 @@ const QueueManagement = () => {
             {showWalkInModal && (
                 <AddWalkInModal
                     onClose={() => setShowWalkInModal(false)}
-                    //onSuccess={fetchQueue}
+                    onSuccess={fetchQueue}
                     currentUserId={currentUser}
                 />
             )}

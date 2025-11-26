@@ -180,11 +180,25 @@ const ConsultationDetail = () => {
 
     useEffect(() => {
         // If coming from Visits page, use that data instead
+        const calculateAge = (birthdate) => {
+          if (!birthdate) return 'N/A';
+          const today = new Date();
+          const birthDate = new Date(birthdate);
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          const dayDiff = today.getDate() - birthDate.getDate();
+          // Adjust if birthday hasn't occurred yet this year
+          if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            age--;
+          }
+          return age;
+        };
+
         if (fromVisits && patientDataFromVisits) {
             const formattedPatient = {
                 id: patientDataFromVisits.PatientID,
                 name: `${patientDataFromVisits.FirstName} ${patientDataFromVisits.MiddleName} ${patientDataFromVisits.LastName}`,
-                age: patientDataFromVisits.Age,
+                age: calculateAge(patientDataFromVisits.Birthdate),
                 gender: patientDataFromVisits.Sex,
                 phone: patientDataFromVisits.ContactNumber || 'N/A',
                 dateOfBirth: patientDataFromVisits.Birthdate || 'N/A',
@@ -389,7 +403,7 @@ const ConsultationDetail = () => {
       <main className="FileMaintenance-Content">
         <div className="FileMaintenance-Header">
           <div className="FileMaintenance-HeaderTitle">
-            <h1>Consultation Details</h1>
+            <h1>Visit Details</h1>
           </div>
           <div className="FileMaintenance-HeaderSetting">
             <button className="emergency-button">
@@ -463,13 +477,13 @@ const ConsultationDetail = () => {
           </div>
           <div className="patient-header-actions">
             <button className="add-to-queue-button">+ Add to Queue</button>
-            <button 
+            {/* <button 
               className="add-to-queue-button" 
               style={{ backgroundColor: '#6c757d', marginLeft: '10px' }}
               onClick={() => setShowArchives(true)}
             >
               📦 View Archives ({archivedRecords.length})
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -507,10 +521,6 @@ const ConsultationDetail = () => {
               <div className="emergency-contact-card">
                 <h3>📋 Visit Information</h3>
                 <div className="emergency-details">
-                  <div className="emergency-info-row">
-                    <span className="emergency-label">Visit ID:</span>
-                    <span className="emergency-value">{currentVisitRecord.ConsultID || 'N/A'}</span>
-                  </div>
                   <div className="emergency-info-row">
                     <span className="emergency-label">Date:</span>
                     <span className="emergency-value">{currentVisitRecord.consultation_date || 'N/A'}</span>
