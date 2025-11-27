@@ -95,8 +95,8 @@ const UserManagement = () => {
 
     // Form state for create/edit user
     const [formData, setFormData] = useState({
-        username: '',
-        fullName: '',
+        lastName: '',
+        firstName: '',
         email: '',
         role: '',
         department: '',
@@ -118,32 +118,33 @@ const UserManagement = () => {
         const fetchUsers = async () => {
             try {
                 setIsLoading(true);
-                const response = await axios.get('http://localhost/api/create-user.php');
-                
+                // const response = await axios.get('http://localhost/api/create-user.php');
+                const response = await axios.get("http://localhost/api/get_users.php");
+                console.log(response.data);
                 if (response.data.success && response.data.users) {
                     setUsers(response.data.users);
                     // Also save to localStorage as cache
-                    localStorage.setItem('healthcenter_users', JSON.stringify(response.data.users));
-                } else {
-                    // Fallback to localStorage or mock data
-                    const storedUsers = localStorage.getItem('healthcenter_users');
-                    if (storedUsers) {
-                        setUsers(JSON.parse(storedUsers));
-                    } else {
-                        setUsers(MOCK_USERS);
-                        localStorage.setItem('healthcenter_users', JSON.stringify(MOCK_USERS));
-                    }
-                }
+                    //localStorage.setItem('healthcenter_users', JSON.stringify(response.data.users));
+                }// else {
+                //     // Fallback to localStorage or mock data
+                //     const storedUsers = localStorage.getItem('healthcenter_users');
+                //     if (storedUsers) {
+                //         setUsers(JSON.parse(storedUsers));
+                //     } else {
+                //         setUsers(MOCK_USERS);
+                //         localStorage.setItem('healthcenter_users', JSON.stringify(MOCK_USERS));
+                //     }
+                // }
             } catch (error) {
                 console.error('Error fetching users:', error);
                 // Fallback to localStorage or mock data
-                const storedUsers = localStorage.getItem('healthcenter_users');
-                if (storedUsers) {
-                    setUsers(JSON.parse(storedUsers));
-                } else {
-                    setUsers(MOCK_USERS);
-                    localStorage.setItem('healthcenter_users', JSON.stringify(MOCK_USERS));
-                }
+                // const storedUsers = localStorage.getItem('healthcenter_users');
+                // if (storedUsers) {
+                //     setUsers(JSON.parse(storedUsers));
+                // } else {
+                //     setUsers(MOCK_USERS);
+                //     localStorage.setItem('healthcenter_users', JSON.stringify(MOCK_USERS));
+                // }
             } finally {
                 setIsLoading(false);
             }
@@ -158,11 +159,16 @@ const UserManagement = () => {
 
         // Search filter
         if (searchQuery) {
-            result = result.filter(user =>
-                user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.email.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+            const query = searchQuery.toLowerCase();
+
+            result = result.filter(user => {
+                const fullName = `${user.first_name} ${user.last_name}`.toLowerCase();
+                return (
+                    fullName.includes(query) ||
+                    (user.username && user.username.toLowerCase().includes(query)) ||
+                    (user.email && user.email.toLowerCase().includes(query))
+                );
+            });
         }
 
         // Role filter
@@ -173,12 +179,13 @@ const UserManagement = () => {
         setFilteredUsers(result);
     }, [users, searchQuery, filterRole]);
 
-    // Calculate statistics
     const stats = {
         total: users.length,
         active: users.filter(u => u.status === 'active').length,
+        inactive: users.filter(u => u.status === 'inactive').length,
         admins: users.filter(u => u.role === 'admin').length,
-        inactive: users.filter(u => u.status === 'inactive').length
+        // Optional: array of full names
+        fullNames: users.map(u => `${u.first_name} ${u.last_name}`)
     };
 
 
@@ -271,20 +278,20 @@ const UserManagement = () => {
         
         try {
             const newUser = {
-                id: Date.now().toString(),
-                username: formData.username,
-                fullName: formData.fullName,
+                // id: Date.now().toString(),
+                first_name: formData.lastName,
+                last_name: formData.firstName,
                 email: formData.email,
                 role: formData.role,
-                department: formData.department,
+                // department: formData.department,
                 password: formData.tempPassword,
-                status: 'active',
-                has2FA: false,
-                lastLogin: 'Never',
-                lastPasswordChange: new Date().toISOString().split('T')[0],
-                createdAt: new Date().toISOString().split('T')[0],
-                forcePasswordChange: formData.forcePasswordChange,
-                permissions: formData.permissions
+                // status: 'active',
+                // has2FA: false,
+                // lastLogin: 'Never',
+                // lastPasswordChange: new Date().toISOString().split('T')[0],
+                // createdAt: new Date().toISOString().split('T')[0],
+                // forcePasswordChange: formData.forcePasswordChange,
+                // permissions: formData.permissions
             };
 
             // Try to save to backend API
@@ -420,32 +427,32 @@ const UserManagement = () => {
     };
 
     // Check access permission
-    if (!hasAccess) {
-        return (
-            <div className={styles.container}>
-                <Sidebar />
-                <main className={styles.content}>
-                    <div style={{ 
-                        padding: '2rem', 
-                        textAlign: 'center',
-                        backgroundColor: '#fff',
-                        borderRadius: '8px',
-                        margin: '2rem',
-                        border: '3px solid #27374D'
-                    }}>
-                        <BiError size={64} color="#dc3545" style={{ marginBottom: '1rem' }} />
-                        <h2 style={{ color: '#27374D', marginBottom: '1rem' }}>Access Denied</h2>
-                        <p style={{ color: '#666', marginBottom: '1.5rem' }}>
-                            You do not have permission to access User Management.
-                        </p>
-                        <p style={{ color: '#999', fontSize: '0.9rem' }}>
-                            Please contact your administrator if you believe this is an error.
-                        </p>
-                    </div>
-                </main>
-            </div>
-        );
-    }
+    // if (!hasAccess) {
+    //     return (
+    //         <div className={styles.container}>
+    //             <Sidebar />
+    //             <main className={styles.content}>
+    //                 <div style={{ 
+    //                     padding: '2rem', 
+    //                     textAlign: 'center',
+    //                     backgroundColor: '#fff',
+    //                     borderRadius: '8px',
+    //                     margin: '2rem',
+    //                     border: '3px solid #27374D'
+    //                 }}>
+    //                     <BiError size={64} color="#dc3545" style={{ marginBottom: '1rem' }} />
+    //                     <h2 style={{ color: '#27374D', marginBottom: '1rem' }}>Access Denied</h2>
+    //                     <p style={{ color: '#666', marginBottom: '1.5rem' }}>
+    //                         You do not have permission to access User Management.
+    //                     </p>
+    //                     <p style={{ color: '#999', fontSize: '0.9rem' }}>
+    //                         Please contact your administrator if you believe this is an error.
+    //                     </p>
+    //                 </div>
+    //             </main>
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className={styles.container}>
@@ -524,7 +531,7 @@ const UserManagement = () => {
                     </div>
                     
                 </div>
-                    <PermissionGate permission={PERMISSIONS.USERS_ADD}>
+
                         <div className={styles.createButtonContainer}>
                             <button 
                                 className={styles.createButton}
@@ -534,7 +541,7 @@ const UserManagement = () => {
                                 Create User Account
                             </button>
                         </div>
-                    </PermissionGate>
+
                 
 
 
@@ -548,80 +555,88 @@ const UserManagement = () => {
                         <thead>
                             <tr>
                                 <th>User</th>
-                                <th>Role & Department</th>
+                                <th>Role</th>
                                 <th>Status</th>
                                 <th>Last Login</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.map((user) => (
+                            {filteredUsers.map((user) => {
+                                const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Unknown';
+                                const initials = fullName
+                                ? fullName
+                                    .split(' ')
+                                    .map(n => n[0])
+                                    .join('')
+                                    .substring(0, 2)
+                                : '??';
+
+                                return (
                                 <tr key={user.id}>
                                     <td>
-                                        <div className={styles.userCell}>
-                                            <div 
-                                                className={styles.avatar}
-                                                style={{ backgroundColor: getAvatarColor(user.role) }}
-                                            >
-                                                {user.fullName ? user.fullName.split(' ').map(n => n[0]).join('').substring(0, 2) : '??'}
-                                            </div>
-                                            <div className={styles.userInfo}>
-                                                <div className={styles.userName}>{user.fullName || 'Unknown'}</div>
-                                                <div className={styles.userEmail}>{user.email || 'No email'}</div>
-                                            </div>
+                                    <div className={styles.userCell}>
+                                        <div 
+                                        className={styles.avatar}
+                                        style={{ backgroundColor: getAvatarColor(user.role) }}
+                                        >
+                                        {initials}
                                         </div>
-                                    </td>
-                                    <td>
-                                        <span className={`${styles.roleBadge} ${styles[user.role]}`}>
-                                            {getRoleDisplayName(user.role)}
-                                        </span>
-                                        <span className={styles.department}>{user.department || 'N/A'}</span>
-                                    </td>
-                                    <td>
-                                        <span className={`${styles.statusBadge} ${styles[user.status || 'inactive']}`}>
-                                            <span className={styles.statusDot}></span>
-                                            {user.status ? user.status.charAt(0).toUpperCase() + user.status.slice(1) : 'Unknown'}
-                                        </span>
-                                        
-                                    </td>
-                                    <td>
-                                        <div className={styles.lastLogin}>
-                                            <div className={styles.loginDate}>
-                                                {user.lastLogin ? user.lastLogin.split(' ')[0] : 'Never'}
-                                            </div>
-                                            <div className={styles.loginTime}>
-                                                {user.lastLogin && !user.lastLogin.includes('Never') ? user.lastLogin.split(' ').slice(1).join(' ') : ''}
-                                            </div>
+                                        <div className={styles.userInfo}>
+                                        <div className={styles.userName}>{fullName}</div>
+                                        <div className={styles.userEmail}>{user.email || 'No email'}</div>
                                         </div>
+                                    </div>
                                     </td>
                                     <td>
-                                        <div className={styles.actions}>
-                                            <PermissionGate permission={PERMISSIONS.USERS_VIEW}>
-                                                <button className={`${styles.actionButton} ${styles.view}`} title="View">
-                                                    <FaEye size={16} />
-                                                </button>
-                                            </PermissionGate>
-                                            <PermissionGate permission={PERMISSIONS.USERS_EDIT}>
-                                                <button className={`${styles.actionButton} ${styles.edit}`} title="Edit">
-                                                    <FaEdit size={16} />
-                                                </button>
-                                            </PermissionGate>
-                                            <PermissionGate permission={PERMISSIONS.USERS_DELETE}>
-                                                <button 
-                                                    className={`${styles.actionButton} ${styles.delete}`} 
-                                                    title="Delete"
-                                                    onClick={() => {
-                                                        setSelectedUser(user);
-                                                        setShowDeleteConfirm(true);
-                                                    }}
-                                                >
-                                                    <FaTrash size={16} />
-                                                </button>
-                                            </PermissionGate>
+                                    <span className={`${styles.roleBadge} ${styles[user.role]}`}>
+                                        {getRoleDisplayName(user.role)}
+                                    </span>
+                                    {/* <span className={styles.department}>{user.department || 'N/A'}</span> */}
+                                    </td>
+                                    <td>
+                                    <span className={`${styles.statusBadge} ${styles[user.status || 'inactive']}`}>
+                                        <span className={styles.statusDot}></span>
+                                        {user.status
+                                        ? user.status.charAt(0).toUpperCase() + user.status.slice(1)
+                                        : 'Unknown'}
+                                    </span>
+                                    </td>
+                                    <td>
+                                    <div className={styles.lastLogin}>
+                                        <div className={styles.loginDate}>
+                                        {user.last_login ? user.last_login.split(' ')[0] : 'Never'}
                                         </div>
+                                        <div className={styles.loginTime}>
+                                        {user.last_login && !user.last_login.includes('Never')
+                                            ? user.last_login.split(' ').slice(1).join(' ')
+                                            : ''}
+                                        </div>
+                                    </div>
+                                    </td>
+                                    <td>
+                                    <div className={styles.actions}>
+                                        <button className={`${styles.actionButton} ${styles.view}`} title="View">
+                                        <FaEye size={16} />
+                                        </button>
+                                        <button className={`${styles.actionButton} ${styles.edit}`} title="Edit">
+                                        <FaEdit size={16} />
+                                        </button>
+                                        <button 
+                                        className={`${styles.actionButton} ${styles.delete}`} 
+                                        title="Delete"
+                                        onClick={() => {
+                                            setSelectedUser(user);
+                                            setShowDeleteConfirm(true);
+                                        }}
+                                        >
+                                        <FaTrash size={16} />
+                                        </button>
+                                    </div>
                                     </td>
                                 </tr>
-                            ))}
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
@@ -649,14 +664,14 @@ const UserManagement = () => {
                                     <div className={styles.formGrid}>
                                         <div className={styles.formGroup}>
                                             <label className={styles.formLabel}>
-                                                Username <span style={{ color: '#e53e3e' }}>*</span>
+                                                Last Name <span style={{ color: '#e53e3e' }}>*</span>
                                             </label>
                                             <input
                                                 type="text"
-                                                name="username"
+                                                name="lastName"
                                                 className={`${styles.formInput} ${errors.username ? styles.inputError : ''}`}
-                                                placeholder="@username"
-                                                value={formData.username}
+                                                placeholder="Mendoza"
+                                                value={formData.lastName}
                                                 onChange={handleInputChange}
                                                 required
                                             />
@@ -669,14 +684,14 @@ const UserManagement = () => {
 
                                         <div className={styles.formGroup}>
                                             <label className={styles.formLabel}>
-                                                Full Name <span style={{ color: '#e53e3e' }}>*</span>
+                                                First Name <span style={{ color: '#e53e3e' }}>*</span>
                                             </label>
                                             <input
                                                 type="text"
-                                                name="fullName"
+                                                name="firstName"
                                                 className={`${styles.formInput} ${errors.fullName ? styles.inputError : ''}`}
                                                 placeholder="John Doe"
-                                                value={formData.fullName}
+                                                value={formData.firstName}
                                                 onChange={handleInputChange}
                                                 required
                                             />
@@ -718,7 +733,7 @@ const UserManagement = () => {
                                                 onChange={handleInputChange}
                                                 required
                                             >
-                                                <option value="">Select role</option>
+                                                <option value="" disabled hidden >Select role</option>
                                                 <option value="admin">Admin</option>
                                                 <option value="doctor">Doctor</option>
                                                 <option value="nurse">Nurse</option>
@@ -732,7 +747,7 @@ const UserManagement = () => {
                                             )}
                                         </div>
 
-                                        <div className={styles.formGroup}>
+                                        {/* <div className={styles.formGroup}>
                                             <label className={styles.formLabel}>
                                                 Department <span style={{ color: '#e53e3e' }}>*</span>
                                             </label>
@@ -756,7 +771,7 @@ const UserManagement = () => {
                                                     {errors.department}
                                                 </span>
                                             )}
-                                        </div>
+                                        </div> */}
 
                                         <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                                             <label className={styles.formLabel}>

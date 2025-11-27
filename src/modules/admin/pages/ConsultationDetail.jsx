@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../../../components/Sidebar';
 import './ConsultationDetail.css';
-import { BiError, BiArrowBack } from 'react-icons/bi';
+import { BiError, BiArrowBack, BiShow } from 'react-icons/bi';
 import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 import AddRecordModal from '../../../modules/admin/popups/AddRecordModal';
@@ -136,6 +136,13 @@ const ConsultationDetail = () => {
   const visitData = location.state?.visitData;
   const consultationType = location.state?.consultationType;
   const patientDataFromVisits = location.state?.patientData;
+  const isArchived = location.state?.isArchived || false;
+  const archiveInfo = location.state?.archiveInfo || null;
+
+  // Debug logging
+  console.log('ConsultationDetail - Location State:', location.state);
+  console.log('ConsultationDetail - isArchived:', isArchived);
+  console.log('ConsultationDetail - archiveInfo:', archiveInfo);
 
     const [patientData, setPatientData] = useState(null);
     const [consultationRecords, setConsultationRecords] = useState([]);
@@ -224,6 +231,11 @@ const ConsultationDetail = () => {
     }, [fromVisits, visitData, consultationType, patientDataFromVisits]);
 
     const handleAddRecord = (recordData) => {
+        if (isArchived) {
+            setMessage({ type: 'error', text: 'Cannot modify records for archived patients.' });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+            return;
+        }
         try {
             if (editingRecord) {
                 // Update existing record
@@ -278,6 +290,11 @@ const ConsultationDetail = () => {
     };
 
     const handleEditRecord = (record) => {
+        if (isArchived) {
+            setMessage({ type: 'error', text: 'Cannot edit records for archived patients.' });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+            return;
+        }
         setEditingRecord(record);
         setShowAddModal(true);
     };
@@ -303,6 +320,11 @@ const ConsultationDetail = () => {
     };
 
     const handleArchiveRecord = (record) => {
+        if (isArchived) {
+            setMessage({ type: 'error', text: 'Cannot archive records for archived patients.' });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+            return;
+        }
         // Show confirmation dialog
         setRecordToArchive(record);
         setShowDeleteConfirm(true);
@@ -386,14 +408,28 @@ const ConsultationDetail = () => {
         // If coming from Visits, go back to Visits page
         if (fromVisits && patientData?.id) {
             navigate(`/patient/${patientData.id}/visits`, {
-                state: { patient: patientDataFromVisits }
+                state: { 
+                    patient: patientDataFromVisits || patientData,
+                    isArchived: isArchived,
+                    archiveInfo: archiveInfo
+                }
             });
         } else if (patientData?.id) {
             // Navigate back to the patient's visit list using the patient ID from patientData
-            navigate(`/patient/${patientData.id}/visits`);
+            navigate(`/patient/${patientData.id}/visits`, {
+                state: {
+                    patient: patientData,
+                    isArchived: isArchived,
+                    archiveInfo: archiveInfo
+                }
+            });
         } else {
-            // Fallback to Patients list if no patient ID available
-            navigate('/Patients');
+            // Fallback based on archived state
+            if (isArchived) {
+                navigate('/Archives');
+            } else {
+                navigate('/Patients');
+            }
         }
     };
 
@@ -429,6 +465,33 @@ const ConsultationDetail = () => {
             fontWeight: '500',
           }}>
             {message.text}
+          </div>
+        )}
+        
+        {/* Archived Patient Warning Banner */}
+        {isArchived && (
+          <div style={{
+            padding: '16px 24px',
+            marginBottom: '20px',
+            backgroundColor: '#fff3cd',
+            border: '1px solid #ffc107',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            fontSize: '15px',
+            fontWeight: '500',
+            color: '#856404'
+          }}>
+            <BiShow style={{ fontSize: '24px', flexShrink: 0 }} />
+            <div>
+              <div>This patient is archived. All visit actions are disabled. Only viewing is allowed.</div>
+              {archiveInfo && (
+                <div style={{ fontSize: '13px', marginTop: '4px', opacity: 0.8 }}>
+                  Archived on {archiveInfo.archivedOn} • Reason: {archiveInfo.reason}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -675,6 +738,9 @@ const ConsultationDetail = () => {
               <button 
                 className="add-record-button"
                 onClick={() => setShowAddModal(true)}
+                disabled={isArchived}
+                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
               >
                 Add New Record
               </button>
@@ -710,8 +776,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className="edit-button" 
-                        title="Edit"
+                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
                         onClick={() => handleEditRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaEdit />
                       </button>
@@ -719,8 +787,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className='delete-button' 
-                        title="Archive"
+                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
                         onClick={() => handleArchiveRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaTrash />
                       </button>
@@ -739,6 +809,9 @@ const ConsultationDetail = () => {
               <button 
                 className="add-record-button"
                 onClick={() => setShowAddModal(true)}
+                disabled={isArchived}
+                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
               >
                 Add New Record
               </button>
@@ -778,8 +851,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className="edit-button" 
-                        title="Edit"
+                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
                         onClick={() => handleEditRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaEdit />
                       </button>
@@ -787,8 +862,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className='delete-button' 
-                        title="Archive"
+                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
                         onClick={() => handleArchiveRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaTrash />
                       </button>
@@ -807,6 +884,9 @@ const ConsultationDetail = () => {
               <button 
                 className="add-record-button"
                 onClick={() => setShowAddModal(true)}
+                disabled={isArchived}
+                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
               >
                 Add New Record
               </button>
@@ -838,8 +918,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className="edit-button" 
-                        title="Edit"
+                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
                         onClick={() => handleEditRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaEdit />
                       </button>
@@ -847,8 +929,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className='delete-button' 
-                        title="Archive"
+                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
                         onClick={() => handleArchiveRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaTrash />
                       </button>
@@ -867,6 +951,9 @@ const ConsultationDetail = () => {
               <button 
                 className="add-record-button"
                 onClick={() => setShowAddModal(true)}
+                disabled={isArchived}
+                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
               >
                 Add New Record
               </button>
@@ -899,8 +986,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className="edit-button" 
-                        title="Edit"
+                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
                         onClick={() => handleEditRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaEdit />
                       </button>
@@ -908,8 +997,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className='delete-button' 
-                        title="Archive"
+                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
                         onClick={() => handleArchiveRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaTrash />
                       </button>
@@ -928,6 +1019,9 @@ const ConsultationDetail = () => {
               <button 
                 className="add-record-button"
                 onClick={() => setShowAddModal(true)}
+                disabled={isArchived}
+                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
               >
                 Add New Record
               </button>
@@ -956,8 +1050,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className="edit-button" 
-                        title="Edit"
+                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
                         onClick={() => handleEditRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaEdit />
                       </button>
@@ -965,8 +1061,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className='delete-button' 
-                        title="Archive"
+                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
                         onClick={() => handleArchiveRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaTrash />
                       </button>
@@ -981,14 +1079,15 @@ const ConsultationDetail = () => {
 
         {activeTab === 'prescription' && (
           <div className='add-record-container'>
-           <button 
+              <button 
                 className="add-record-button"
                 onClick={() => setShowAddModal(true)}
+                disabled={isArchived}
+                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
               >
                 Add New Record
-              </button>
-
-              <div className="records-container">
+              </button>              <div className="records-container">
             <table>
               <thead>
                 <tr>
@@ -1029,8 +1128,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className="edit-button" 
-                        title="Edit"
+                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
                         onClick={() => handleEditRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaEdit />
                       </button>
@@ -1038,8 +1139,10 @@ const ConsultationDetail = () => {
                     <td>
                       <button 
                         className='delete-button' 
-                        title="Archive"
+                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
                         onClick={() => handleArchiveRecord(record)}
+                        disabled={isArchived}
+                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         <FaTrash />
                       </button>

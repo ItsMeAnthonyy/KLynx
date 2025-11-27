@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 
  
-import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus } from 'react-icons/bi';
+import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus, BiShow } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
 import { fetchPatientData } from "../services/patientService";
@@ -23,6 +23,8 @@ const Visits = () => {
     const { patientId } = useParams();
     const location = useLocation();
     const patient = location.state?.patient;
+    const isArchived = location.state?.isArchived || false;
+    const archiveInfo = location.state?.archiveInfo || null;
 
     const [allPatients, setAllPatients] = useState([]);
     const [allDoctors, setAllDoctors] = useState([]);
@@ -286,12 +288,16 @@ const Visits = () => {
 
     const viewHistory = async (visitData) => {
         // Navigate to ConsultationDetail page with visit data
+        console.log('Visits - viewHistory - isArchived:', isArchived);
+        console.log('Visits - viewHistory - archiveInfo:', archiveInfo);
         navigate('/ConsultationDetail', {
             state: {
                 visitData: visitData,
                 consultationType: visitData.consultation_type || 'general',
                 patientData: patient,
-                fromVisits: true
+                fromVisits: true,
+                isArchived: isArchived,
+                archiveInfo: archiveInfo
             }
         });
     }
@@ -374,7 +380,12 @@ const Visits = () => {
     }
 
     const handleBackToPatientList = () => {
-        navigate('/Patients');
+        if (isArchived) {
+            // If archived, go back to Archives page
+            navigate('/Archives');
+        } else {
+            navigate('/Patients');
+        }
     };
 
     const handleAddToQueue = (visitPatient) => {
@@ -574,6 +585,27 @@ const Visits = () => {
                       </div>
                     </div>
                 {/*<hr></hr>*/}
+                
+                {/* Archived Patient Warning Banner */}
+                {isArchived && (
+                    <div style={{
+                        padding: '16px 24px',
+                        marginBottom: '20px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffc107',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        fontSize: '15px',
+                        fontWeight: '500',
+                        color: '#856404'
+                    }}>
+                        <BiShow style={{ fontSize: '24px', flexShrink: 0 }} />
+                        <span>This patient is archived. All visit actions are disabled. Only viewing is allowed.</span>
+                    </div>
+                )}
+                
                 <div className="Visits-Filter-Container">
                     <div className="FileMaintenance-Entries">
                         <button onClick={handleBackToPatientList} className="Visits-BackButton">
@@ -581,7 +613,18 @@ const Visits = () => {
                         </button>
                     </div>
                     <div className="FileMaintenance-AddSearch">
-                            <button onClick={() => setIsVisitModalOpen(true)}><BiPlus/></button>
+                            <button 
+                                onClick={() => {
+                                    if (!isArchived) {
+                                        setIsVisitModalOpen(true);
+                                    }
+                                }}
+                                disabled={isArchived}
+                                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                                title={isArchived ? 'Cannot add visits for archived patients' : 'Add new visit'}
+                            >
+                                <BiPlus/>
+                            </button>
                             <input type="text" placeholder="Search here..."/>
                     </div>
                 </div>
@@ -640,26 +683,37 @@ const Visits = () => {
                                 </td>
                                 <td>
                                     <button 
-                                        onClick={() => { setSelectedVisit(patient); setEditVisitModal(true); }} 
+                                        onClick={() => { 
+                                            if (!isArchived) {
+                                                setSelectedVisit(patient); 
+                                                setEditVisitModal(true);
+                                            }
+                                        }} 
+                                        disabled={isArchived}
                                         style={{ 
                                             backgroundColor: 'transparent',
                                             border: '1px solid #e5e7eb',
                                             borderRadius: '4px',
-                                            cursor: 'pointer', 
+                                            cursor: isArchived ? 'not-allowed' : 'pointer', 
                                             padding: '8px',
                                             display: 'inline-flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            transition: 'all 0.2s'
+                                            transition: 'all 0.2s',
+                                            opacity: isArchived ? 0.5 : 1
                                         }} 
-                                        title="Edit"
+                                        title={isArchived ? 'Cannot edit visits for archived patients' : 'Edit'}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#f3f4f6';
-                                            e.currentTarget.style.borderColor = '#d1d5db';
+                                            if (!isArchived) {
+                                                e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                                e.currentTarget.style.borderColor = '#d1d5db';
+                                            }
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent';
-                                            e.currentTarget.style.borderColor = '#e5e7eb';
+                                            if (!isArchived) {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                                e.currentTarget.style.borderColor = '#e5e7eb';
+                                            }
                                         }}
                                     >
                                         <BiSolidEdit style={{ fontSize: '18px', color: '#282a2eff' }} />
@@ -667,26 +721,37 @@ const Visits = () => {
                                 </td>
                                 <td>
                                     <button 
-                                        onClick={() => { setSelectedVisit(patient); setDeleteVisitModal(true); }} 
+                                        onClick={() => { 
+                                            if (!isArchived) {
+                                                setSelectedVisit(patient); 
+                                                setDeleteVisitModal(true);
+                                            }
+                                        }} 
+                                        disabled={isArchived}
                                         style={{ 
                                             backgroundColor: 'transparent',
                                             border: '1px solid #e5e7eb',
                                             borderRadius: '4px',
-                                            cursor: 'pointer', 
+                                            cursor: isArchived ? 'not-allowed' : 'pointer', 
                                             padding: '8px',
                                             display: 'inline-flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            transition: 'all 0.2s'
+                                            transition: 'all 0.2s',
+                                            opacity: isArchived ? 0.5 : 1
                                         }} 
-                                        title="Delete"
+                                        title={isArchived ? 'Cannot delete visits for archived patients' : 'Delete'}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#fee2e2';
-                                            e.currentTarget.style.borderColor = '#fca5a5';
+                                            if (!isArchived) {
+                                                e.currentTarget.style.backgroundColor = '#fee2e2';
+                                                e.currentTarget.style.borderColor = '#fca5a5';
+                                            }
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent';
-                                            e.currentTarget.style.borderColor = '#e5e7eb';
+                                            if (!isArchived) {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                                e.currentTarget.style.borderColor = '#e5e7eb';
+                                            }
                                         }}
                                     >
                                         <BiSolidTrash style={{ fontSize: '18px', color: '#ef4444' }} />

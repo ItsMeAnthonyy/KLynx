@@ -81,7 +81,7 @@ const Sidebar = () => {
                     {/*{checkPermission(PERMISSIONS.ICD_VIEW) && (<Link to="/ICDManager2">ICD-10</Link>)}*/}
                         {isAdmin && (
                             <>   
-                                <Link to="/NurseNotes">Nurse Notes</Link>                 
+                                {/* <Link to="/NurseNotes">Nurse Notes</Link>                  */}
                                 <Link to="/UserManagement">User Management</Link>
                             </>
                         )}

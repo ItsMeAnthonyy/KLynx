@@ -435,7 +435,6 @@ function StaffHealthRecord() {
                     </div>
                 </div>
 
-                 <PermissionGate permission={PERMISSIONS.USERS_ADD}>
                                         <div className={styles.addButtonContainer}>
                                             <button 
                                                 className={styles.addButton}
@@ -445,7 +444,6 @@ function StaffHealthRecord() {
                                                Add Health Record
                                             </button>
                                         </div>
-                </PermissionGate>
 
                 {/* Summary Table */}
                 <div className={styles.summarySection}>
