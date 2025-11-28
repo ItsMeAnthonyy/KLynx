@@ -103,6 +103,7 @@ const Patients = () => {
     }    
 
     const handleAddDoctorsChange = (e) => {
+        const navigate = useNavigate();
         const name = e.target.name;
         const value = e.target.value;
         const updatedInputs = { ...addDoctorsInputs, [name]: value };
@@ -451,43 +452,44 @@ const Patients = () => {
 
     const handleAddToQueue = (patient) => {
         try {
-            // Get existing queue from localStorage
-            const savedQueue = localStorage.getItem('queueAppointments');
-            let queue = savedQueue ? JSON.parse(savedQueue) : [];
+            navigate('/QueueManagement');
+            // // Get existing queue from localStorage
+            // const savedQueue = localStorage.getItem('queueAppointments');
+            // let queue = savedQueue ? JSON.parse(savedQueue) : [];
             
-            // Check if patient is already in queue
-            const isAlreadyInQueue = queue.some(apt => apt.patientId === patient.PatientID);
-            if (isAlreadyInQueue) {
-                toast.warning(`${patient.FirstName} ${patient.LastName} is already in the queue!`);
-                return;
-            }
+            // // Check if patient is already in queue
+            // const isAlreadyInQueue = queue.some(apt => apt.patientId === patient.PatientID);
+            // if (isAlreadyInQueue) {
+            //     toast.warning(`${patient.FirstName} ${patient.LastName} is already in the queue!`);
+            //     return;
+            // }
             
-            // Get the next queue number
-            const nextQueueNumber = queue.length > 0 
-                ? Math.max(...queue.map(apt => apt.queueNumber)) + 1 
-                : 1;
+            // // Get the next queue number
+            // const nextQueueNumber = queue.length > 0 
+            //     ? Math.max(...queue.map(apt => apt.queueNumber)) + 1 
+            //     : 1;
             
-            // Create new appointment
-            const newAppointment = {
-                queueNumber: nextQueueNumber,
-                patientId: patient.PatientID,
-                name: `${patient.FirstName} ${patient.MiddleName || ''} ${patient.LastName}`.trim(),
-                phone: patient.ContactNumber || 'N/A',
-                status: 'waiting',
-                complaint: '',
-                addedAt: new Date().toISOString()
-            };
+            // // Create new appointment
+            // const newAppointment = {
+            //     queueNumber: nextQueueNumber,
+            //     patientId: patient.PatientID,
+            //     name: `${patient.FirstName} ${patient.MiddleName || ''} ${patient.LastName}`.trim(),
+            //     phone: patient.ContactNumber || 'N/A',
+            //     status: 'waiting',
+            //     complaint: '',
+            //     addedAt: new Date().toISOString()
+            // };
             
-            // Add to queue
-            queue.push(newAppointment);
+            // // Add to queue
+            // queue.push(newAppointment);
             
-            // Save to localStorage
-            localStorage.setItem('queueAppointments', JSON.stringify(queue));
+            // // Save to localStorage
+            // localStorage.setItem('queueAppointments', JSON.stringify(queue));
             
-            // Show success message
-            toast.success(`${patient.FirstName} ${patient.LastName} added to queue (Queue #${nextQueueNumber})`);
+            // // Show success message
+            // toast.success(`${patient.FirstName} ${patient.LastName} added to queue (Queue #${nextQueueNumber})`);
             
-            console.log('Patient added to queue:', newAppointment);
+            // console.log('Patient added to queue:', newAppointment);
         } catch (error) {
             console.error('Error adding patient to queue:', error);
             toast.error('Failed to add patient to queue');
@@ -639,7 +641,10 @@ const Patients = () => {
                                 <td>
                                     <button 
                                         className="queue-button" 
-                                        onClick={() => handleAddToQueue(consProf)}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // prevent row click
+                                            handleAddToQueue(consProf);
+                                        }}
                                         style={{
                                             padding: '6px 12px',
                                             backgroundColor: '#10b981',
@@ -655,12 +660,25 @@ const Patients = () => {
                                     </button>
                                 </td>
                                 <td>
-                                    <button className="download-button" onClick={() => handleDownloadData(consProf)}>
+                                    <button 
+                                        className="download-button"
+                                        
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDownloadData(consProf);
+                                        }}
+                                    >
                                         <FaDownload />
                                     </button>
                                 </td>
                                 <td>
-                                    <button className="archive-button" onClick={() => handleArchivePatient(consProf)}>
+                                    <button 
+                                        className="archive-button" 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleArchivePatient(consProf);
+                                        }}
+                                    >
                                         <FaArchive />
                                     </button>
                                 </td>

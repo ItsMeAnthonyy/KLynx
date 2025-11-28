@@ -4,31 +4,36 @@ import PropTypes from "prop-types";
 import './Frontpage.css';
 
 const ForgotPassword = () => {
-
   const [email, setEmail] = useState('');
-  const [mobile, setMobile] = useState(''); 
-  const [error, setError] = useState(""); 
+  //const [mobile, setMobile] = useState(''); 
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const Navigate = useNavigate();
 
-  const predefinedEmail = "user123@gmail.com";  
-  const predefinedMobile = "09123456789";  
+  //const predefinedEmail = "user123@gmail.com";  
+ // const predefinedMobile = "09123456789";  
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!email && !mobile) {
-      setError("Email or mobile number is required");
-      return;
-    }
+  try {
+    const response = await fetch("http://localhost/api/forgot_password.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
 
-    if (email === predefinedEmail || mobile === predefinedMobile) {
-      console.log("Account found");
-    //  onSearch && onSearch('admin'); 
-      Navigate("/resetpass"); // Navigate to the Enter Code page
+    const res = await response.json();
+    console.log(res);
+    if (res.success) {
+      Navigate("/entercode");
     } else {
-      setError("Invalid email or mobile number");
+      setError(res.message);
     }
-  };
+  } catch (err) {
+    setError("Server error");
+  }
+};
 
   return (
     <div className="forgot-password-page">
@@ -37,42 +42,24 @@ const ForgotPassword = () => {
           <h5>Please enter your email or mobile number to search for your account.</h5>
        
         <form className="forgot-password-form" onSubmit={handleSubmit}>
-        
-          <div>
-              <input 
-              type="text" 
-              id="number" 
-              name="number" 
-              placeholder="Email Address or Contact Number" 
-              value={email || mobile}
-              onChange={(e) => {
-                if (e.target.value.includes('@')) {
-                  setEmail(e.target.value);
-                  setMobile('');
-                } else {
-                  setMobile(e.target.value);
-                  setEmail('');
-                }
-              }}
-              required />
-              {error && <p className="error-message" style={{ color: "red" }}>{error}</p>}
-          </div>
-       
-        <button type="submit" className="reset-password-button">Search</button>
-         </form>
+          <input 
+            type="email"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          {error && <p className="error-message">{error}</p>}
+          {success && <p className="success-message">{success}</p>}
+          <button type="submit" className="reset-password-button">Search</button>
+        </form>
 
+        <div className="Return-Home-Button">
+            <Link to="/"><button>Back</button></Link>
+        </div>
       </div>
-      <div className="Return-Home-Button">
-              <Link to="/">
-                <button>Back</button>
-              </Link>
-              </div>
-      
     </div>
   );
 };
 
-ForgotPassword.propTypes = {
-  onSearch: PropTypes.func.isRequired,
-};
 export default ForgotPassword;

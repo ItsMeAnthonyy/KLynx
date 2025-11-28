@@ -22,6 +22,7 @@ const STATUS_COLORS = {
     cancelled: '#EF4444'
 };
 
+
 const CONSULTATION_TYPES = [
   { value: 'general', label: 'General' },
   { value: 'prenatal', label: 'Prenatal' },
