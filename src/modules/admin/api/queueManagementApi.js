@@ -44,3 +44,21 @@ export const getQueue = async (providerId = null, status = null) => {
         throw err;
     }
 };
+
+
+export const updateQueueProvider = async (queueId, providerId) => {
+  try {
+    const { data } = await axios.post(
+      'http://localhost/your-php-path/update_queue_provider.php',
+      { queue_id: queueId, provider_id: providerId },
+      { withCredentials: true }
+    );
+
+    if (!data.success) throw new Error(data.message);
+
+    return data.data;
+  } catch (error) {
+    console.error('Error updating queue provider:', error);
+    throw error;
+  }
+};

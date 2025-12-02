@@ -148,7 +148,8 @@ function App() {
               <Route element={<RequireAuth allowedRoles={[ROLES.DOCTOR, ROLES.ADMIN]} />}>
                 <Route path='/Appointments' element={<Appointments />} />
                 <Route path ='/Patients' element={<Patients />} />
-                <Route path="/patient/:id/visits" element={<Visits />} />
+                <Route path="/patient/:patientId/visits" element={<Visits />} />
+                <Route path="/patient/:patientId/visit/:visitId" element={<ConsultationDetail />} />
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 
@@ -162,7 +163,7 @@ function App() {
                 <Route path='/Immunization' element={<Immunization/>} />
                 <Route path='/Prenatal' element={<Prenatal/>} />
                 <Route path='/Consultation' element={<Consultation />} />
-                <Route path='/ConsultationDetail' element={<ConsultationDetail />} />
+                {/* <Route path='/ConsultationDetail' element={<ConsultationDetail />} /> */}
                 <Route path='/StaffHealthRecord' element={<StaffHealthRecord />} />
                 
                 <Route path='/QueueManagement' element={<QueueManagement />} />

@@ -10,6 +10,7 @@ import { getQueue/*, updateQueueStatus, removeFromQueue*/ } from '../api/queueMa
 import AddWalkInModal from '../popups/addWalkInModal';
 import styles from './QueueManagement.module.css';
 import useAuth from '../../../hooks/useAuth';
+import axios from "axios";
 
 const STATUS_COLORS = {
     waiting: '#F59E0B',
@@ -33,6 +34,7 @@ const QueueManagement = () => {
     const [showWalkInModal, setShowWalkInModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [queueWarnings, setQueueWarnings] = useState([]);
+    const [providers, setProviders] = useState([]);
     const { toast } = useToast();
     const { auth } = useAuth();
 
@@ -44,6 +46,7 @@ const QueueManagement = () => {
         if (currentUser) {
             fetchQueue();
             // checkLimits();
+            fetchProviders(setProviders);
         }
     }, [currentUser]);
 
@@ -71,6 +74,20 @@ const QueueManagement = () => {
             });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchProviders = async (setProviders) => {
+        try {
+            const { data } = await axios.get(
+      'http://localhost/api/get_providers.php'
+    );
+
+            //if (!data.success) throw new Error(data.message);
+
+            setProviders(data || []);
+        } catch (error) {
+            console.error('Error fetching providers:', error);
         }
     };
 
@@ -121,6 +138,28 @@ const QueueManagement = () => {
     //     });
     //     }
     // };
+
+    const handleProviderChange = async (queueId, newProviderId) => {
+    try {
+        console.log("CHECLKKK",queueId,newProviderId )
+        const { data } = await axios.post(
+            'http://localhost/api/update_queue_provider.php',
+            { queueId, providerId: newProviderId }
+        );
+
+        if (!data.success) throw new Error(data.message);
+
+        toast({ title: 'Provider updated' });
+        fetchQueue(); // refresh queue list
+    } catch (error) {
+        toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive',
+        });
+    }
+};
+
 
     const calculateWaitingTime = (addedAt) => {
         const minutes = Math.floor((new Date() - new Date(addedAt)) / 60000);
@@ -243,11 +282,35 @@ const QueueManagement = () => {
                                         <span>{item.patient_last_name}, {item.patient_first_name}</span>
                                     </div>
 
+
                                     <div>
+  {isAdmin && item.status !== 'finished_service' ? (
+  <select
+    value={item.assigned_provider_id || ''}
+    onChange={(e) => handleProviderChange(item.id, e.target.value)}
+    className={styles.inlineSelect}
+  >
+    <option value="">Unassigned</option>
+    {providers.map((provider) => (
+      <option key={provider.id} value={provider.id}>
+        {provider.last_name}, {provider.first_name}
+      </option>
+    ))}
+  </select>
+) : (
+  <span>
+    {item.assignedProviderId && item.provider_first_name
+      ? `${item.provider_last_name}, ${item.provider_first_name}`
+      : 'Unassigned'}
+  </span>
+)}
+</div>
+
+                                    {/* <div>
                                         {item.provider_last_name && item.provider_first_name
                                         ? `${item.provider_last_name}, ${item.provider_first_name}`
                                         : 'Unassigned'}
-                                    </div>
+                                    </div> */}
 
                                     <div className={styles.typeCell}>
                                         {item.consultation_type?.replace('_', ' ')}

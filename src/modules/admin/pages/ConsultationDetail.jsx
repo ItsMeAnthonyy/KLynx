@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../../../components/Sidebar';
 import './ConsultationDetail.css';
 import { BiError, BiArrowBack, BiShow } from 'react-icons/bi';
@@ -7,6 +7,9 @@ import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 import AddRecordModal from '../../../modules/admin/popups/AddRecordModal';
 import { generatePrescriptionPDF } from '../../../../Utility/PrescriptionPDF';
+
+import { getPatientById } from '../api/patientApi';
+import { getVisitsByPatientId } from '../api/visitApi';
 
 
 
@@ -127,10 +130,12 @@ const MOCK_INITIAL_RECORDS = [
 ];
 
 const ConsultationDetail = () => {
-
-  const navigate = useNavigate();
+  const { patientId, visitId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   
+
+
   // Check if coming from Visits page with specific visit data
   const fromVisits = location.state?.fromVisits;
   const visitData = location.state?.visitData;
@@ -144,48 +149,98 @@ const ConsultationDetail = () => {
   console.log('ConsultationDetail - isArchived:', isArchived);
   console.log('ConsultationDetail - archiveInfo:', archiveInfo);
 
-    const [patientData, setPatientData] = useState(null);
-    const [consultationRecords, setConsultationRecords] = useState([]);
-    const [archivedRecords, setArchivedRecords] = useState([]);
-    const [currentVisitRecord, setCurrentVisitRecord] = useState(null); // Store visit data separately
-   
-    const [activeTab, setActiveTab] = useState('general');
-    const [message, setMessage] = useState({ type: '', text: '' });
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [editingRecord, setEditingRecord] = useState(null);
-    const [showArchives, setShowArchives] = useState(false);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [recordToArchive, setRecordToArchive] = useState(null);
+  const [patientData, setPatientData] = useState(null);
+  const [consultationRecords, setConsultationRecords] = useState([]);
+  const [archivedRecords, setArchivedRecords] = useState([]);
+  const [currentVisitRecord, setCurrentVisitRecord] = useState(null); // Store visit data separately
+  
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
+  const [showArchives, setShowArchives] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [recordToArchive, setRecordToArchive] = useState(null);
+
+
+
+  // REVISE STARTS HERE:
+
+  const [patient, setPatient] = useState(location.state?.patient || null);
+  const [visit, setVisit] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('general');
+  const [pasok, setPasok] = useState(false);
+
+  useEffect(() => {
+    fetchData();
+  }, [patientId, visitId]);
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const [patientResponse, visitsResponse] = await Promise.all([
+        getPatientById(patientId),
+        getVisitsByPatientId(patientId)
+      ]);
+
+      if (patientResponse.success && patientResponse.data) {
+        setPatient(patientResponse.data);
+      }
+
+      if (visitsResponse.success) {
+        console.log("CHECK",visitsResponse.data);
+        const foundVisit = visitsResponse.data.find(v => v.visitId === Number(visitId));
+        
+        if (foundVisit) {
+          setVisit(foundVisit);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+      setPasok(true);
+    }
+  };
+
+
+
+
+
+
+
+
 
     // Initialize mock data from localStorage or use defaults
-    const initializeMockData = () => {
-        const storedPatient = localStorage.getItem('mockPatientData');
-        const storedRecords = localStorage.getItem('mockConsultationRecords');
-        const storedArchives = localStorage.getItem('mockArchivedRecords');
+  const initializeMockData = () => {
+      const storedPatient = localStorage.getItem('mockPatientData');
+      const storedRecords = localStorage.getItem('mockConsultationRecords');
+      const storedArchives = localStorage.getItem('mockArchivedRecords');
 
-        if (storedPatient) {
-            setPatientData(JSON.parse(storedPatient));
-        } else {
-            setPatientData(MOCK_PATIENT_DATA);
-            localStorage.setItem('mockPatientData', JSON.stringify(MOCK_PATIENT_DATA));
-        }
+      if (storedPatient) {
+          setPatientData(JSON.parse(storedPatient));
+      } else {
+          setPatientData(MOCK_PATIENT_DATA);
+          localStorage.setItem('mockPatientData', JSON.stringify(MOCK_PATIENT_DATA));
+      }
 
-        if (storedRecords) {
-            setConsultationRecords(JSON.parse(storedRecords));
-        } else {
-            setConsultationRecords(MOCK_INITIAL_RECORDS);
-            localStorage.setItem('mockConsultationRecords', JSON.stringify(MOCK_INITIAL_RECORDS));
-        }
+      if (storedRecords) {
+          setConsultationRecords(JSON.parse(storedRecords));
+      } else {
+          setConsultationRecords(MOCK_INITIAL_RECORDS);
+          localStorage.setItem('mockConsultationRecords', JSON.stringify(MOCK_INITIAL_RECORDS));
+      }
 
-        if (storedArchives) {
-            setArchivedRecords(JSON.parse(storedArchives));
-        } else {
-            setArchivedRecords([]);
-            localStorage.setItem('mockArchivedRecords', JSON.stringify([]));
-        }
-    };
+      if (storedArchives) {
+          setArchivedRecords(JSON.parse(storedArchives));
+      } else {
+          setArchivedRecords([]);
+          localStorage.setItem('mockArchivedRecords', JSON.stringify([]));
+      }
+  };
 
     useEffect(() => {
+        if (!patient || !visit) return;
         // If coming from Visits page, use that data instead
         const calculateAge = (birthdate) => {
           if (!birthdate) return 'N/A';
@@ -201,34 +256,31 @@ const ConsultationDetail = () => {
           return age;
         };
 
-        if (fromVisits && patientDataFromVisits) {
+        
+        if (true) {
             const formattedPatient = {
-                id: patientDataFromVisits.PatientID,
-                name: `${patientDataFromVisits.FirstName} ${patientDataFromVisits.MiddleName} ${patientDataFromVisits.LastName}`,
-                age: calculateAge(patientDataFromVisits.Birthdate),
-                gender: patientDataFromVisits.Sex,
-                phone: patientDataFromVisits.ContactNumber || 'N/A',
-                dateOfBirth: patientDataFromVisits.Birthdate || 'N/A',
+                id: patient.PatientID,
+                name: `${patient.FirstName} ${patient.MiddleName} ${patient.LastName}`,
+                age: calculateAge(patient.Birthdate),
+                gender: patient.Sex,
+                phone: patient.PhoneNumber || 'N/A',
+                dateOfBirth: patient.Birthdate || 'N/A',
                 emergencyContact: 'N/A'
             };
             setPatientData(formattedPatient);
+            setCurrentVisitRecord(visit);
             
             // Set active tab based on consultation type
-            if (consultationType) {
-                setActiveTab(consultationType === 'animal-bite' ? 'animalBite' : consultationType);
-            }
+            setActiveTab(visit.consultationType === 'animal-bite' ? 'animalBite' : visit.consultationType);
+
             
-            // If there's specific visit data, store it separately (don't add to consultation records)
-            if (visitData) {
-                setCurrentVisitRecord(visitData);
-            }
             
             // Initialize empty consultation records when coming from Visits
             setConsultationRecords([]);
         } else {
             initializeMockData();
         }
-    }, [fromVisits, visitData, consultationType, patientDataFromVisits]);
+    }, [fromVisits, visitData, consultationType, patientDataFromVisits, patient, visit]);
 
     const handleAddRecord = (recordData) => {
         if (isArchived) {
@@ -406,23 +458,25 @@ const ConsultationDetail = () => {
 
      const handleBackToPatientList = () => {
         // If coming from Visits, go back to Visits page
-        if (fromVisits && patientData?.id) {
-            navigate(`/patient/${patientData.id}/visits`, {
-                state: { 
-                    patient: patientDataFromVisits || patientData,
-                    isArchived: isArchived,
-                    archiveInfo: archiveInfo
-                }
-            });
-        } else if (patientData?.id) {
-            // Navigate back to the patient's visit list using the patient ID from patientData
-            navigate(`/patient/${patientData.id}/visits`, {
-                state: {
-                    patient: patientData,
-                    isArchived: isArchived,
-                    archiveInfo: archiveInfo
-                }
-            });
+        // if (fromVisits && patientData?.id) {
+        //     navigate(`/patient/${patientData.id}/visits`, {
+        //         state: { 
+        //             patient: patientDataFromVisits || patientData,
+        //             isArchived: isArchived,
+        //             archiveInfo: archiveInfo
+        //         }
+        //     });
+        // } else if (patientData?.id) {
+        //     // Navigate back to the patient's visit list using the patient ID from patientData
+        //     navigate(`/patient/${patientData.id}/visits`, {
+        //         state: {
+        //             patient: patientData,
+        //             isArchived: isArchived,
+        //             archiveInfo: archiveInfo
+        //         }
+        //     });
+        if (patientId) {
+          navigate(`/patient/${patientId}/visits`);
         } else {
             // Fallback based on archived state
             if (isArchived) {
@@ -578,7 +632,7 @@ const ConsultationDetail = () => {
         </div>
 
         {/* Visit Information Section - Only shown when coming from Visits */}
-        {fromVisits && currentVisitRecord && (
+        {/* {currentVisitRecord && ( */}
           <div className="emergency-contact-section">
             <div className="emergency-contact-container">
               <div className="emergency-contact-card">
@@ -586,64 +640,69 @@ const ConsultationDetail = () => {
                 <div className="emergency-details">
                   <div className="emergency-info-row">
                     <span className="emergency-label">Date:</span>
-                    <span className="emergency-value">{currentVisitRecord.consultation_date || 'N/A'}</span>
+                    <span className="emergency-value">{currentVisitRecord?.dateTime
+      ? currentVisitRecord.dateTime.split(',')[0]?.trim()
+      : 'Pending'}</span>
                   </div>
                   <div className="emergency-info-row">
                     <span className="emergency-label">Time:</span>
-                    <span className="emergency-value">{currentVisitRecord.consultation_time || 'N/A'}</span>
+                    <span className="emergency-value"> {currentVisitRecord?.dateTime
+      ? currentVisitRecord.dateTime.split(',')[1]?.trim()
+      : 'Pending'}</span>
                   </div>
                   <div className="emergency-info-row">
                     <span className="emergency-label">Attending Provider:</span>
-                    <span className="emergency-value">{currentVisitRecord.attending_provider || 'N/A'}</span>
+                    <span className="emergency-value">{currentVisitRecord?.provider || 'N/A'}</span>
                   </div>
                   <div className="emergency-info-row">
                     <span className="emergency-label">Chief Complaint:</span>
-                    <span className="emergency-value">{currentVisitRecord.chief_complaint || 'N/A'}</span>
+                    <span className="emergency-value">{currentVisitRecord?.chiefComplaint || 'N/A'}</span>
                   </div>
                   <div className="emergency-info-row">
                     <span className="emergency-label">Nature of Visit:</span>
-                    <span className="emergency-value">{currentVisitRecord.nature_of_visit || 'N/A'}</span>
+                    <span className="emergency-value">{currentVisitRecord?.natureOfVisit || 'N/A'}</span>
                   </div>
                   <div className="emergency-info-row">
                     <span className="emergency-label">Consultation Type:</span>
-                    <span className="emergency-value">{currentVisitRecord.consultation_type || 'N/A'}</span>
+                    <span className="emergency-value">{currentVisitRecord?.consultationType || 'N/A'}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        )}
+        {/* )} */}
 
         {/* Medical Records Tabs */}
-        {fromVisits ? (
-          /* Show only specific consultation type tab when coming from Visits */
+        {fromVisits && visit ? (
+          /* Show only specific consultation type tab when coming from Visits */  
+          
           <div className="consultation-tabs-new">
             <button 
               className={`tab-item ${activeTab !== 'prescription' ? 'active' : ''}`}
-              onClick={() => setActiveTab(consultationType)}
+              onClick={() => setActiveTab(visit.consultationType)}
               style={{ flex: 1 }}
             >
               <span className="tab-icon">
-                {consultationType === 'general' ? '📋' : 
-                 consultationType === 'prenatal' ? '🤰' :
-                 consultationType === 'dental' ? '🦷' :
-                 consultationType === 'animalBite' ? '🐕' :
-                 consultationType === 'immunization' ? '💉' : '📋'}
+                {visit.consultationType === 'general' ? '📋' : 
+                 visit.consultationType === 'prenatal' ? '🤰' :
+                 visit.consultationType === 'dental' ? '🦷' :
+                 visit.consultationType === 'animalBite' ? '🐕' :
+                 visit.consultationType === 'immunization' ? '💉' : '📋'}
               </span>
               <div className="tab-content">
                 <div className="tab-title">
-                  {consultationType === 'general' ? 'General Checkup' : 
-                   consultationType === 'prenatal' ? 'Prenatal' :
-                   consultationType === 'dental' ? 'Dental' :
-                   consultationType === 'animalBite' ? 'Animal Bite' :
-                   consultationType === 'immunization' ? 'Immunization' : 'Consultation'}
+                  {visit.consultationType === 'general' ? 'General Checkup' : 
+                   visit.consultationType === 'prenatal' ? 'Prenatal' :
+                   visit.consultationType === 'dental' ? 'Dental' :
+                   visit.consultationType === 'animalBite' ? 'Animal Bite' :
+                   visit.consultationType === 'immunization' ? 'Immunization' : 'Consultation'}
                 </div>
                 <div className="tab-subtitle">
-                  {consultationType === 'general' ? 'Medical records' : 
-                   consultationType === 'prenatal' ? 'Maternal care' :
-                   consultationType === 'dental' ? 'Oral health' :
-                   consultationType === 'animalBite' ? 'Bite treatment' :
-                   consultationType === 'immunization' ? 'Vaccine records' : 'Medical records'}
+                  {visit.consultationType === 'general' ? 'Medical records' : 
+                   visit.consultationType === 'prenatal' ? 'Maternal care' :
+                   visit.consultationType === 'dental' ? 'Oral health' :
+                   visit.consultationType === 'animalBite' ? 'Bite treatment' :
+                   visit.consultationType === 'immunization' ? 'Vaccine records' : 'Medical records'}
                 </div>
               </div>
             </button>

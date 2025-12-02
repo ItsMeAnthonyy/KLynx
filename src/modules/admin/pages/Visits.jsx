@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import VisitModal from '../popups/VisitModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import Sidebar from '../../../components/Sidebar';
@@ -17,12 +17,13 @@ import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus, BiShow } from 
 //import IcdCollapsibleDropdown from "./IcdManager";
 
 import { fetchPatientData } from "../services/patientService";
+import { getPatientById } from '../api/patientApi';
+import { getVisitsByPatientId } from '../api/visitApi';
 
 const Visits = () => {
     const navigate = useNavigate();
     const { patientId } = useParams();
     const location = useLocation();
-    const patient = location.state?.patient;
     const isArchived = location.state?.isArchived || false;
     const archiveInfo = location.state?.archiveInfo || null;
 
@@ -59,6 +60,14 @@ const Visits = () => {
 
     const [loading, setLoading] = useState(false);
     const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
+
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [patient, setPatient] = useState(location.state?.patient || null);
+    const [visits, setVisits] = useState([]);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
+
 
     const handleModalOpen = () =>{
         setShowModal(true);
@@ -216,14 +225,70 @@ const Visits = () => {
     }
 
     useEffect( () => {
-        const idToUse = patientId || patient?.PatientID;
-        console.log('useEffect - Loading visits for patient:', idToUse);
-        getConsultProfiles(idToUse);
-        setAddHistoryInputs((prev) => ({
-            ...prev,
-            consult_date_visit: new Date().toISOString().split("T")[0]
-        }));
-    }, [patientId, patient]);
+        const fetchData = async () => {
+            try {
+                const [patientResponse, visitsResponse] = await Promise.all([
+                    getPatientById(patientId),
+                    getVisitsByPatientId(patientId)
+                ]);
+
+                console.log("WHAT???", visitsResponse.data);
+
+                if (patientResponse.success && patientResponse.data) {
+                    setPatient(patientResponse.data);
+                }
+
+                if (visitsResponse.success) {
+                    setVisits(visitsResponse.data);
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+        // const idToUse = patientId || patient?.PatientID;
+        // console.log('useEffect - Loading visits for patient:', idToUse);
+        // getConsultProfiles(idToUse);
+        // setAddHistoryInputs((prev) => ({
+        //     ...prev,
+        //     consult_date_visit: new Date().toISOString().split("T")[0]
+        // }));
+    }, [patientId]);
+
+    const filteredVisits = useMemo(() => {
+        console.log("VISIT STATE?",visits);
+        let filtered = visits;
+        
+        if (statusFilter !== 'all') {
+            filtered = filtered.filter(visit => visit.status === statusFilter);
+        }
+
+        
+    
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(visit => 
+                visit.chiefComplaint?.toLowerCase().includes(query) ||
+                visit.provider?.toLowerCase().includes(query) ||
+                visit.natureOfVisit?.toLowerCase().includes(query) ||
+                visit.consultationType?.toLowerCase().includes(query) ||
+                (visit.dateTime 
+                    ? new Date(visit.dateTime)
+                        .toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                        .toLowerCase()
+                        .includes(query)
+                    : false
+                )
+
+            );
+        }
+    
+        return filtered;
+    }, [visits, statusFilter, searchQuery]);
 
 
 
@@ -625,7 +690,12 @@ const Visits = () => {
                             >
                                 <BiPlus/>
                             </button>
-                            <input type="text" placeholder="Search here..."/>
+                            <input 
+                                type="text" 
+                                placeholder="Search here..." 
+                                value={searchQuery} 
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                     </div>
                 </div>
                 <div className="FileMaintenance-TableWrapper">
@@ -643,30 +713,33 @@ const Visits = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {consultProfiles.map((patient, key) => (
-                            <tr key={key}>
+                            {filteredVisits.map((visit, index) => (
+
+                            <tr key={visit.visitId}>
                                 <td>
-                                    {key + 1}
+                                    {index + 1}
                                 </td> 
                                 <td>
-                                    {patient.visit_date_time ? patient.visit_date_time.split(',')[0]?.trim() : 'Pending'}
+                                    {visit.dateTime ? visit.dateTime.split(',')[0]?.trim() : 'Pending'}
                                 </td>
                                 <td>
-                                    {patient.visit_date_time ? patient.visit_date_time.split(',')[1]?.trim() : 'Pending'}
+                                    {visit.dateTime ? visit.dateTime.split(',')[1]?.trim() : 'Pending'}
                                 </td>
                                
                                 <td>
-                                    { patient.consultation_type || 'N/A'}
+                                    {visit.consultationType || 'N/A'}
                                 </td> 
-                                <td title={patient.chief_complaint || 'N/A'}>
-                                    { patient.chief_complaint || 'N/A'}
+                                <td title={visit.chiefComplaint || 'N/A'}>
+                                    {visit.chiefComplaint || 'N/A'}
                                 </td>
                                 <td>
-                                    { patient.attending_provider || 'Not Assigned Yet'}
+                                    {visit.provider || 'Not Assigned Yet'}
                                 </td>
                                 <td>
                                     <button 
-                                        onClick={() => viewHistory(patient)} 
+                                        onClick={() => /*!isPatientArchived &&*/ navigate(`/patient/${patientId}/visit/${visit.visitId}`, { 
+                                            state: { patient, /*isPatientArchived*/ } 
+                                        })}
                                         style={{
                                             padding: '5px 5px',
                                             backgroundColor: '#3b82f6',
