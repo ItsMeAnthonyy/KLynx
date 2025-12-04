@@ -11,6 +11,12 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
     { id: 'dr_jones', name: 'Dr. Jones' },
     { id: 'dr_brown', name: 'Dr. Brown' },
   ];
+  console.log("RECORD TYPE?",recordType);
+
+  const [doctorsOrderForm, setDoctorsOrderForm] = useState({
+    imaging: []
+  })
+
   const [formData, setFormData] = useState({
    
     // General checkup fields
@@ -183,12 +189,26 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
   }, [isOpen]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { value, checked } = e.target;
+
+    if (checked) {
+      setDoctorsOrderForm({
+        ...doctorsOrderForm,
+        imaging: [...doctorsOrderForm.imaging, value],
+      });
+    } else {
+      setDoctorsOrderForm({
+        ...doctorsOrderForm,
+        imaging: doctorsOrderForm.imaging.filter((d) => d !== value),
+      });
+    }
+    console.log(doctorsOrderForm);
   };
+
+
+  useEffect(() => {
+    console.log("TESTT",formData.imaging);
+  }, [formData]);
 
   // Handle medication field changes
   const handleMedicationChange = (index, field, value) => {
@@ -326,7 +346,11 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
           setShowSpecifyContact(e.target.value === 'yes');
       };
   
+  
+    
   if (!isOpen) return null;
+
+  
   
 
   return (
@@ -336,11 +360,65 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
           <h2 className="addRecord-modal-title">
             {editingRecord ? 'Edit' : 'Add'} {recordType.charAt(0).toUpperCase() + recordType.slice(1)} Record
             <button onClick={onClose} className="close-button">
-            ✕
-          </button>
+              ✕
+            </button>
           </h2>
-          
         </div>
+
+        {recordType === 'doctors-order' && (
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <div className="inputBox">
+                <label className="required">Imaging</label>
+                <div className="checkbox-grid">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="imaging"
+                      value="ecg"
+                      checked={doctorsOrderForm.imaging.includes("ecg")}
+                      onChange={handleChange
+                    />
+                    ECG
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="imaging"
+                      value="mri"
+                      checked={doctorsOrderForm.imaging.includes("mri")}
+                      onChange={handleChange}
+                    />
+                    MRI
+                  </label>
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="imaging"
+                      value="ultraSound"
+                      checked={doctorsOrderForm.imaging.includes("ultraSound")}
+                      onChange={handleChange}
+                    />
+                    Ultrasound
+                  </label>
+                </div>
+                <div className="checkbox-grid">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="imaging"
+                      value="xray"
+                      checked={doctorsOrderForm.imaging.includes("xray")}
+                      onChange={handleChange}
+                    />
+                    X-ray
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+          </form>
+        )}
 
         {recordType === 'general' && (
         <form onSubmit={handleSubmit}>

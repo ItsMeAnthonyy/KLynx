@@ -1,34 +1,39 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  backdrop-filter: blur(4px);
 }
 
 .modal {
   background: hsl(0 0% 100%);
-  border-radius: 0.75rem;
-  max-width: 600px;
+  border-radius: 1rem;
+  max-width: 560px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid hsl(210 25% 88%);
+  position: sticky;
+  top: 0;
+  background: hsl(0 0% 100%);
+  z-index: 10;
 }
 
 .header h2 {
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 700;
   color: hsl(215 25% 15%);
   margin: 0;
@@ -39,9 +44,12 @@
   border: none;
   color: hsl(215 15% 50%);
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
+  padding: 0.375rem;
+  border-radius: 0.5rem;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .closeBtn:hover {
@@ -53,66 +61,97 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .infoBox {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  padding: 1rem;
-  background: hsl(200 95% 40% / 0.1);
-  border-radius: 0.5rem;
-  color: hsl(200 95% 40%);
+  padding: 0.875rem 1rem;
+  background: hsl(200 95% 40% / 0.08);
+  border-radius: 0.625rem;
+  border: 1px solid hsl(200 95% 40% / 0.2);
 }
 
 .infoBox svg {
   flex-shrink: 0;
   margin-top: 0.125rem;
+  color: hsl(200 95% 40%);
 }
 
 .infoBox p {
   margin: 0;
   font-size: 0.875rem;
   color: hsl(215 25% 15%);
+  line-height: 1.5;
 }
 
-.field {
+/* Section Styles */
+.section {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: hsl(210 30% 92% / 0.3);
+  border-radius: 0.75rem;
+  border: 1px solid hsl(210 25% 88% / 0.5);
 }
 
-.field label {
+.sectionTitle {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   color: hsl(215 25% 15%);
-  font-size: 0.9375rem;
+  margin: 0 0 0.25rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid hsl(210 25% 88% / 0.5);
 }
 
-.field label svg {
+.sectionTitle svg {
   color: hsl(200 95% 40%);
 }
 
-.row {
+/* Field Styles */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.field label {
+  font-weight: 500;
+  color: hsl(215 25% 15%);
+  font-size: 0.875rem;
+}
+
+.required {
+  color: hsl(0 84.2% 60.2%);
+  margin-left: 0.125rem;
+}
+
+.fieldRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
 
+
+/* Input Styles */
 .input,
 .select,
 .textarea {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid hsl(210 25% 88%);
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid hsl(210 25% 88%);
   border-radius: 0.5rem;
   background: hsl(210 40% 98%);
   color: hsl(215 25% 15%);
   font-size: 0.9375rem;
   font-family: inherit;
+  transition: all 0.2s;
 }
 
 .input:focus,
@@ -120,15 +159,214 @@
 .textarea:focus {
   outline: none;
   border-color: hsl(200 95% 40%);
+  box-shadow: 0 0 0 3px hsl(200 95% 40% / 0.1);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: hsl(215 15% 50% / 0.7);
+}
+
+.inputError {
+  border-color: hsl(0 84.2% 60.2%) !important;
+}
+
+.errorText {
+  font-size: 0.75rem;
+  color: hsl(0 84.2% 60.2%);
+  margin-top: 0.125rem;
 }
 
 .select {
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
 }
 
 .textarea {
   resize: vertical;
+  min-height: 60px;
 }
+
+
+/* Vital Signs Group */
+.vitalGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.vitalLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: hsl(215 25% 15%);
+  font-size: 0.875rem;
+}
+
+.vitalLabel svg {
+  color: hsl(200 95% 40%);
+  flex-shrink: 0;
+}
+
+
+/* Input with Unit */
+.inputWithUnit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputWithUnit .input {
+  flex: 1;
+}
+
+.unit {
+  font-size: 0.8125rem;
+  color: hsl(215 15% 50%);
+  min-width: 2.5rem;
+}
+
+
+/* Blood Pressure Row */
+.bpRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bpField {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.bpField .input {
+  flex: 1;
+}
+
+.bpDivider {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: hsl(215 15% 50%);
+}
+
+/* Auto Computed Badges */
+.autoComputed {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.autoComputedSmall {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.normal {
+  background: hsl(142 76% 36% / 0.1);
+  color: hsl(142 76% 36%);
+}
+
+.warning {
+  background: hsl(38 92% 50% / 0.1);
+  color: hsl(38 92% 40%);
+}
+
+.critical {
+  background: hsl(0 84% 60% / 0.1);
+  color: hsl(0 84% 50%);
+}
+
+
+/* Converter Button & Box */
+.converterBtn {
+  margin-left: auto;
+  background: hsl(210 30% 92%);
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  color: hsl(215 15% 50%);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.converterBtn:hover {
+  background: hsl(200 95% 40% / 0.1);
+  color: hsl(200 95% 40%);
+}
+
+.converterBox {
+  background: hsl(210 30% 92% / 0.5);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  border: 1px dashed hsl(210 25% 88%);
+}
+
+.converterInputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.converterInputs span {
+  font-size: 0.8125rem;
+  color: hsl(215 15% 50%);
+}
+
+.converterInput {
+  width: 70px;
+  padding: 0.5rem;
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 0.375rem;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-size: 0.875rem;
+}
+
+.converterInput:focus {
+  outline: none;
+  border-color: hsl(200 95% 40%);
+}
+
+.convertBtn {
+  padding: 0.5rem 0.875rem;
+  background: hsl(200 95% 40%);
+  color: hsl(0 0% 100%);
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.convertBtn:hover {
+  opacity: 0.9;
+}
+
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid hsl(var(--border) / 0.5);
+}
+
 
 .radioRow {
   display: flex;
@@ -144,18 +382,22 @@
   color: hsl(215 25% 15%);
 }
 
+/* Actions */
 .actions {
   display: flex;
   gap: 0.75rem;
   margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid hsl(210 25% 88% / 0.5);
 }
+
 
 .cancelBtn,
 .submitBtn {
   flex: 1;
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.625rem;
   font-weight: 600;
   font-size: 0.9375rem;
   cursor: pointer;
@@ -174,30 +416,76 @@
 .submitBtn {
   background: hsl(200 95% 40%);
   color: hsl(0 0% 100%);
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
 }
 
 .submitBtn:hover:not(:disabled) {
   opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .submitBtn:disabled,
 .cancelBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
-@media (max-width: 768px) {
-    .modal {
-        max-width: 100%;
-        max-height: 100vh;
-        border-radius: 0;
-    }
+/* Responsive */
+@media (max-width: 640px) {
+  .overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
 
-    .row {
-        grid-template-columns: 1fr;
-    }
+  .modal {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 1.5rem 1.5rem 0 0;
+  }
 
-    .actions {
-        flex-direction: column;
-    }
+  .form {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .fieldRow {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  .bpRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .bpField {
+    width: 100%;
+  }
+
+  .bpDivider {
+    display: none;
+  }
+
+  .converterInputs {
+    gap: 0.375rem;
+  }
+
+  .converterInput {
+    width: 60px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .cancelBtn,
+  .submitBtn {
+    padding: 1rem;
+  }
 }

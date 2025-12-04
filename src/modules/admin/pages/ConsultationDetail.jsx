@@ -10,6 +10,7 @@ import { generatePrescriptionPDF } from '../../../../Utility/PrescriptionPDF';
 
 import { getPatientById } from '../api/patientApi';
 import { getVisitsByPatientId } from '../api/visitApi';
+//import DoctorsOrderForm from '@/components/visit/forms/DoctorsOrderForm';
 
 
 
@@ -129,6 +130,62 @@ const MOCK_INITIAL_RECORDS = [
     },
 ];
 
+const BASIC_SERVICES = {
+  "vital-signs": {
+    icon: "🩺",
+    title: "Vital Signs",
+    subtitle: "Patient's vital signs"
+  },
+  "physical-exam": {
+    icon: "👁️",
+    title: "Physical Exam",
+    subtitle: "Body examination details"
+  },
+  "system-review": {
+    icon: "📋",
+    title: "System Review",
+    subtitle: "Review of body systems"
+  },
+  "doctors-order": {
+    icon: "📝",
+    title: "Doctors Order",
+    subtitle: "Prescriptions and orders"
+  }
+};
+
+const CONSULTATION_TYPES = {
+  general: {
+    icon: "📋",
+    title: "General Checkup",
+    subtitle: "Medical records"
+  },
+  prenatal: {
+    icon: "🤰",
+    title: "Prenatal",
+    subtitle: "Maternal care"
+  },
+  dental: {
+    icon: "🦷",
+    title: "Dental",
+    subtitle: "Oral health"
+  },
+  animalBite: {
+    icon: "🐕",
+    title: "Animal Bite",
+    subtitle: "Bite treatment"
+  },
+  immunization: {
+    icon: "💉",
+    title: "Immunization",
+    subtitle: "Vaccine records"
+  },
+  prescription: {
+    icon: "📝",
+    title: "Doctor's Prescription",
+    subtitle: "Prescription records"
+  }
+};
+
 const ConsultationDetail = () => {
   const { patientId, visitId } = useParams();
   const location = useLocation();
@@ -169,7 +226,10 @@ const ConsultationDetail = () => {
   const [visit, setVisit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('general');
-  const [pasok, setPasok] = useState(false);
+
+  const isPatientArchived = location.state?.isPatientArchived || patient?.archived;
+  const isCompleted = visit?.status === 'completed';
+  const isReadOnly = isPatientArchived || isCompleted;
 
   useEffect(() => {
     fetchData();
@@ -199,88 +259,85 @@ const ConsultationDetail = () => {
       console.error('Error fetching data:', error);
     } finally {
       setIsLoading(false);
-      setPasok(true);
     }
   };
 
 
 
-
-
-
-
-
-
-    // Initialize mock data from localStorage or use defaults
-  const initializeMockData = () => {
-      const storedPatient = localStorage.getItem('mockPatientData');
-      const storedRecords = localStorage.getItem('mockConsultationRecords');
-      const storedArchives = localStorage.getItem('mockArchivedRecords');
-
-      if (storedPatient) {
-          setPatientData(JSON.parse(storedPatient));
-      } else {
-          setPatientData(MOCK_PATIENT_DATA);
-          localStorage.setItem('mockPatientData', JSON.stringify(MOCK_PATIENT_DATA));
+  useEffect(() => {
+    if (!patient || !visit) return;
+    // If coming from Visits page, use that data instead
+    const calculateAge = (birthdate) => {
+      if (!birthdate) return 'N/A';
+      const today = new Date();
+      const birthDate = new Date(birthdate);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+      // Adjust if birthday hasn't occurred yet this year
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
       }
+      return age;
+    };
 
-      if (storedRecords) {
-          setConsultationRecords(JSON.parse(storedRecords));
-      } else {
-          setConsultationRecords(MOCK_INITIAL_RECORDS);
-          localStorage.setItem('mockConsultationRecords', JSON.stringify(MOCK_INITIAL_RECORDS));
-      }
+    const formattedPatient = {
+        id: patient.PatientID,
+        name: `${patient.FirstName} ${patient.MiddleName} ${patient.LastName}`,
+        age: calculateAge(patient.Birthdate),
+        gender: patient.Sex,
+        phone: patient.PhoneNumber || 'N/A',
+        dateOfBirth: patient.Birthdate || 'N/A',
+        emergencyContact: 'N/A'
+    };
 
-      if (storedArchives) {
-          setArchivedRecords(JSON.parse(storedArchives));
-      } else {
-          setArchivedRecords([]);
-          localStorage.setItem('mockArchivedRecords', JSON.stringify([]));
-      }
+    setPatientData(formattedPatient);
+    setCurrentVisitRecord(visit);
+        
+    // Set active tab based on consultation type
+    setActiveTab(
+      visit.consultationType === 'animal-bite' 
+        ? 'animalBite' 
+        : visit.consultationType
+    );
+                    
+    // Initialize empty consultation records when coming from Visits
+    setConsultationRecords([]);
+  }, [patient, visit]);
+
+
+  const getTabs = (visit) => {
+
+    const fixedTabs = [
+      { id: "vital-signs", ...BASIC_SERVICES["vital-signs"] },
+      { id: "physical-exam", ...BASIC_SERVICES["physical-exam"] },
+      { id: "system-review", ...BASIC_SERVICES["system-review"] },
+      { id: "doctors-order", ...BASIC_SERVICES["doctors-order"] },
+      { id: "prescription", ...CONSULTATION_TYPES["prescription"] },
+    ];
+
+    if (visit) {
+      // Visit may have multiple consultation types
+      const consultTabs = Array.isArray(visit.consultationType)
+        ? visit.consultationType.map((type) => ({ id: type, ...CONSULTATION_TYPES[type] }))
+        : [{ id: visit.consultationType, ...CONSULTATION_TYPES[visit.consultationType] }];
+
+      return [...fixedTabs, ...consultTabs];
+    }
+
+    // Normal page → show ALL tabs
+    return [
+      ...fixedTabs,
+      ...Object.keys(CONSULTATION_TYPES)
+        .filter((key) => !fixedTabs.some(tab => tab.id === key))
+        .map((key) => ({ id: key, ...CONSULTATION_TYPES[key] })),
+    ];
   };
 
-    useEffect(() => {
-        if (!patient || !visit) return;
-        // If coming from Visits page, use that data instead
-        const calculateAge = (birthdate) => {
-          if (!birthdate) return 'N/A';
-          const today = new Date();
-          const birthDate = new Date(birthdate);
-          let age = today.getFullYear() - birthDate.getFullYear();
-          const monthDiff = today.getMonth() - birthDate.getMonth();
-          const dayDiff = today.getDate() - birthDate.getDate();
-          // Adjust if birthday hasn't occurred yet this year
-          if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-            age--;
-          }
-          return age;
-        };
+  const tabs = getTabs(visit);
 
-        
-        if (true) {
-            const formattedPatient = {
-                id: patient.PatientID,
-                name: `${patient.FirstName} ${patient.MiddleName} ${patient.LastName}`,
-                age: calculateAge(patient.Birthdate),
-                gender: patient.Sex,
-                phone: patient.PhoneNumber || 'N/A',
-                dateOfBirth: patient.Birthdate || 'N/A',
-                emergencyContact: 'N/A'
-            };
-            setPatientData(formattedPatient);
-            setCurrentVisitRecord(visit);
-            
-            // Set active tab based on consultation type
-            setActiveTab(visit.consultationType === 'animal-bite' ? 'animalBite' : visit.consultationType);
 
-            
-            
-            // Initialize empty consultation records when coming from Visits
-            setConsultationRecords([]);
-        } else {
-            initializeMockData();
-        }
-    }, [fromVisits, visitData, consultationType, patientDataFromVisits, patient, visit]);
+
 
     const handleAddRecord = (recordData) => {
         if (isArchived) {
@@ -418,6 +475,7 @@ const ConsultationDetail = () => {
             setRecordToArchive(null);
         }
     };
+
 
     const cancelArchive = () => {
         setShowDeleteConfirm(false);
@@ -633,166 +691,67 @@ const ConsultationDetail = () => {
 
         {/* Visit Information Section - Only shown when coming from Visits */}
         {/* {currentVisitRecord && ( */}
-          <div className="emergency-contact-section">
-            <div className="emergency-contact-container">
-              <div className="emergency-contact-card">
-                <h3>📋 Visit Information</h3>
-                <div className="emergency-details">
-                  <div className="emergency-info-row">
-                    <span className="emergency-label">Date:</span>
-                    <span className="emergency-value">{currentVisitRecord?.dateTime
-      ? currentVisitRecord.dateTime.split(',')[0]?.trim()
-      : 'Pending'}</span>
-                  </div>
-                  <div className="emergency-info-row">
-                    <span className="emergency-label">Time:</span>
-                    <span className="emergency-value"> {currentVisitRecord?.dateTime
-      ? currentVisitRecord.dateTime.split(',')[1]?.trim()
-      : 'Pending'}</span>
-                  </div>
-                  <div className="emergency-info-row">
-                    <span className="emergency-label">Attending Provider:</span>
-                    <span className="emergency-value">{currentVisitRecord?.provider || 'N/A'}</span>
-                  </div>
-                  <div className="emergency-info-row">
-                    <span className="emergency-label">Chief Complaint:</span>
-                    <span className="emergency-value">{currentVisitRecord?.chiefComplaint || 'N/A'}</span>
-                  </div>
-                  <div className="emergency-info-row">
-                    <span className="emergency-label">Nature of Visit:</span>
-                    <span className="emergency-value">{currentVisitRecord?.natureOfVisit || 'N/A'}</span>
-                  </div>
-                  <div className="emergency-info-row">
-                    <span className="emergency-label">Consultation Type:</span>
-                    <span className="emergency-value">{currentVisitRecord?.consultationType || 'N/A'}</span>
-                  </div>
+        <div className="emergency-contact-section">
+          <div className="emergency-contact-container">
+            <div className="emergency-contact-card">
+              <h3>📋 Visit Information</h3>
+              <div className="emergency-details">
+                <div className="emergency-info-row">
+                  <span className="emergency-label">Date:</span>
+                  <span className="emergency-value">{currentVisitRecord?.dateTime
+                    ? currentVisitRecord.dateTime.split(',')[0]?.trim()
+                    : 'Pending'}
+                  </span>
+                </div>
+                <div className="emergency-info-row">
+                  <span className="emergency-label">Time:</span>
+                  <span className="emergency-value"> {currentVisitRecord?.dateTime
+                    ? currentVisitRecord.dateTime.split(',')[1]?.trim()
+                    : 'Pending'}
+                  </span>
+                </div>
+                <div className="emergency-info-row">
+                  <span className="emergency-label">Attending Provider:</span>
+                  <span className="emergency-value">{currentVisitRecord?.provider || 'N/A'}</span>
+                </div>
+                <div className="emergency-info-row">
+                  <span className="emergency-label">Chief Complaint:</span>
+                  <span className="emergency-value">{currentVisitRecord?.chiefComplaint || 'N/A'}</span>
+                </div>
+                <div className="emergency-info-row">
+                  <span className="emergency-label">Nature of Visit:</span>
+                  <span className="emergency-value">{currentVisitRecord?.natureOfVisit || 'N/A'}</span>
+                </div>
+                <div className="emergency-info-row">
+                  <span className="emergency-label">Consultation Type:</span>
+                  <span className="emergency-value">{currentVisitRecord?.consultationType || 'N/A'}</span>
                 </div>
               </div>
             </div>
           </div>
-        {/* )} */}
+        </div>
 
         {/* Medical Records Tabs */}
-        {fromVisits && visit ? (
-          /* Show only specific consultation type tab when coming from Visits */  
-          
-          <div className="consultation-tabs-new">
-            <button 
-              className={`tab-item ${activeTab !== 'prescription' ? 'active' : ''}`}
-              onClick={() => setActiveTab(visit.consultationType)}
+        
+        <div className="consultation-tabs-new">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`tab-item ${activeTab === tab.id ? "active" : ""}`}
+              onClick={() => setActiveTab(tab.id)}
               style={{ flex: 1 }}
             >
-              <span className="tab-icon">
-                {visit.consultationType === 'general' ? '📋' : 
-                 visit.consultationType === 'prenatal' ? '🤰' :
-                 visit.consultationType === 'dental' ? '🦷' :
-                 visit.consultationType === 'animalBite' ? '🐕' :
-                 visit.consultationType === 'immunization' ? '💉' : '📋'}
-              </span>
+              <span className="tab-icon">{tab.icon}</span>
               <div className="tab-content">
-                <div className="tab-title">
-                  {visit.consultationType === 'general' ? 'General Checkup' : 
-                   visit.consultationType === 'prenatal' ? 'Prenatal' :
-                   visit.consultationType === 'dental' ? 'Dental' :
-                   visit.consultationType === 'animalBite' ? 'Animal Bite' :
-                   visit.consultationType === 'immunization' ? 'Immunization' : 'Consultation'}
-                </div>
-                <div className="tab-subtitle">
-                  {visit.consultationType === 'general' ? 'Medical records' : 
-                   visit.consultationType === 'prenatal' ? 'Maternal care' :
-                   visit.consultationType === 'dental' ? 'Oral health' :
-                   visit.consultationType === 'animalBite' ? 'Bite treatment' :
-                   visit.consultationType === 'immunization' ? 'Vaccine records' : 'Medical records'}
-                </div>
+                <div className="tab-title">{tab.title}</div>
+                <div className="tab-subtitle">{tab.subtitle}</div>
               </div>
             </button>
-            
-            <button 
-              className={`tab-item ${activeTab === 'prescription' ? 'active' : ''}`}
-              onClick={() => setActiveTab('prescription')}
-              style={{ flex: 1 }}
-            >
-              <span className="tab-icon">📝</span>
-              <div className="tab-content">
-                <div className="tab-title">Doctor&apos;s Prescription</div>
-                <div className="tab-subtitle">Prescription records</div>
-              </div>
-            </button>
-          </div>
-        ) : (
-          /* Show all tabs for normal use */
-          <div className="consultation-tabs-new">
-            <button 
-              className={`tab-item ${activeTab === 'general' ? 'active' : ''}`}
-              onClick={() => setActiveTab('general')}
-            >
-              <span className="tab-icon">📋</span>
-              <div className="tab-content">
-                <div className="tab-title">General Checkup</div>
-                <div className="tab-subtitle">Medical records</div>
-              </div>
-            </button>
-            
-            <button 
-              className={`tab-item ${activeTab === 'prenatal' ? 'active' : ''}`}
-              onClick={() => setActiveTab('prenatal')}
-            >
-              <span className="tab-icon">🤰</span>
-              <div className="tab-content">
-                <div className="tab-title">Prenatal</div>
-                <div className="tab-subtitle">Maternal care</div>
-              </div>
-            </button>
-            
-            <button 
-              className={`tab-item ${activeTab === 'dental' ? 'active' : ''}`}
-              onClick={() => setActiveTab('dental')}
-            >
-              <span className="tab-icon">🦷</span>
-              <div className="tab-content">
-                <div className="tab-title">Dental</div>
-                <div className="tab-subtitle">Oral health</div>
-              </div>
-            </button>
-
-            <button 
-              className={`tab-item ${activeTab === 'animalBite' ? 'active' : ''}`}
-              onClick={() => setActiveTab('animalBite')}
-            >
-              <span className="tab-icon">🐕</span>
-              <div className="tab-content">
-                <div className="tab-title">Animal Bite</div>
-                <div className="tab-subtitle">Bite treatment</div>
-              </div>
-            </button>
-
-            <button 
-              className={`tab-item ${activeTab === 'immunization' ? 'active' : ''}`}
-              onClick={() => setActiveTab('immunization')}
-            >
-              <span className="tab-icon">💉</span>
-              <div className="tab-content">
-                <div className="tab-title">Immunization</div>
-                <div className="tab-subtitle">Vaccine records</div>
-              </div>
-            </button>
-
-            <button 
-              className={`tab-item ${activeTab === 'prescription' ? 'active' : ''}`}
-              onClick={() => setActiveTab('prescription')}
-            >
-              <span className="tab-icon">📝</span>
-              <div className="tab-content">
-                <div className="tab-title">Doctor&apos;s Prescription</div>
-                <div className="tab-subtitle">Prescription records</div>
-              </div>
-            </button>
-          </div>
-        )}
+          ))}
+        </div>
 
         <div className="ConsultationDetail-Content">
-
-        {activeTab === 'general' && (
+          {activeTab === 'general' && (
             <div className="add-record-container">
               <button 
                 className="add-record-button"
@@ -803,67 +762,65 @@ const ConsultationDetail = () => {
               >
                 Add New Record
               </button>
-        
-          <div className="records-container">
-            
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Doctor</th>
-                  <th>Blood Pressure</th>
-                  <th>Pulse Rate</th>
-                  <th>Temperature</th>
-                  <th>Height</th>
-                  <th>Weight</th>
-                  <th>Diagnosis</th>
-                  <th colSpan="2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRecords.map((record) => (
-                  <tr key={record.id}>
-                    <td>{record.date}</td>
-                    <td>{record.doctor}</td>
-                    <td>{record.bloodPressure}</td>
-                    <td>{record.pulseRate}</td>
-                    <td>{record.temperature}</td>
-                    <td>{record.height}</td>
-                    <td>{record.weight}</td>
-                    <td>{record.diagnosis}</td>
-                    
-                    <td>
-                      <button 
-                        className="edit-button" 
-                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
-                        onClick={() => handleEditRecord(record)}
-                        disabled={isArchived}
-                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                      >
-                        <FaEdit />
-                      </button>
-                    </td>
-                    <td>
-                      <button 
-                        className='delete-button' 
-                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
-                        onClick={() => handleArchiveRecord(record)}
-                        disabled={isArchived}
-                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                      >
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        )}
+          
+              <div className="records-container">  
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Doctor</th>
+                      <th>Blood Pressure</th>
+                      <th>Pulse Rate</th>
+                      <th>Temperature</th>
+                      <th>Height</th>
+                      <th>Weight</th>
+                      <th>Diagnosis</th>
+                      <th colSpan="2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRecords.map((record) => (
+                      <tr key={record.id}>
+                        <td>{record.date}</td>
+                        <td>{record.doctor}</td>
+                        <td>{record.bloodPressure}</td>
+                        <td>{record.pulseRate}</td>
+                        <td>{record.temperature}</td>
+                        <td>{record.height}</td>
+                        <td>{record.weight}</td>
+                        <td>{record.diagnosis}</td>
+                        
+                        <td>
+                          <button 
+                            className="edit-button" 
+                            title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
+                            onClick={() => handleEditRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaEdit />
+                          </button>
+                        </td>
+                        <td>
+                          <button 
+                            className='delete-button' 
+                            title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
+                            onClick={() => handleArchiveRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
-         {activeTab === 'prenatal' && (
-            
+         {activeTab === 'prenatal' && ( 
             <div className="add-record-container">
               <button 
                 className="add-record-button"
@@ -875,70 +832,68 @@ const ConsultationDetail = () => {
                 Add New Record
               </button>
            
-          <div className="records-container">
-          
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Doctor</th>
-                  <th>AOG</th>
-                  <th>Blood Pressure</th>
-                  <th>Pulse Rate</th>
-                  <th>Temperature</th>
-                  <th>Height</th>
-                  <th>Weight</th>
-                  <th>Chief Complaint</th>
-                  <th>Nurse&apos;s/Midwife Notes</th>  
-                  <th colSpan='2'>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRecords.map((record) => (
-                  <tr key={record.id}>
-                    <td>{record.dateVisit}</td>
-                    <td>{record.doc}</td>
-                    <td>{record.AOG}</td>
-                    <td>{record.BPS}</td>
-                    <td>{record.PR}</td>
-                    <td>{record.HT}</td>
-                    <td>{record.WT}</td>
-                    <td>{record.Temp}</td>
-                    <td>{record.ccomplaint}</td>
-                    <td>{record.MidwifeNotes}</td>
-                    
-                    <td>
-                      <button 
-                        className="edit-button" 
-                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
-                        onClick={() => handleEditRecord(record)}
-                        disabled={isArchived}
-                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                      >
-                        <FaEdit />
-                      </button>
-                    </td>
-                    <td>
-                      <button 
-                        className='delete-button' 
-                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
-                        onClick={() => handleArchiveRecord(record)}
-                        disabled={isArchived}
-                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                      >
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        )}
+              <div className="records-container">  
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Doctor</th>
+                      <th>AOG</th>
+                      <th>Blood Pressure</th>
+                      <th>Pulse Rate</th>
+                      <th>Temperature</th>
+                      <th>Height</th>
+                      <th>Weight</th>
+                      <th>Chief Complaint</th>
+                      <th>Nurse&apos;s/Midwife Notes</th>  
+                      <th colSpan='2'>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRecords.map((record) => (
+                      <tr key={record.id}>
+                        <td>{record.dateVisit}</td>
+                        <td>{record.doc}</td>
+                        <td>{record.AOG}</td>
+                        <td>{record.BPS}</td>
+                        <td>{record.PR}</td>
+                        <td>{record.HT}</td>
+                        <td>{record.WT}</td>
+                        <td>{record.Temp}</td>
+                        <td>{record.ccomplaint}</td>
+                        <td>{record.MidwifeNotes}</td>
+                        
+                        <td>
+                          <button 
+                            className="edit-button" 
+                            title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
+                            onClick={() => handleEditRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaEdit />
+                          </button>
+                        </td>
+                        <td>
+                          <button 
+                            className='delete-button' 
+                            title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
+                            onClick={() => handleArchiveRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
          {activeTab === 'dental' && (
-            
             <div className="add-record-container">
               <button 
                 className="add-record-button"
@@ -949,60 +904,59 @@ const ConsultationDetail = () => {
               >
                 Add New Record
               </button>
-           
-          <div className="records-container">
           
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Procedure</th>
-                  <th>Teeth Number</th>
-                  <th>Treatment Plan</th>
-                  <th>Dentist&apos;s Name</th>
-                  <th>Next Visit</th>
-                  <th colSpan="2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRecords.map((record) => (
-                  <tr key={record.id}>
-                    <td>{record.dateVisitDental}</td>
-                    <td>{record.procedureDental}</td>
-                    <td>{record.toothNumber}</td>
-                    <td>{record.treatmentPlanDental}</td>
-                    <td>{record.dentistName}</td>
-                    <td>{record.nextVisitDental}</td>
-                    
-                    <td>
-                      <button 
-                        className="edit-button" 
-                        title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
-                        onClick={() => handleEditRecord(record)}
-                        disabled={isArchived}
-                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                      >
-                        <FaEdit />
-                      </button>
-                    </td>
-                    <td>
-                      <button 
-                        className='delete-button' 
-                        title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
-                        onClick={() => handleArchiveRecord(record)}
-                        disabled={isArchived}
-                        style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                      >
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        )}
+              <div className="records-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Procedure</th>
+                      <th>Teeth Number</th>
+                      <th>Treatment Plan</th>
+                      <th>Dentist&apos;s Name</th>
+                      <th>Next Visit</th>
+                      <th colSpan="2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRecords.map((record) => (
+                      <tr key={record.id}>
+                        <td>{record.dateVisitDental}</td>
+                        <td>{record.procedureDental}</td>
+                        <td>{record.toothNumber}</td>
+                        <td>{record.treatmentPlanDental}</td>
+                        <td>{record.dentistName}</td>
+                        <td>{record.nextVisitDental}</td>
+                        
+                        <td>
+                          <button 
+                            className="edit-button" 
+                            title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
+                            onClick={() => handleEditRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaEdit />
+                          </button>
+                        </td>
+                        <td>
+                          <button 
+                            className='delete-button' 
+                            title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
+                            onClick={() => handleArchiveRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
          {activeTab === 'animalBite' && (
             
@@ -1146,7 +1100,8 @@ const ConsultationDetail = () => {
                 title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
               >
                 Add New Record
-              </button>              <div className="records-container">
+              </button>              
+            <div className="records-container">
             <table>
               <thead>
                 <tr>
@@ -1213,24 +1168,97 @@ const ConsultationDetail = () => {
             </div>
 
             </div>
-
-
-
         )}
+          {activeTab === 'doctors-order' && (
+            <div className='add-record-container'>
+              <button 
+                className="add-record-button"
+                onClick={() => setShowAddModal(true)}
+                disabled={isArchived}
+                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
+              >
+                Add New Record
+              </button>
+              <div className="records-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Prescribed by</th>
+                      <th>Diagnosis</th>
+                      <th>Medication</th>
+                      <th>Dosage</th>
+                      <th>Frequency</th>
+                      <th>Follow-up Visit</th>
+                      <th>Special Instructions</th>
+                      <th colSpan='3'>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRecords.map((record) => (
+                      <tr key={record.id}>
+                        <td>{record.datePresc}</td>
+                        <td>{record.prescribedBy}</td>
+                        <td>{record.prescriptionDetails}</td>
+                        <td>{record.medicationName}</td>
+                        <td>{record.prescdosage}</td>
+                        <td>{record.prescfrequency}</td>
+                        <td>{record.followUpDate}</td>
+                        <td>{record.specialInstructions}</td>
+                        <td>
+                          <button 
+                            className="download-button" 
+                            title="Download Prescription"
+                            onClick={() => handleDownloadPrescription(record)}
+                          >
+                            <FaDownload />
+                          </button>
+                        </td>
+                        <td>
+                          <button 
+                            className="edit-button" 
+                            title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
+                            onClick={() => handleEditRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaEdit />
+                          </button>
+                        </td>
+                        <td>
+                          <button 
+                            className='delete-button' 
+                            title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
+                            onClick={() => handleArchiveRecord(record)}
+                            disabled={isArchived}
+                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
 
           
         </div>
 
-                {showAddModal && (
-                    <AddRecordModal
-                        isOpen={showAddModal}
-                        onClose={handleCloseModal}
-                        onSubmit={handleAddRecord}
-                        recordType={activeTab}
-                        patientId={patientData?.id}
-                        editingRecord={editingRecord}
-                    />
-                )}   
+        {showAddModal && (
+          <AddRecordModal
+            isOpen={showAddModal}
+            onClose={handleCloseModal}
+            onSubmit={handleAddRecord}
+            recordType={activeTab}
+            patientId={patientData?.id}
+            editingRecord={editingRecord}
+          />
+        )} 
 
                 {/* Archives Modal */}
                 {showArchives && (

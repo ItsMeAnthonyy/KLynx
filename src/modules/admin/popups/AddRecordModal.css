@@ -75,7 +75,7 @@
 
 .input-group label {
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 500;   
     color: #374151;
 }
 
@@ -169,6 +169,31 @@
 
 .modal-content {
     animation: slideUp 0.3s ease-out;
+}
+
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  gap: 12px 15px; /* row gap, column gap */
+  margin-top: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;   /* aligns checkbox and text on the same line */
+  gap: 8px;              /* space between checkbox and text */
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #374151;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 15px;
+  accent-color: #07598D; /* modern browsers: custom checkbox color */
+  margin: 0;
+  cursor: pointer;
 }
 
 @keyframes fadeIn {
