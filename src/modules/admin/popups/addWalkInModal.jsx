@@ -8,14 +8,16 @@ import styles from './addWalkInModal.module.css';
 import ConsentForm from './VisitConsentForm';
 
 const CONSULTATION_TYPES = [
-  { value: 'general', label: 'General' },
+  { value: 'check_up', label: 'Check-up' },
+  { value: 'animal_bite', label: 'Animal Bite' },
   { value: 'prenatal', label: 'Prenatal' },
-  { value: 'postnatal', label: 'Postnatal' },
-  { value: 'family_planning', label: 'Family Planning' },
+//   { value: 'postnatal', label: 'Postnatal' },
+//   { value: 'family_planning', label: 'Family Planning' },
   { value: 'immunization', label: 'Immunization' },
-  { value: 'pediatric', label: 'Pediatric' },
+//   { value: 'pediatric', label: 'Pediatric' },
   { value: 'dental', label: 'Dental' },
-  { value: 'laboratory', label: 'Laboratory' }
+//   { value: 'laboratory', label: 'Laboratory' }
+
 ];
 
 const PRIORITIES = [

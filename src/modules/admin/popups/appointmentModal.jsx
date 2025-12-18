@@ -24,14 +24,14 @@ const STATUS_COLORS = {
 
 
 const CONSULTATION_TYPES = [
-  { value: 'general', label: 'General' },
+  { value: 'check_up', label: 'Check-up' },
   { value: 'prenatal', label: 'Prenatal' },
-  { value: 'postnatal', label: 'Postnatal' },
-  { value: 'family_planning', label: 'Family Planning' },
+  //{ value: 'postnatal', label: 'Postnatal' },
+  //{ value: 'family_planning', label: 'Family Planning' },
   { value: 'immunization', label: 'Immunization' },
-  { value: 'pediatric', label: 'Pediatric' },
+  //{ value: 'pediatric', label: 'Pediatric' },
   { value: 'dental', label: 'Dental' },
-  { value: 'laboratory', label: 'Laboratory' }
+  { value: 'animal_bite', label: 'Animal Bite' }
 ];
 
 const PRIORITIES = [
@@ -42,7 +42,6 @@ const PRIORITIES = [
 
 
 const appointmentModal = ({ appointment, onClose, onUpdate, currentUserId, isAdmin }) => {
-    console.log("RAW DATA: ", appointment);
     const [loading, setLoading] = useState(false);
     const [showCancelReason, setShowCancelReason] = useState(false);
     const [showQueueForm, setShowQueueForm] = useState(false);
@@ -52,7 +51,7 @@ const appointmentModal = ({ appointment, onClose, onUpdate, currentUserId, isAdm
     const [formData, setFormData] = useState({
         patient_id: '',
         assigned_provider_id: '',
-        consultation_type: 'general',
+        consultation_type: 'check_up',
         priority: 'routine',
         chief_complaint: ''
     });
@@ -64,7 +63,7 @@ const appointmentModal = ({ appointment, onClose, onUpdate, currentUserId, isAdm
         setFormData({
             patient_id: appointment.patient_id,
             assigned_provider_id: appointment.assigned_provider_id,
-            consultation_type: appointment.consultation_type || 'general',
+            consultation_type: appointment.consultation_type || 'check_up',
             priority: appointment.priority || 'routine',
             chief_complaint: appointment.chief_complaint || ''
         });

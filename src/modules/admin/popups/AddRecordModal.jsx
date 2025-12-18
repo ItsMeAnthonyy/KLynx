@@ -1,11 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
+import { BiX, BiCapsule, BiSearch, BiUser, BiCalendar, BiErrorCircle, BiRuler, BiTransfer, BiTrip, BiPulse, BiHeart, BiTrendingUp, BiWind, BiDroplet, BiTime } from "react-icons/bi";
+
+import useAuth from '../../../hooks/useAuth';
+import { createDoctorsOrder } from '../api/doctorsOrderApi';
 import PropTypes from 'prop-types';
 import './AddRecordModal.css';
+import ICD10SearchModal from './ICD10SearchModal';
+import PrescriptionListModal from './PrescriptionListModal';
 import "../../../components/css/FileMaintenance.css";
 
 
 
-export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, editingRecord }) {
+
+export default function AddRecordModal({ isOpen, onClose, recordType, patientId, visitId, onSubmit, editingRecord, isReadOnly }) {
   const doctors = [
     { id: 'dr_smith', name: 'Dr. Smith' },
     { id: 'dr_jones', name: 'Dr. Jones' },
@@ -13,9 +20,25 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
   ];
   console.log("RECORD TYPE?",recordType);
 
+  const { auth } = useAuth();
+  const isAdmin  = auth?.userRole?.includes("admin");
+
   const [doctorsOrderForm, setDoctorsOrderForm] = useState({
-    imaging: []
-  })
+    imaging: [],
+    alertType: [],
+    alertDescription: '',
+    diagnosisStatus: "",
+    icd10_a: "",
+    icd10_b: "",
+    icd10_c: "",
+    diagnosisSpecify: "",
+    treatmentPlan: "",
+    remarks: ""
+  });
+  const [showICD10Modal, setShowICD10Modal] = useState(false);
+  const [activeIcdField, setActiveIcdField] = useState(null);
+  const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+  
 
   const [formData, setFormData] = useState({
    
@@ -189,26 +212,27 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
   }, [isOpen]);
 
   const handleChange = (e) => {
-    const { value, checked } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    if (checked) {
-      setDoctorsOrderForm({
-        ...doctorsOrderForm,
-        imaging: [...doctorsOrderForm.imaging, value],
-      });
+    if (type === "checkbox") {
+      setDoctorsOrderForm((prev) => ({
+        ...prev,
+        [name]: checked
+          ? [...prev[name], value]
+          : prev[name].filter((d) => d !== value),
+      }));
     } else {
-      setDoctorsOrderForm({
-        ...doctorsOrderForm,
-        imaging: doctorsOrderForm.imaging.filter((d) => d !== value),
-      });
+      // for text, textarea, select, etc.
+      setDoctorsOrderForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
-    console.log(doctorsOrderForm);
+
   };
 
 
-  useEffect(() => {
-    console.log("TESTT",formData.imaging);
-  }, [formData]);
+
 
   // Handle medication field changes
   const handleMedicationChange = (index, field, value) => {
@@ -230,33 +254,79 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
     }
   };
 
+  const handlePrescriptionModalClose = () => {
+    setShowPrescriptionModal(false);
+    fetchPrescriptionCount();
+  };
+
+  const handleOpenICD10Search = (field) => {
+    setActiveIcdField(field);
+    setShowICD10Modal(true);
+  };
+
+  const handleSelectICD10 = (code) => {
+    console.log("FINAL LAST",code.Code);
+    if (activeIcdField) {
+      setDoctorsOrderForm(prev => ({ ...prev, [activeIcdField]: code.Code }));
+    }
+    console.log(doctorsOrderForm);
+    setShowICD10Modal(false);
+    setActiveIcdField(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    let submitData = {
-      ...formData,
-      type: recordType,
-      date: new Date().toISOString().split('T')[0]
-    };
-    
-    // For prescription type, combine medications array into comma-separated strings
-    if (recordType === 'prescription') {
-      submitData.medicationName = medications.map(m => m.medicationName).join(', ');
-      submitData.prescdosage = medications.map(m => m.dosage).join(', ');
-      submitData.prescfrequency = medications.map(m => m.frequency).join(', ');
-      submitData.prescduration = medications.map(m => m.duration).join(', ');
+
+    try{
+      await createDoctorsOrder(
+        visitId,
+        patientId, 
+        doctorsOrderForm
+      );
+
+      setDoctorsOrderForm({
+        imaging: [],
+        alertType: [],
+        alertDescription: '',
+        diagnosisStatus: "",
+        icd10_a: "",
+        icd10_b: "",
+        icd10_c: "",
+        diagnosisSpecify: "",
+        treatmentPlan: "",
+        remarks: ""
+      });
+      
+    } catch (err) {
+      console.error("Error submitting form:", err);
     }
     
-    const createdRecord = await onSubmit(submitData);
 
-    onClose();
+    // let submitData = {
+    //   ...formData,
+    //   type: recordType,
+    //   date: new Date().toISOString().split('T')[0]
+    // };
+    
+    // For prescription type, combine medications array into comma-separated strings
+    // if (recordType === 'prescription') {
+    //   submitData.medicationName = medications.map(m => m.medicationName).join(', ');
+    //   submitData.prescdosage = medications.map(m => m.dosage).join(', ');
+    //   submitData.prescfrequency = medications.map(m => m.frequency).join(', ');
+    //   submitData.prescduration = medications.map(m => m.duration).join(', ');
+    // }
+    console.log("TEST2: ", doctorsOrderForm);
+
+    //const createdRecord = await onSubmit(submitData);
+
+    //onClose();
     
     // Reset medications state
     setMedications([{ medicationName: '', dosage: '', frequency: '', duration: '' }]);
 
-    if (createdRecord?.id) {
-      navigate(`/visits/${createdRecord.id}`);
-    }
+    // if (createdRecord?.id) {
+    //   navigate(`/visits/${createdRecord.id}`);
+    // }
   };
 
    const [selectedBodyPart, setSelectedBodyPart] = useState("");
@@ -366,59 +436,299 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
         </div>
 
         {recordType === 'doctors-order' && (
-          <form onSubmit={handleSubmit}>
-            <div className="input-group">
-              <div className="inputBox">
-                <label className="required">Imaging</label>
-                <div className="checkbox-grid">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      name="imaging"
-                      value="ecg"
-                      checked={doctorsOrderForm.imaging.includes("ecg")}
-                      onChange={handleChange
-                    />
-                    ECG
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      name="imaging"
-                      value="mri"
-                      checked={doctorsOrderForm.imaging.includes("mri")}
-                      onChange={handleChange}
-                    />
-                    MRI
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      name="imaging"
-                      value="ultraSound"
-                      checked={doctorsOrderForm.imaging.includes("ultraSound")}
-                      onChange={handleChange}
-                    />
-                    Ultrasound
-                  </label>
-                </div>
-                <div className="checkbox-grid">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      name="imaging"
-                      value="xray"
-                      checked={doctorsOrderForm.imaging.includes("xray")}
-                      onChange={handleChange}
-                    />
-                    X-ray
-                  </label>
+          <>
+            <form onSubmit={handleSubmit}>
+              <div className="input-group">
+                <div className="inputBox">
+                  <label className="required">Imaging</label>
+                  <div className="checkbox-grid">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="imaging"
+                        value="ecg"
+                        checked={doctorsOrderForm.imaging.includes("ecg")}
+                        onChange={handleChange}
+                      />
+                      ECG
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="imaging"
+                        value="mri"
+                        checked={doctorsOrderForm.imaging.includes("mri")}
+                        onChange={handleChange}
+                      />
+                      MRI
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="imaging"
+                        value="ultraSound"
+                        checked={doctorsOrderForm.imaging.includes("ultraSound")}
+                        onChange={handleChange}
+                      />
+                      Ultrasound
+                    </label>
+                  </div>
+                  <div className="checkbox-grid">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="imaging"
+                        value="x-ray"
+                        checked={doctorsOrderForm.imaging.includes("x-ray")}
+                        onChange={handleChange}
+                      />
+                      X-ray
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-          </form>
+
+              <div className="input-group">
+                <div className="inputBox">
+                  <label className="required">Alert Type</label>
+                  <div className="checkbox-grid">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="alertType"
+                        value="allergy"
+                        checked={doctorsOrderForm.alertType.includes("allergy")}
+                        onChange={handleChange}
+                      />
+                      Allergy
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="alertType"
+                        value="disability"
+                        checked={doctorsOrderForm.alertType.includes("disability")}
+                        onChange={handleChange}
+                      />
+                      Disability
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="alertType"
+                        value="drug"
+                        checked={doctorsOrderForm.alertType.includes("drug")}
+                        onChange={handleChange}
+                      />
+                      Drug
+                    </label>
+                  </div>
+                  <div className="checkbox-grid">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="alertType"
+                        value="handicap"
+                        checked={doctorsOrderForm.alertType.includes("handicap")}
+                        onChange={handleChange}
+                      />
+                      Handicap
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="alertType"
+                        value="impairment"
+                        checked={doctorsOrderForm.alertType.includes("impairment")}
+                        onChange={handleChange}
+                      />
+                      Impairment
+                    </label>
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="alertType"
+                        value="others"
+                        checked={doctorsOrderForm.alertType.includes("others")}
+                        onChange={handleChange}
+                      />
+                      Others
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* 🚨 New Alert Description Section */}
+              <div className="input-group">
+                <div className="inputBox">
+                  <label>Alert Description</label>
+                  <textarea
+                    name="alertDescription"
+                    value={doctorsOrderForm.alertDescription}
+                    onChange={handleChange}
+                    placeholder="Enter alert details here..."
+                    rows="3"
+                  />
+                </div>
+              </div>
+
+              {/* Diagnosis Type Section */}
+              <div className="input-group">
+                <div className="inputBox">
+                  <label className="required">Diagnosis Status</label>
+                  <select
+                    name="diagnosisStatus"
+                    value={doctorsOrderForm.diagnosisStatus}
+                    onChange={handleChange}
+                    className="selectBox"
+                  >
+                    <option value="" hidden >-- Select Diagnosis Status --</option>
+                    <option value="admitting_diagnosis">Admitting Diagnosis</option>
+                    <option value="working_diagnosis">Working Diagnosis</option>
+                    <option value="final_diagnosis">Final Diagnosis</option>
+                    <option value="not_applicable">Not Applicable</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Conditionally render ICD10 inputs */}
+              {["admitting_diagnosis", "working_diagnosis", "final_diagnosis"].includes(doctorsOrderForm.diagnosisStatus) && (
+                <div className="input-group">
+                  <div className="inputBox">
+                    <label className="required">ICD10 Codes</label>
+                    <div className="icd10-grid">
+                      <div className="icd10-row">
+                        <input
+                          type="text"
+                          name="icd10_a"
+                          value={doctorsOrderForm.icd10_a}
+                          onChange={handleChange}
+                          placeholder="Enter A. ICD10"
+                        />
+                        <label className="required"></label>
+                        <button 
+                          type="button" 
+                          onClick={() => handleOpenICD10Search("icd10_a")}
+                        >
+                            <BiSearch size={16} />  
+                            Search ICD10 Code
+                        </button>
+                      </div>
+                      <div className="icd10-row">
+                        <input
+                          type="text"
+                          name="icd10_b"
+                          value={doctorsOrderForm.icd10_b}
+                          onChange={handleChange}
+                          placeholder="Enter B. ICD10"
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => handleOpenICD10Search("icd10_b")}
+                        >
+                            <BiSearch size={16} />  
+                            Search ICD10 Code
+                        </button>
+                      </div>
+                      <div className="icd10-row">
+                        <input
+                          type="text"
+                          name="icd10_c"
+                          value={doctorsOrderForm.icd10_c}
+                          onChange={handleChange}
+                          placeholder="Enter C. ICD10"
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => handleOpenICD10Search("icd10_c")}
+                        >
+                            <BiSearch size={16} />  
+                            Search ICD10 Code
+                        </button>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 🚨 New Alert Description Section */}
+              <div className="input-group">
+                <div className="inputBox">
+                  <label>Diagnosis Specify</label>
+                  <textarea
+                    name="diagnosisSpecify"
+                    value={doctorsOrderForm.diagnosisSpecify}
+                    onChange={handleChange}
+                    placeholder="Enter diagnosis details here..."
+                    rows="3"
+                  />
+                </div>
+              </div>
+
+              {/* 🚨 New Alert Description Section */}
+              <div className="input-group">
+                <div className="inputBox">
+                  <label>Prescription</label>
+                  <button
+                    type="button"
+                    name="diagnosisSpecify"
+                    onClick={() => setShowPrescriptionModal(true)}
+                    className="prescribeButton"
+                  >
+                    <BiCapsule size={18} />
+                    Prescribe Medicine
+                  </button>
+                </div>
+              </div>
+              
+              {/* 🚨 New Treatment Plan Section */}
+              <div className="input-group">
+                <div className="inputBox">
+                  <label>Treatment Plan</label>
+                  <textarea
+                    name="treatmentPlan"
+                    value={doctorsOrderForm.treatmentPlan}
+                    onChange={handleChange}
+                    placeholder="Enter alert details here..."
+                    rows="3"
+                  />
+                </div>
+              </div>
+
+              {/* 🚨 New Remarks Section */}
+              <div className="input-group">
+                <div className="inputBox">
+                  <label>Remarks</label>
+                  <textarea
+                    name="remarks"
+                    value={doctorsOrderForm.remarks}
+                    onChange={handleChange}
+                    placeholder="Enter alert details here..."
+                    rows="3"
+                  />
+                </div>
+              </div>
+
+
+            </form>
+
+            <PrescriptionListModal
+              isOpen={showPrescriptionModal}
+              onClose={handlePrescriptionModalClose}
+              visitId={visitId}
+              isReadOnly={isReadOnly}
+            />
+
+            <ICD10SearchModal
+              isOpen={showICD10Modal}
+              onClose={() => setShowICD10Modal(false)}
+              onSelect={handleSelectICD10}
+              isAdmin={isAdmin}
+            />
+          </>
         )}
+
 
         {recordType === 'general' && (
         <form onSubmit={handleSubmit}>
@@ -843,7 +1153,7 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
             </form>
           )}
 
-          {recordType === 'animalBite' && (
+          {recordType === 'animal_bite' && (
             <form onSubmit={handleSubmit}>
               <div className="input-group">
                 <div className="input-box">
@@ -873,16 +1183,16 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
                                         <div className="site-bite-caption">Click on a body part to select</div>
                                         <div className="body-figure-box">
                                             <svg viewBox="0 0 120 260" width="100%" height="220" preserveAspectRatio="xMidYMid meet">
-                                                <circle cx="60" cy="28" r="18" className={`bf-region ${selectedBodyPart === 'Face' || selectedBodyPart === 'Head' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Face')} />
-                                                <rect x="28" y="50" width="64" height="70" rx="4" className={`bf-region ${selectedBodyPart === 'Torso' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Torso')} />
-                                                <rect x="4" y="58" width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Left Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Arm')} />
-                                                <rect x="4" y="75" width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Left Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Arm')} />
-                                                <rect x="92" y="58" width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Right Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Arm')} />
-                                                <rect x="92" y="75  " width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Right Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Arm')} />
-                                                <rect x="34" y="126" width="18" height="72" rx="2" className={`bf-region ${selectedBodyPart === 'Left Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Leg')} />
-                                                <rect x="34" y="200" width="18" height="12" rx="2" className={`bf-region ${selectedBodyPart === 'Left Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Leg')} />
-                                                <rect x="68" y="126" width="18" height="72" rx="2" className={`bf-region ${selectedBodyPart === 'Right Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Leg')} />
-                                                <rect x="68" y="200" width="18" height="12" rx="2" className={`bf-region ${selectedBodyPart === 'Right Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Leg')} />
+                                                <circle cx="60" cy="28" r="18" className={`bf-region ${selectedBodyPart === 'Face' || selectedBodyPart === 'Head' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Face')}><title>Face</title></circle>
+                                                <rect x="28" y="50" width="64" height="70" rx="4" className={`bf-region ${selectedBodyPart === 'Torso' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Torso')} ><title>Torso</title></rect>
+                                                <rect x="4" y="58" width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Left Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Arm')} ><title>Left Arm</title></rect>
+                                                <rect x="4" y="75" width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Left Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Arm')} ><title>Left Arm</title></rect>
+                                                <rect x="92" y="58" width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Right Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Arm')} ><title>Right Arm</title></rect>
+                                                <rect x="92" y="75  " width="24" height="16" rx="2" className={`bf-region ${selectedBodyPart === 'Right Arm' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Arm')} ><title>Right Arm</title></rect>
+                                                <rect x="34" y="126" width="18" height="72" rx="2" className={`bf-region ${selectedBodyPart === 'Left Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Leg')} ><title>Left Leg</title></rect>
+                                                <rect x="34" y="200" width="18" height="12" rx="2" className={`bf-region ${selectedBodyPart === 'Left Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Left Foot')} ><title>Left Foot</title></rect>
+                                                <rect x="68" y="126" width="18" height="72" rx="2" className={`bf-region ${selectedBodyPart === 'Right Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Leg')} ><title>Right Leg</title></rect>
+                                                <rect x="68" y="200" width="18" height="12" rx="2" className={`bf-region ${selectedBodyPart === 'Right Leg' ? 'selected' : ''}`} onClick={() => handleBodyPartClick('Right Foot')} ><title>Right Foot</title></rect>
                                             </svg>
                                         </div>
                                     </div>
@@ -1721,7 +2031,7 @@ export default function AddRecordModal({ isOpen, onClose, recordType, onSubmit, 
 AddRecordModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  recordType: PropTypes.oneOf(['general', 'prenatal', 'dental', 'animalBite', 'immunization', 'prescription']).isRequired,
+  recordType: PropTypes.oneOf(['general', 'prenatal', 'dental', 'animal_bite', 'immunization', 'prescription', 'doctors-order']).isRequired,
   onSubmit: PropTypes.func.isRequired,
   patientId: PropTypes.string,
   editingRecord: PropTypes.object,

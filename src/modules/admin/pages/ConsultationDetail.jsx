@@ -28,124 +28,23 @@ const MOCK_PATIENT_DATA = {
     emergencyContact: 'Juan Santos',
 };
 
-const MOCK_INITIAL_RECORDS = [
-    // General Checkup Records
-    {
-        id: 'GEN001',
-        type: 'general',
-        date: '2024-10-15',
-        doctor: 'Dr. Jane Smith',
-        age: '28',
-        bloodPressure: '120/80',
-        pulseRate: '72',
-        temperature: '36.5°C',
-        height: '164.7cm',
-        weight: '55kg',
-        diagnosis: 'Common cold, prescribed rest and medication',
-    },
-    {
-        id: 'GEN002',
-        type: 'general',
-        date: '2024-09-10',
-        doctor: 'Dr. Smith',
-        age: '28',
-        bloodPressure: '118/78',
-        pulseRate: '70',
-        temperature: '36.6°C',
-        height: '164.7cm',
-        weight: '54kg',
-        diagnosis: 'Annual checkup - healthy',
-    },
-    // Prenatal Records
-    {
-        id: 'PRE001',
-        type: 'prenatal',
-        date: '2024-10-10',
-        doctor: 'Dr. Brown',
-        aog: '20 weeks',
-        bloodPressure: '115/75',
-        temperature: '36.5°C',
-        height: '164.7cm',
-        weight: '58kg',
-        diagnosis: 'Normal pregnancy progression',
-    },
-    // Dental Records
-    {
-        id: 'DEN001',
-        type: 'dental',
-        date: '2024-09-20',
-        Procedure: 'Teeth Cleaning',
-        Diagnosis: 'Mild plaque buildup',
-        TeethNumber: '12, 13',
-        TreatmentPlan: 'Regular cleaning recommended every 6 months',
-    },
-    // Animal Bite Records
-    {
-        id: 'AB001',
-        type: 'animalBite',
-        date: '2024-08-15',
-        siteOfBite: 'Left forearm',
-        categoryOfExposure: 'Category II',
-        placeBitten: 'Home',
-        antibioticsGiven: 'Amoxicillin',
-        typeOfAnimal: 'Dog',
-    },
-    // Immunization Records
-    {
-        id: 'IMM001',
-        type: 'immunization',
-        date: '2024-07-20',
-        antigen: 'Tetanus Toxoid',
-        ageInMonths: '336',
-        vaccinatorName: 'Nurse Garcia',
-        nextVisit: '2025-07-20',
-        remarks: 'Booster dose administered',
-    },
-    // Prescription Records
-    {
-        id: 'PRESC001',
-        type: 'prescription',
-        datePresc: '2024-10-15',
-        prescriptionDetails: 'Upper Respiratory Tract Infection (Common Cold)',
-        medicationName: 'Paracetamol 500mg, Amoxicillin 500mg, Cetirizine 10mg',
-        prescdosage: '1 tablet, 1 capsule, 1 tablet',
-        prescfrequency: 'Every 6 hours, Every 8 hours, Once daily at bedtime',
-        prescduration: '5 days',
-        prescribedBy: 'Dr. Jane Smith, MD',
-        followUpDate: '2024-10-22',
-        specialInstructions: 'Take Paracetamol and Amoxicillin with food. Complete the full course of antibiotics even if symptoms improve. Drink plenty of fluids and get adequate rest. Avoid cold drinks and spicy foods.',
-    },
-    {
-        id: 'PRESC002',
-        type: 'prescription',
-        datePresc: '2024-09-05',
-        prescriptionDetails: 'Hypertension (High Blood Pressure)',
-        medicationName: 'Amlodipine 5mg, Losartan 50mg',
-        prescdosage: '1 tablet, 1 tablet',
-        prescfrequency: 'Once daily in the morning, Once daily in the morning',
-        prescduration: '30 days (maintenance)',
-        prescribedBy: 'Dr. Roberto Cruz, MD',
-        followUpDate: '2024-10-05',
-        specialInstructions: 'Take medications at the same time daily. Monitor blood pressure regularly. Reduce salt intake and maintain healthy diet. Exercise regularly.',
-    },
-];
 
 const BASIC_SERVICES = {
-  "vital-signs": {
-    icon: "🩺",
-    title: "Vital Signs",
-    subtitle: "Patient's vital signs"
-  },
-  "physical-exam": {
-    icon: "👁️",
-    title: "Physical Exam",
-    subtitle: "Body examination details"
-  },
-  "system-review": {
-    icon: "📋",
-    title: "System Review",
-    subtitle: "Review of body systems"
-  },
+  // "vital-signs": {
+  //   icon: "🩺",
+  //   title: "Vital Signs",
+  //   subtitle: "Patient's vital signs"
+  // },
+  // "physical-exam": {
+  //   icon: "👁️",
+  //   title: "Physical Exam",
+  //   subtitle: "Body examination details"
+  // },
+  // "system-review": {
+  //   icon: "📋",
+  //   title: "System Review",
+  //   subtitle: "Review of body systems"
+  // },
   "doctors-order": {
     icon: "📝",
     title: "Doctors Order",
@@ -154,11 +53,6 @@ const BASIC_SERVICES = {
 };
 
 const CONSULTATION_TYPES = {
-  general: {
-    icon: "📋",
-    title: "General Checkup",
-    subtitle: "Medical records"
-  },
   prenatal: {
     icon: "🤰",
     title: "Prenatal",
@@ -169,7 +63,7 @@ const CONSULTATION_TYPES = {
     title: "Dental",
     subtitle: "Oral health"
   },
-  animalBite: {
+  animal_bite: {
     icon: "🐕",
     title: "Animal Bite",
     subtitle: "Bite treatment"
@@ -179,11 +73,11 @@ const CONSULTATION_TYPES = {
     title: "Immunization",
     subtitle: "Vaccine records"
   },
-  prescription: {
-    icon: "📝",
-    title: "Doctor's Prescription",
-    subtitle: "Prescription records"
-  }
+  // prescription: {
+  //   icon: "📝",
+  //   title: "Doctor's Prescription",
+  //   subtitle: "Prescription records"
+  // }
 };
 
 const ConsultationDetail = () => {
@@ -225,7 +119,7 @@ const ConsultationDetail = () => {
   const [patient, setPatient] = useState(location.state?.patient || null);
   const [visit, setVisit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState('check_up');
 
   const isPatientArchived = location.state?.isPatientArchived || patient?.archived;
   const isCompleted = visit?.status === 'completed';
@@ -296,8 +190,8 @@ const ConsultationDetail = () => {
         
     // Set active tab based on consultation type
     setActiveTab(
-      visit.consultationType === 'animal-bite' 
-        ? 'animalBite' 
+      visit.consultationType === 'animal_bite' 
+        ? 'animal_bite' 
         : visit.consultationType
     );
                     
@@ -310,10 +204,10 @@ const ConsultationDetail = () => {
 
     const fixedTabs = [
       { id: "vital-signs", ...BASIC_SERVICES["vital-signs"] },
-      { id: "physical-exam", ...BASIC_SERVICES["physical-exam"] },
-      { id: "system-review", ...BASIC_SERVICES["system-review"] },
+      //{ id: "physical-exam", ...BASIC_SERVICES["physical-exam"] },
+      //{ id: "system-review", ...BASIC_SERVICES["system-review"] },
       { id: "doctors-order", ...BASIC_SERVICES["doctors-order"] },
-      { id: "prescription", ...CONSULTATION_TYPES["prescription"] },
+      // id: "prescription", ...CONSULTATION_TYPES["prescription"] },
     ];
 
     if (visit) {
@@ -362,7 +256,6 @@ const ConsultationDetail = () => {
             } else {
                 // Add new record
                 const typePrefix = {
-                    general: 'GEN',
                     prenatal: 'PRE',
                     dental: 'DEN',
                     animalBite: 'AB',
@@ -751,74 +644,6 @@ const ConsultationDetail = () => {
         </div>
 
         <div className="ConsultationDetail-Content">
-          {activeTab === 'general' && (
-            <div className="add-record-container">
-              <button 
-                className="add-record-button"
-                onClick={() => setShowAddModal(true)}
-                disabled={isArchived}
-                style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                title={isArchived ? 'Cannot add records for archived patients' : 'Add New Record'}
-              >
-                Add New Record
-              </button>
-          
-              <div className="records-container">  
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Doctor</th>
-                      <th>Blood Pressure</th>
-                      <th>Pulse Rate</th>
-                      <th>Temperature</th>
-                      <th>Height</th>
-                      <th>Weight</th>
-                      <th>Diagnosis</th>
-                      <th colSpan="2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRecords.map((record) => (
-                      <tr key={record.id}>
-                        <td>{record.date}</td>
-                        <td>{record.doctor}</td>
-                        <td>{record.bloodPressure}</td>
-                        <td>{record.pulseRate}</td>
-                        <td>{record.temperature}</td>
-                        <td>{record.height}</td>
-                        <td>{record.weight}</td>
-                        <td>{record.diagnosis}</td>
-                        
-                        <td>
-                          <button 
-                            className="edit-button" 
-                            title={isArchived ? 'Cannot edit records for archived patients' : 'Edit'}
-                            onClick={() => handleEditRecord(record)}
-                            disabled={isArchived}
-                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                          >
-                            <FaEdit />
-                          </button>
-                        </td>
-                        <td>
-                          <button 
-                            className='delete-button' 
-                            title={isArchived ? 'Cannot archive records for archived patients' : 'Archive'}
-                            onClick={() => handleArchiveRecord(record)}
-                            disabled={isArchived}
-                            style={isArchived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                          >
-                            <FaTrash />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
 
          {activeTab === 'prenatal' && ( 
             <div className="add-record-container">
@@ -958,7 +783,7 @@ const ConsultationDetail = () => {
             </div>
           )}
 
-         {activeTab === 'animalBite' && (
+         {activeTab === 'animal_bite' && (
             
             <div className="add-record-container">
               <button 
@@ -1255,8 +1080,10 @@ const ConsultationDetail = () => {
             onClose={handleCloseModal}
             onSubmit={handleAddRecord}
             recordType={activeTab}
-            patientId={patientData?.id}
+            patientId={patientId}
+            visitId={visitId}
             editingRecord={editingRecord}
+            isReadOnly={isReadOnly}
           />
         )} 
 

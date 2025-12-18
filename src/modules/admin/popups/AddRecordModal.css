@@ -65,6 +65,7 @@
     display: flex;
     flex-direction: row;
     gap: 6px;
+    margin-top: 1rem;
 }
 
 .input-group label.required::after {
@@ -81,7 +82,7 @@
 
 .input-group input,
 .input-group textarea .input-group select {
-     padding: 0 15px;
+    padding: 0 15px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     font-size: 0.875rem;
@@ -94,9 +95,29 @@
 
 }
 
+.input-group textarea {
+  display: flex;
+  align-items: center;   /* vertical centering */
+  justify-content: flex-start; /* keep text left-aligned */
+  margin-top: 0.5rem;
+  padding: 10px 10px 5px 15px;
+  border: 0.1rem solid #112250;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  width: 180%;
+  min-height: 90px;          /* fixed height */
+  box-sizing: border-box;
+  text-align: left;
+  line-height: 1.4;
+}
+
+
+
+
+
 .selectBox {
     height: 45px;
-    width: 100%;
+    width: 105%;
     border: 0.1rem solid #112250;
     border-radius: 0.35rem;
     padding: 0 15px;
@@ -113,6 +134,70 @@
     border-color: #07598D;
     box-shadow: 0 0 0 2px rgba(7, 89, 141, 0.1);
 }
+
+.icd10-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.icd10-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.icd10-row input {
+  flex: 1;
+  max-width: 300px;
+  height: 40px;
+  padding: 0 10px;
+  border: 0.1rem solid #112250;
+  border-radius: 6px;
+}
+
+.icd10-row button {
+  display: flex;              /* make icon + text flex items */
+  align-items: center;        /* vertical centering */
+  gap: 6px;                   /* space between icon and text */
+  
+  height: 40px;
+  padding: 0 16px;
+  background-color: #07598D;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  white-space: nowrap;        /* keep text on one line */
+}
+
+.icd10-row button:hover {
+  background-color: #064a73;
+}
+
+.icd10-row button:hover {
+  background-color: #064a73;
+}
+
+
+.prescribeButton {
+  padding: 0.75rem 1rem;
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 6px;
+  background-color: #07598D;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-left: 1.5em;
+}
+
+.prescribeButton:hover {
+  background-color: #064a73;
+}
+
 
 .button-group {
     display: flex;
