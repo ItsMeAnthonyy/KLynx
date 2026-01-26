@@ -23,20 +23,31 @@
 }
 
 .addRecord-modal-header {
-   display: flex;
+    display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 1rem;
     margin-bottom: 20px;
     padding-bottom: 16px;
     border-bottom: 1px solid #e5e7eb;
 }
 
-.addRecord-modal-title {
-   font-size: 1.5rem;
-  color: #112250;
-  font-weight: 500;
-  text-align: flex-start;
+.addRecord-modal-header h2.addRecord-modal-title {
+    font-size: 1.5rem;
+    color: #112250;
+    font-weight: 600;
+    margin: 0;
+    margin-top: 0.5rem;
 }
+
+.addRecord-modal-header h3.addRecord-modal-title {
+    font-size: 1.25rem;
+    color: #334155;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
 
 .close-button {
     background: none;
@@ -66,34 +77,49 @@
     flex-direction: row;
     gap: 6px;
     margin-top: 1rem;
+    max-width: 100%;
+    flex: 1;
 }
 
-.input-group label.required::after {
+.input-group-checkbox-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 1rem;
+    max-width: 100%;
+    flex: 1;
+}
+
+.input-group label.required::after, .input-group-checkbox-grid label.required::after {
     content: ' *';
     color: #c00;
     margin-left: 4px;
 }
 
-.input-group label {
+.input-group label, .input-group-checkbox-grid label {
     font-size: 0.875rem;
     font-weight: 500;   
     color: #374151;
 }
 
-.input-group input,
-.input-group textarea .input-group select {
+.input-group input, .input-group-checkbox-grid input,
+.input-group textarea,
+.input-group select {
     padding: 0 15px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     font-size: 0.875rem;
     transition: border-color 0.2s;
-     border: 0.1rem solid #112250;
+    border: 0.1rem solid #112250;
     height: 45px;
     width: 100%;
     box-sizing: border-box;
     margin-top: 8px;
-
 }
+
+.react-datepicker__input-container input { padding: 0 15px; border: 0.1rem solid #112250; border-radius: 6px; font-size: 0.875rem; height: 45px; width: 100%; box-sizing: border-box; margin-top: 8px; transition: border-color 0.2s; }
+.react-datepicker__input-container input:focus { outline: none; border-color: #07598D; box-shadow: 0 0 0 2px rgba(7, 89, 141, 0.1); }
+.checkbox-date-item .react-datepicker__input-container { flex: 1; /* let it expand like other inputs */ margin: 0; /* remove any default spacing */ padding: 0; }
 
 .input-group textarea {
   display: flex;
@@ -104,15 +130,18 @@
   border: 0.1rem solid #112250;
   border-radius: 6px;
   font-size: 0.875rem;
-  width: 180%;
+  width: 100%;
   min-height: 90px;          /* fixed height */
   box-sizing: border-box;
   text-align: left;
   line-height: 1.4;
+  flex: 1; /* tells every child of .inputBox to expand equally. */
 }
 
+.inputBox { flex: 1; /* makes both input boxes equal width */ } 
+.inputBox input { width: 100%; box-sizing: border-box; }
 
-
+.input-box { flex: 1;  }
 
 
 .selectBox {
@@ -128,12 +157,74 @@
     outline: none;
 }
 
-.input-group input:focus,
+.input-group input:focus, .input-group-checkbox-grid input:focus,
 .input-group textarea:focus {
     outline: none;
     border-color: #07598D;
     box-shadow: 0 0 0 2px rgba(7, 89, 141, 0.1);
 }
+
+.checkbox-date-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0;
+}
+
+.checkbox-date-1-grid {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 16px;
+    padding: 0;
+}
+
+
+.checkbox-date-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+}
+
+.date-label { 
+    font-size: 0.75rem; 
+    font-weight: 500; 
+    color: #374151;
+}
+
+
+
+.radio-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 5px;
+    margin-left: 16px;
+}
+
+.radio-set label { 
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.875rem;
+    color: #374151;
+    cursor: pointer; 
+    line-height: 1;
+}
+
+.radio-set label span {
+  position: relative;
+  top: 4px; /* or 2px depending on font rendering */
+}
+
+
+.radio-set input[type="radio"] {
+    accent-color: #112250;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
 
 .icd10-grid {
   display: flex;
@@ -219,6 +310,13 @@
   transition: 0.5s ease-in-out;
 }
 
+.form-actions {
+    padding-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
 .cancel-button {
     padding: 8px 16px;
     border: 1px solid #d1d5db;
@@ -256,21 +354,39 @@
     animation: slideUp 0.3s ease-out;
 }
 
+.checkbox-2-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 3 equal columns */
+  gap: 14px;
+  margin-top: 5px;
+  margin-left: 16px;
+}
 
-.checkbox-grid {
+.checkbox-3-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
-  gap: 12px 15px; /* row gap, column gap */
-  margin-top: 8px;
+  gap: 14px;
+  margin-top: 5px;
+  margin-left: 16px;
 }
+
+.checkbox-4-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+  gap: 14px;
+  margin-top: 5px;
+  margin-left: 16px;
+}
+
 
 .checkbox-label {
   display: flex;
   align-items: center;   /* aligns checkbox and text on the same line */
-  gap: 8px;              /* space between checkbox and text */
+  gap: 10px;              /* space between checkbox and text */
   font-size: 0.875rem;
   font-weight: 400;
   color: #374151;
+  cursor: pointer;
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -279,6 +395,10 @@
   accent-color: #07598D; /* modern browsers: custom checkbox color */
   margin: 0;
   cursor: pointer;
+}
+
+.ml-label {
+    font-size: 0.85rem; /* smaller text */ /* medium bold */ color: #374151; /* neutral gray */ margin-left: 6px; width: 80%; /* spacing from input */
 }
 
 @keyframes fadeIn {

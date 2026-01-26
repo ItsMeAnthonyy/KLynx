@@ -736,34 +736,32 @@ export default function AddRecordModal({ isOpen, onClose, recordType, patientId,
           <div className="form-grid">
             <div className="input-group">
               <div>
-
-              <label className='required'>Date</label>
-            
-              <input
-                type="text"
-                name="checkupDate"
-                value={formData.checkupDate}
-                onChange={handleChange}
-                required
-                disabled
-              />
-
+                <label className='required'>Date</label>
+              
+                <input
+                  type="text"
+                  name="checkupDate"
+                  value={formData.checkupDate}
+                  onChange={handleChange}
+                  required
+                  disabled
+                />
              </div>
          
-            <div>
-              <label className="required">Blood Pressure</label>
-              <input
-                type="text"
-                name="bloodPressure"
-                value={formData.bloodPressure}
-                onChange={handleChange}
-            
-                required
-              />
-            </div>
+              <div>
+                <label className="required">Blood Pressure</label>
+                <input
+                  type="text"
+                  name="bloodPressure"
+                  value={formData.bloodPressure}
+                  onChange={handleChange}
+              
+                  required
+                />
+              </div>
         
             </div>
-            </div> 
+          </div> 
           
 
           <div className="input-group">

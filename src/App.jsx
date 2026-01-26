@@ -50,6 +50,7 @@ import AnimalBite from './pages/Admin/AnimalBite';
 import CreateUser from './modules/admin/pages/CreateUser';
 
 import ConsultationDetail from './modules/admin/pages/ConsultationDetail';
+import VisitDetails from './modules/admin/pages/VisitDetails';
 
 import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
@@ -150,6 +151,7 @@ function App() {
                 <Route path ='/Patients' element={<Patients />} />
                 <Route path="/patient/:patientId/visits" element={<Visits />} />
                 <Route path="/patient/:patientId/visit/:visitId" element={<ConsultationDetail />} />
+                <Route path="/patient/:patientId/visit/:visitId/alt" element={<VisitDetails />} />
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 

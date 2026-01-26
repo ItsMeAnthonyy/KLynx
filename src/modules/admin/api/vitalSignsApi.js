@@ -13,3 +13,17 @@ export const saveVitalSigns = async (vitalData) => {
         throw error;
     }
 }
+
+export const getVitalSignsByVisitId = async (visitId) => {
+    try {
+        const response = await axios.get('http://localhost/api/get_vital_signs_by_visit_id.php', {
+            params: { visit_id: visitId },
+            //withCredentials: true,
+        });
+
+        return response.data; // { success: true, data: [...] }
+    } catch (error) {
+        console.error('Error fetching vital signs:', error);
+        return { success: false, error: error.message };
+    }
+}
