@@ -82,50 +82,50 @@ function MaternalReport() {
   });
 
   // Fetching Maternal Checkup Statistics (Prenatal, Intrapartum, Postpartum)
-  useEffect(() => {
-    const fetchCheckupStats = async () => {
-      try {
-        const response = await axios.get('http://localhost/api/maternal-checkup-stats.php');
-        setCheckupStats(response.data);
-      } catch (error) {
-        console.error("Error fetching checkup stats:", error);
-        setMessage({ text: 'Error fetching checkup statistics', type: 'error' });
-        setTimeout(() => setMessage({ text: '', type: '' }), 3000);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCheckupStats = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost/api/maternal-checkup-stats.php');
+  //       setCheckupStats(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching checkup stats:", error);
+  //       setMessage({ text: 'Error fetching checkup statistics', type: 'error' });
+  //       setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+  //     }
+  //   };
 
-    fetchCheckupStats();
-  }, []);
+  //   fetchCheckupStats();
+  // }, []);
 
   // Fetching Age Group Distribution for Selected Month
-  useEffect(() => {
-    const fetchAgeGroupData = async () => {
-      try {
-        const response = await axios.get(`http://localhost/api/maternal-age-groups.php?month=${selectedMonth}`);
-        setAgeGroupData(response.data);
-      } catch (error) {
-        console.error("Error fetching age group data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAgeGroupData = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost/api/maternal-age-groups.php?month=${selectedMonth}`);
+  //       setAgeGroupData(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching age group data:", error);
+  //     }
+  //   };
 
-    if (selectedMonth) {
-      fetchAgeGroupData();
-    }
-  }, [selectedMonth]);
+  //   if (selectedMonth) {
+  //     fetchAgeGroupData();
+  //   }
+  // }, [selectedMonth]);
 
   // Fetching Monthly Checkups for the Year
-  useEffect(() => {
-    const fetchMonthlyCheckups = async () => {
-      try {
-        const response = await axios.get(`http://localhost/api/maternal-monthly-checkups.php?year=${currentYear}`);
-        setMonthlyCheckups(response.data);
-      } catch (error) {
-        console.error("Error fetching monthly checkups:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMonthlyCheckups = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost/api/maternal-monthly-checkups.php?year=${currentYear}`);
+  //       setMonthlyCheckups(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching monthly checkups:", error);
+  //     }
+  //   };
 
-    fetchMonthlyCheckups();
-  }, []);
+  //   fetchMonthlyCheckups();
+  // }, []);
 
   const handleMaternalDownload = async () => {
     try {

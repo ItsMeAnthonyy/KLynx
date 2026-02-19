@@ -2,92 +2,103 @@ import { useState, useRef } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import { BiX, BiCapsule, BiSearch, BiUser, BiCalendar, BiErrorCircle, BiRuler, BiTransfer, BiTrip, BiPulse, BiHeart, BiTrendingUp, BiWind, BiDroplet, BiTime } from "react-icons/bi";
 import { getConsultationTabs } from '../pages/VisitDetails';
+import { useToast } from '../../../hooks/use-toast';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultationType, editingRecord, visitId, isReadOnly/*, patientId, onSubmit */}) {
+import { createAnimalBite } from '../api/animalBiteApi';
+
+export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultationType, editingRecord, visitId, patientId, isReadOnly/*, onSubmit */}) {
     const { auth } = useAuth();
     const isAdmin  = auth?.userRole?.includes("admin");
+    const { toast } = useToast();
+
+    const [loading, setLoading] = useState("");
     const [formData, setFormData] = useState({
-        siteOfBite: '',
+        siteOfBite: [],
         dateOfBite: '',
-        specificLocation: '',
-        isAnimalVaccinated: '',
         categoryOfExposure: '',
-        placeBitten: '',
-        postExposureTreatment: '',
-        postExposureSpecify: '',
+        placeBitten: [],
+        postExposureTreatment: [],
+        otherPostExposureTreatment: '',
         antiTetanus: '',
-        passiveImmunizationDate: '',
+        antiTetanusVaccineName: '',
         antiTetanusDate: '',
         antiTetanusWhere: '',
         antibioticsGiven: '',
         activeImmunization: '',
         idOrIm: '',
-        dateGiven: '',
-        previousArvVacc: '',
         activeImmunizationDate: '',
+        dateD0: '',
+        dateD3: '',
+        dateD7: '',
+        dateD30: '',
+        previousArvVacc: '',
         PrevArvVaccDate: '',
-        Vacc:'',
+        vacc:'',
         passiveImmunization: '',
-        PassiveImmunizationDate: '',
+        passiveImmunizationDate: '',
         typeOfImmunoglobulin: '',
-        SpecifyTypeofImmuno: '',
+        erigVolume: '',
         erigDate: '',
         erigWhere: '',
+        hrigVolume: '',
         hrigDate: '',
         hrigWhere: '',
         species: '',
         specifyTypeOfAnimal: '',
-        ageOwner: '',
-        containment:'',
+        ageOfAnimal: '',
+        ageOfAnimalUnit: '',
+        animalContainmentStatus: '',
         ownerOfAnimal: '',
+        ownerContact: '',
+        ownerAddress: '',
+        wasAnimalVaccinated: '',
         dateOfAnimalVaccination:'',
         animalVaccineType: '',
-        isInContactWithAnimal: '',
+        contactWithOtherAnimals: '',
         animalTypeContacted: '',
-        conditionBeforeBite: '',
         animalContactCount: '',
+        conditionBeforeBite: '',
+        sickSince: '',
         animalDeathDate: '',
         animalCauseOfDeath: '',
         rabiesClinicalSigns: '',
         animalObservationDate: ''
     });
-    const [selectedBodyPart, setSelectedBodyPart] = useState("");
-    const [specificLocations, setSpecificLocations] = useState([]);
-    const [selectedSpecificLocation, setSelectedSpecificLocation] = useState("");
-    const bodyPartLocations = {
-        Face: [
-            'Head',
-            'Forehead',
-            'Eyebrow',
-            'Eyes',
-            'Nose',
-            'Cheek',
-            'Upper Lip',
-            'Lower Lip',
-            'Chin',
-            'Jaw',
-            'Neck',
-            'Nape',
-            'Ears',
-            'Scalp'
-        ],
-        Head: ['Scalp', 'Temple', 'Forehead'],
-        Torso: ['Chest', 'Abdomen', 'Back'],
-        'Left Arm': ['Upper Arm', 'Elbow', 'Forearm', 'Wrist', 'Hand', 'Fingers'],
-        'Right Arm': ['Upper Arm', 'Elbow', 'Forearm', 'Wrist', 'Hand', 'Fingers'],
-        'Left Leg': ['Thigh', 'Knee', 'Shin', 'Ankle', 'Foot', 'Toes'],
-        'Right Leg': ['Thigh', 'Knee', 'Shin', 'Ankle', 'Foot', 'Toes']
-      };
-      const [showOthers, setShowOthers] = useState(false);
-      const postExposureSpecifyRef = useRef(null);
-      const typeOfAnimalSpecifyRef = useRef(null);
-      const specifyContactRef = useRef(null);
-      const [ShowActiveImmunenization, setShowActiveImmunenization] = useState(false);
-      const [showTypeOfAnimalOthers, setShowTypeOfAnimalOthers] = useState(false);
-      const [showSpecifyVaccine, setShowSpecifyVaccine] = useState(false);
-      const [showSpecifyContact, setShowSpecifyContact] = useState(false);
+
+    // const bodyPartLocations = {
+    //     Face: [
+    //         'Head',
+    //         'Forehead',
+    //         'Eyebrow',
+    //         'Eyes',
+    //         'Nose',
+    //         'Cheek',
+    //         'Upper Lip',
+    //         'Lower Lip',
+    //         'Chin',
+    //         'Jaw',
+    //         'Neck',
+    //         'Nape',
+    //         'Ears',
+    //         'Scalp'
+    //     ],
+    //     Head: ['Scalp', 'Temple', 'Forehead'],
+    //     Torso: ['Chest', 'Abdomen', 'Back'],
+    //     'Left Arm': ['Upper Arm', 'Elbow', 'Forearm', 'Wrist', 'Hand', 'Fingers'],
+    //     'Right Arm': ['Upper Arm', 'Elbow', 'Forearm', 'Wrist', 'Hand', 'Fingers'],
+    //     'Left Leg': ['Thigh', 'Knee', 'Shin', 'Ankle', 'Foot', 'Toes'],
+    //     'Right Leg': ['Thigh', 'Knee', 'Shin', 'Ankle', 'Foot', 'Toes']
+    //   };
+    //   const [showOthers, setShowOthers] = useState(false);
+    //   const postExposureSpecifyRef = useRef(null);
+    //   const typeOfAnimalSpecifyRef = useRef(null);
+    //   const specifyContactRef = useRef(null);
+    //   const [ShowActiveImmunenization, setShowActiveImmunenization] = useState(false);
+    //   const [showTypeOfAnimalOthers, setShowTypeOfAnimalOthers] = useState(false);
+    //   const [showSpecifyVaccine, setShowSpecifyVaccine] = useState(false);
+    //   const [showSpecifyContact, setShowSpecifyContact] = useState(false);
 
      const consultationTabs = getConsultationTabs(consultationType);
      const activeTabData = consultationTabs.find(
@@ -139,21 +150,22 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
         //     { label: "Unknown", value: "unknown" }
         //     ]
         // }
-        ];
+    ];
 
-    const placeOptions = [
+    const placeBittenOptions = [
         { label: "House", value: "house" },
         { label: "Street", value: "street" },
         { label: "Neighbour", value: "neighbour" },
         { label: "Compound", value: "compound" },
-        { label: "Work/Site", value: "workOrSite" },
-        { label: "Other places", value: "otherPlaces" }
+        { label: "Work/Site", value: "work_site" },
+        { label: "Other places", value: "other_places" }
     ];
+    
     const postExposureOptions = [
-        { label: "Wound washed with soap & water", value: "washedSoapWater" },
-        { label: "Applied disinfectant", value: "appliedDisinfectant" },
-        { label: "Tandok applied", value: "tandokApplied" },
-        { label: "Used garlic", value: "usedGarlic" },
+        { label: "Wound washed with soap & water", value: "washed_soap_water" },
+        { label: "Applied disinfectant", value: "applied_disinfectant" },
+        { label: "Tandok applied", value: "tandok_applied" },
+        { label: "Used garlic", value: "used_garlic" },
         { label: "None", value: "none" },
         { label: "Others", value: "others" }
     ];
@@ -188,7 +200,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
     const animalCauseOfDeathOptions = [
         { label: "Sick", value: "sick" },
         { label: "Slaughtered", value: "slaughtered" },
-        { label: "Found Dead", value: "foundDead" },
+        { label: "Found Dead", value: "found_dead" },
         { label: "Accident", value: "accident" }
     ]
 
@@ -244,6 +256,16 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
         setLoading(true);
 
         try {
+            const animal_bite_case = await createAnimalBite(
+                visitId,
+                patientId, 
+                formData
+            );
+            
+            toast({ 
+                title: `Test submit success (Case ID: ${animal_bite_case})`, 
+                className: "toast-success" 
+            });
 
         } catch (error) {
             toast({
@@ -339,8 +361,8 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                     <input
                                         type="radio"
                                         name="categoryOfExposure"
-                                        value="II"
-                                        checked={formData.categoryOfExposure === 'II'}
+                                        value="category_ii"
+                                        checked={formData.categoryOfExposure === 'category_ii'}
                                         onChange={handleChange}
                                         required
                                     />
@@ -350,8 +372,8 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                     <input
                                         type="radio"
                                         name="categoryOfExposure"
-                                        value="III"
-                                        checked={formData.categoryOfExposure === 'III'}
+                                        value="category_iii"
+                                        checked={formData.categoryOfExposure === 'category_iii'}
                                         onChange={handleChange}
                                     />
                                     <span>Category III</span>
@@ -363,7 +385,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                         <div className="input-box">
                             <label className="required">Place Bitten:</label>
                             <div className="checkbox-3-grid">
-                                {placeOptions.map(({ label, value }) => (
+                                {placeBittenOptions.map(({ label, value }) => (
                                     <label key={value} className="checkbox-label">
                                         <input
                                             type="checkbox"
@@ -402,10 +424,10 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                 ))}
                             </div>
                         </div>
-                        {showOthers && (
+                        {formData.postExposureTreatment.includes('others') && (
                             <div className="input-box">
-                                <label className="required">Please Specify</label>
-                                <input ref={postExposureSpecifyRef} type="text" name="postExposureSpecify" required className="site-select" value={formData.postExposureSpecify ?? ''} onChange={handleChange} />
+                                <label className="required">Others (specify):</label>
+                                <input type="text" name="otherPostExposureTreatment" required className="site-select" value={formData.otherPostExposureTreatment} onChange={handleChange} />
                             </div>
                         )}
                     </div>
@@ -423,8 +445,8 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                     <input
                                         type="radio"
                                         name="antiTetanus"
-                                        value="atsOrTig"
-                                        checked={formData.antiTetanus === 'atsOrTig'}
+                                        value="ats_tig"
+                                        checked={formData.antiTetanus === 'ats_tig'}
                                         onChange={handleChange}
                                         required
                                     />
@@ -434,8 +456,8 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                     <input
                                         type="radio"
                                         name="antiTetanus"
-                                        value="tetanusToxoid"
-                                        checked={formData.antiTetanus === 'tetanusToxoid'}
+                                        value="tetanus_toxoid"
+                                        checked={formData.antiTetanus === 'tetanus_toxoid'}
                                         onChange={handleChange}
                                     />
                                     <span>Tetanus Toxoid</span>
@@ -566,7 +588,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                                         name="activeImmunizationDate" 
                                                         value="d0Status" 
                                                         checked={formData.activeImmunizationDate.includes("d0Status")} 
-                                                        onChange={handleChange} 
+                                                        onChange={handleChange}
                                                     />
                                                     D0
                                                 </label>
@@ -697,10 +719,10 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                             <input 
                                                 type="text" 
                                                 placeholder="Enter Vacc" 
-                                                name="Vacc" 
+                                                name="vacc" 
                                                 className="site-select" 
                                                 required={!!formData.previousArvVacc}
-                                                value={formData.Vacc ?? ''} 
+                                                value={formData.vacc ?? ''} 
                                                 onChange={handleChange} />
                                         </div>
                                     </div>
@@ -827,7 +849,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                                 </label>
                                                 <input 
                                                     type="number"
-                                                    name="erigVolume"
+                                                    name="hrigVolume"
                                                     value={formData.hrigVolume}
                                                     onChange={handleChange}
                                                     disabled={!formData.typeOfImmunoglobulin.includes("hrig")}
@@ -895,6 +917,19 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                 ))}
                             </div>
                         </div>
+                        {formData.species === 'others' && (
+                            <div className="input-box">
+                                <label className="required">Specify Type Of Animal:</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter animal type" 
+                                    name="specifyTypeOfAnimal" 
+                                    className="site-select" 
+                                    required={!!formData.species}
+                                    value={formData.specifyTypeOfAnimal} 
+                                    onChange={handleChange} />
+                            </div>
+                        )}
                     </div>
 
                     {/* <div className="input-group">
@@ -994,9 +1029,9 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                 <label>
                                     <input
                                         type="radio"
-                                        name="isAnimalVaccinated"
+                                        name="wasAnimalVaccinated"
                                         value="yes"
-                                        checked={formData.isAnimalVaccinated === 'yes'}
+                                        checked={formData.wasAnimalVaccinated === 'yes'}
                                         onChange={handleChange}
                                         required
                                     />
@@ -1005,9 +1040,9 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                 <label>
                                     <input
                                         type="radio"
-                                        name="isAnimalVaccinated"
+                                        name="wasAnimalVaccinated"
                                         value="no"
-                                        checked={formData.isAnimalVaccinated === 'no'}
+                                        checked={formData.wasAnimalVaccinated === 'no'}
                                         onChange={handleChange}
                                     />
                                     <span>No</span>
@@ -1015,11 +1050,11 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                             </div>
                         </div>
                     </div>
-                    {formData.isAnimalVaccinated === "yes" && (
+                    {formData.wasAnimalVaccinated === "yes" && (
                         <div className="input-group">
                             <div className="input-box">
                                 <label className="required">Date of Vaccination:</label>
-                                <input type="text" placeholder="Name of Owner" name="dateOfAnimalVaccination" className="site-select" required value={formData.dateOfAnimalVaccination} onChange={handleChange} />
+                                <input type="date" placeholder="Name of Owner" name="dateOfAnimalVaccination" className="site-select" required value={formData.dateOfAnimalVaccination} onChange={handleChange} />
                             </div>
                             <div className="input-box">
                                 <label className="required">Type of Vaccine:</label>
@@ -1172,6 +1207,22 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                     </div>
 
                 </form>
+
+                <div className="form-actions">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="cancel-button"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="save-button"
+                    >
+                        {editingRecord ? 'Update Record' : 'Save Record'}
+                    </button>
+                </div>
             </div>
         </div>
     );

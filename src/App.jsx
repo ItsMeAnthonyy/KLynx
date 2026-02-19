@@ -64,6 +64,7 @@ import Archives from './modules/admin/pages/Archives';
 //import Prescription from './pages/Admin/Prescription'
 import Prenatal2 from './pages/Patient/Prenatal';
 import DiseaseReport from './pages/Reports/Diseasereport';
+import DiseaseReports from './modules/admin/pages/DiseaseReports.jsx';
 import AnimalBiteReport from './pages/Reports/AnimalBiteReport';
 import MaternalReport from './pages/Reports/MaternalReport';
 
@@ -150,8 +151,8 @@ function App() {
                 <Route path='/Appointments' element={<Appointments />} />
                 <Route path ='/Patients' element={<Patients />} />
                 <Route path="/patient/:patientId/visits" element={<Visits />} />
-                <Route path="/patient/:patientId/visit/:visitId" element={<ConsultationDetail />} />
-                <Route path="/patient/:patientId/visit/:visitId/alt" element={<VisitDetails />} />
+                <Route path="/patient/:patientId/visit/:visitId/alt" element={<ConsultationDetail />} />
+                <Route path="/patient/:patientId/visit/:visitId" element={<VisitDetails />} />
                 <Route path='/IcdManager' element={<IcdManager />} />
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 
@@ -184,6 +185,7 @@ function App() {
                 <Route path='/Calendar' element={<Calendar />} />
                 <Route path='/NurseNotes' element={<NurseNotes />} />
                 <Route path='/DiseaseReport' element={<DiseaseReport />} />
+                <Route path='/DiseaseReports' element={<DiseaseReports />} />
                 <Route path='/AnimalBiteReport' element={<AnimalBiteReport />} />
                 <Route path='/MaternalReport' element={<MaternalReport />} />
                 {/*<Route path='/Dashboard' element={<Dashboard />} />  */}

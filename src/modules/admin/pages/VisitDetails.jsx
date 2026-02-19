@@ -13,6 +13,7 @@ import VitalSignsForm from './VitalSignsForm';
 import PhysicalExamForm from './PhysicalExamForm';
 import DoctorsOrderForm from './DoctorsOrderForm';
 import AnimalBiteForm from './AnimalBiteForm';
+import PrenatalForm from './PrenatalForm';
 
 export const basicTabs = [
     { id: 'vital-signs', label: 'Vital Signs', subLabel: 'Patient\'s vital signs', icon: '🩺' },
@@ -55,26 +56,62 @@ const VisitDetails = () => {
 
             const today = new Date();
             const birthDate = new Date(birthdate);
-            let age = today.getFullYear() - birthDate.getFullYear();
 
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            const dayDiff = today.getDate() - birthDate.getDate();
+            
+            // let age = today.getFullYear() - birthDate.getFullYear();
 
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-                age--;
+            // const monthDiff = today.getMonth() - birthDate.getMonth();
+            // const dayDiff = today.getDate() - birthDate.getDate();
+
+            // if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+            //     age--;
+            // }
+
+            // return age;
+
+            let years = today.getFullYear() - birthDate.getFullYear(); 
+            let months = today.getMonth() - birthDate.getMonth(); 
+            let days = today.getDate() - birthDate.getDate();
+
+            if (days < 0) {
+                months--; 
+                const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0); 
+                days += prevMonth.getDate();
             }
 
-            return age;
+            if (months < 0) {
+                years--; 
+                months += 12;
+            }
+
+            return { years, months, days };
         };
+
+        const formatDateMMDDYYYY = (dateString) => {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
+            const day = String(date.getDate()).padStart(2, '0');
+            const year = date.getFullYear();
+
+            return `${month}-${day}-${year}`;
+        }
+
+        const ageBreakdown = calculateAge(patient.Birthdate);
 
         return {
             id: patient.PatientID,
             fullName: `${patient.FirstName} ${patient.MiddleName} ${patient.LastName}`,
-            age: calculateAge(patient.Birthdate),
+            ageYears: ageBreakdown ? ageBreakdown.years : 'N/A',
+            ageMonths: ageBreakdown ? ageBreakdown.months : 'N/A',
+            ageDays: ageBreakdown ? ageBreakdown.days : 'N/A',
             sex: patient.Sex,
             phone: patient.PhoneNumber || 'Not specified',
-            dateOfBirth: patient.Birthdate || 'N/A',
-            emergencyContact: 'Not specified'
+            dateOfBirth: patient.Birthdate ? formatDateMMDDYYYY(patient.Birthdate) : 'N/A',
+            emergencyContact: 'Not specified',
+            civilStatus: patient.CivilStatus || 'N/A',
+            status: patient.status
         };
     };
 
@@ -139,6 +176,23 @@ const VisitDetails = () => {
 
     const allTabs = [...basicTabs, ...consultationTabs];
 
+    const consultationTypeLabels = {
+        general: "General Check-up",
+        animal_bite: "Animal Bite",
+        prenatal: "Prenatal",
+        immunization: "Immunization",
+        dental: "Dental"
+    }
+    
+    const natureOfVisitLabels = {
+        routine_checkup: "Routine Checkup", 
+        emergency: "Emergency",
+        follow_up: "Follow-up",
+        new_symptoms: "New Symptoms",
+        referral: "Referral"
+    }
+    
+
     return(
         <div className="FileMaintenance-Container">
             <Sidebar />
@@ -194,7 +248,7 @@ const VisitDetails = () => {
                     <div>This patient is archived. All visit actions are disabled. Only viewing is allowed.</div>
                     {archiveInfo && (
                         <div style={{ fontSize: '13px', marginTop: '4px', opacity: 0.8 }}>
-                        Archived on {archiveInfo.archivedOn} • Reason: {archiveInfo.reason}
+                            Archived on {archiveInfo.archivedOn} • Reason: {archiveInfo.reason}
                         </div>
                     )}
                     </div>
@@ -223,19 +277,37 @@ const VisitDetails = () => {
                         <div className="patient-info-grid">
                             <div className="info-item">
                                 <span className="info-label">Age:</span>
-                                <span className="info-value">{patient.age || 'N/A'}</span>
+                                <span className="info-value">{patient.ageYears !== 'N/A' ? `${patient.ageYears} years, ${patient.ageMonths} months, ${patient.ageDays} days` : 'N/A'}</span>
+                            </div>
+                            <div className="info-item">
+                                <span className="info-label">Birthdate (MM/DD/YYYY):</span>
+                                <span className="info-value">{patient.dateOfBirth || 'Unknown'}</span>
                             </div>
                             <div className="info-item">
                                 <span className="info-label">Sex:</span>
                                 <span className="info-value">{patient.sex || 'Unknown'}</span>
                             </div>
-                            <div className="info-item">
+                            {/* <div className="info-item">
                                 <span className="info-label">Status:</span>
                                 <span className="info-value">Temp Unavailable</span>
-                            </div>
-                            <div className="info-item">
+                            </div> */}
+                            {/* <div className="info-item">
                                 <span className="info-label">Last Visit:</span>
                                 <span className="info-value">Temp Unavailable</span>
+                            </div> */}
+                        </div>
+                        <div className="patient-info-grid">
+                            <div className="info-item">
+                                <span className="info-label">Civil Status:</span>
+                                <span className="info-value">{patient.civilStatus || 'Unknown'}</span>
+                            </div>
+                            <div className="info-item">
+                                <span className="info-label">Patient Status:</span>
+                                <span className="info-value">{patient.status || 'Unknown'}</span>
+                            </div>
+                            <div className="info-item">
+                                <span className="info-label">{/*Consultation for Follow up:*/}</span>
+                                <span className="info-value">{/**/}</span>
                             </div>
                         </div>
 
@@ -280,17 +352,29 @@ const VisitDetails = () => {
                             <h3>📋 Visit Information</h3>
                             <div className="emergency-details">
                                 <div className="emergency-info-row">
-                                    <span className="emergency-label">Date:</span>
-                                    <span className="emergency-value">{visit.dateTime
-                                        ? visit.dateTime.split(',')[0]?.trim()
-                                        : 'Pending'}
+                                    <span className="emergency-label">OPD Date:</span>
+                                    <span className="emergency-value">
+                                        {visit.dateTime
+                                            ? new Date(visit.dateTime).toLocaleDateString('en-PH', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                            })
+                                            : 'Pending'
+                                        }
                                     </span>
                                 </div>
                                 <div className="emergency-info-row">
-                                    <span className="emergency-label">Time:</span>
-                                    <span className="emergency-value"> {visit.dateTime
-                                        ? visit.split(',')[1]?.trim()
-                                        : 'Pending'}
+                                    <span className="emergency-label">OPD Time:</span>
+                                    <span className="emergency-value"> 
+                                        {visit.dateTime
+                                            ? new Date(visit.dateTime).toLocaleTimeString('en-PH', {
+                                                hour: 'numeric',
+                                                minute: '2-digit',
+                                                hour12: true,
+                                            })
+                                            : 'Pending'
+                                        }
                                     </span>
                                 </div>
                                 <div className="emergency-info-row">
@@ -303,11 +387,11 @@ const VisitDetails = () => {
                                 </div>
                                 <div className="emergency-info-row">
                                     <span className="emergency-label">Nature of Visit:</span>
-                                    <span className="emergency-value">{visit.natureOfVisit || 'N/A'}</span>
+                                    <span className="emergency-value">{natureOfVisitLabels[visit.natureOfVisit] || 'N/A'}</span>
                                 </div>
                                 <div className="emergency-info-row">
                                     <span className="emergency-label">Consultation Type:</span>
-                                    <span className="emergency-value">{visit.consultationType || 'N/A'}</span>
+                                    <span className="emergency-value">{consultationTypeLabels[visit.consultationType] || 'N/A'}</span>
                                 </div>
                             </div>
                         </div>
@@ -342,10 +426,13 @@ const VisitDetails = () => {
                         <SystemReviewForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
                     )}
                     {activeTab === 'doctors-order' && (
-                        <DoctorsOrderForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
+                        <DoctorsOrderForm activeTab={activeTab} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} />
                     )}
                     {activeTab === 'animal-bite' && (
-                        <AnimalBiteForm visitId={visitId} activeTab={activeTab} consultationType={visit.consultationType} isReadOnly={isReadOnly} />
+                        <AnimalBiteForm activeTab={activeTab} consultationType={visit.consultationType} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} />
+                    )}
+                    {activeTab === 'prenatal' && (
+                        <PrenatalForm activeTab={activeTab} consultationType={visit.consultationType} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} />
                     )}
                 </div>
 

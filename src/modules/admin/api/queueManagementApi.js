@@ -29,6 +29,28 @@ export const addToQueue = async (queueData) => {
     }
 }
 
+export const updateQueueStatus = async (queueId, visitId, status) => {
+    try {
+    const { data } = await axios.post(
+        'http://localhost/api/update_queue_status.php',
+        { 
+            queue_id: queueId,
+            visit_id: visitId,
+            status: status
+        },
+        { 
+            withCredentials: true 
+        }
+    );
+
+    if (!data.success) throw new Error(data.message);
+
+  } catch (error) {
+    console.error('Error updating queue provider:', error);
+    throw error;
+  }
+}
+
 export const getQueue = async (providerId = null, status = null) => {
     try {
         const { data } = await axios.post("http://localhost/api/get_queue.php", {

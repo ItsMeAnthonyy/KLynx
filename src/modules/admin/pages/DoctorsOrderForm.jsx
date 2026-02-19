@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import DoctorsOrderModal from '../../../modules/admin/popups/DoctorsOrderModal';
 
-export default function DoctorsOrderForm({ visitId, activeTab, isReadOnly }) {
+export default function DoctorsOrderForm({ activeTab, visitId, patientId, isReadOnly }) {
     const [formData, setFormData] = useState({
         laboratory_request: '',
         imaging: [],
@@ -62,8 +62,8 @@ export default function DoctorsOrderForm({ visitId, activeTab, isReadOnly }) {
                     onClose={() => setShowAddModal(false)}
                     activeTab={activeTab}
                     editingRecord={editingRecord}
-                    //patientId = 
                     visitId = {visitId}
+                    patientId = {patientId}
                     isReadOnly = {isReadOnly}
                 />
             )}

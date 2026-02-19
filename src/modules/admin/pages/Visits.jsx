@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 
  
-import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus, BiShow } from 'react-icons/bi';
+import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus, BiShow, BiSearch } from 'react-icons/bi';
 //import IcdCollapsibleDropdown from "./IcdManager";
 
 import { fetchPatientData } from "../services/patientService";
@@ -631,6 +631,14 @@ const Visits = () => {
     
     console.log('Visits Page - Patient Data:', { patientId, patient, patientData });
 
+    const consultationTypeLabels = {
+        general: "General Check-up",
+        animal_bite: "Animal Bite",
+        prenatal: "Prenatal",
+        immunization: "Immunization",
+        dental: "Dental"
+    }
+    
     return (
         <div className="FileMaintenance-Container">
              <Sidebar />
@@ -720,14 +728,28 @@ const Visits = () => {
                                     {index + 1}
                                 </td> 
                                 <td>
-                                    {visit.dateTime ? visit.dateTime.split(',')[0]?.trim() : 'Pending'}
+                                    {visit.dateTime
+                                        ? new Date(visit.dateTime).toLocaleDateString('en-PH', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                          })
+                                        : 'Pending'
+                                    }
                                 </td>
                                 <td>
-                                    {visit.dateTime ? visit.dateTime.split(',')[1]?.trim() : 'Pending'}
+                                    {visit.dateTime
+                                        ? new Date(visit.dateTime).toLocaleTimeString('en-PH', {
+                                            hour: 'numeric',
+                                            minute: '2-digit',
+                                            hour12: true,
+                                          })
+                                        : 'Pending'
+                                    }
                                 </td>
                                
                                 <td>
-                                    {visit.consultationType || 'N/A'}
+                                    {consultationTypeLabels[visit.consultationType] || 'N/A'}
                                 </td> 
                                 <td title={visit.chiefComplaint || 'N/A'}>
                                     {visit.chiefComplaint || 'N/A'}
@@ -751,7 +773,7 @@ const Visits = () => {
                                             fontWeight: '500'
                                         }}
                                     >
-                                        View History
+                                        <BiSearch style={{ fontSize: '18px' }} />
                                     </button>
                                 </td>
                                 <td>

@@ -69,50 +69,50 @@ function AnimalBiteReport() {
   });
 
   // Fetching Overall Animal Bite Statistics
-  useEffect(() => {
-    const fetchAnimalBiteStats = async () => {
-      try {
-        const response = await axios.get('http://localhost/api/animal-bite-stats.php');
-        setAnimalBiteStats(response.data);
-      } catch (error) {
-        console.error("Error fetching animal bite stats:", error);
-        setMessage({ text: 'Error fetching animal bite statistics', type: 'error' });
-        setTimeout(() => setMessage({ text: '', type: '' }), 3000);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAnimalBiteStats = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost/api/animal-bite-stats.php');
+  //       setAnimalBiteStats(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching animal bite stats:", error);
+  //       setMessage({ text: 'Error fetching animal bite statistics', type: 'error' });
+  //       setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+  //     }
+  //   };
 
-    fetchAnimalBiteStats();
-  }, []);
+  //   fetchAnimalBiteStats();
+  // }, []);
 
   // Fetching Animal Types for Selected Month
-  useEffect(() => {
-    const fetchMonthlyAnimalData = async () => {
-      try {
-        const response = await axios.get(`http://localhost/api/animal-types-month.php?month=${selectedMonth}`);
-        setMonthlyAnimalData(response.data);
-      } catch (error) {
-        console.error("Error fetching monthly animal data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMonthlyAnimalData = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost/api/animal-types-month.php?month=${selectedMonth}`);
+  //       setMonthlyAnimalData(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching monthly animal data:", error);
+  //     }
+  //   };
 
-    if (selectedMonth) {
-      fetchMonthlyAnimalData();
-    }
-  }, [selectedMonth]);
+  //   if (selectedMonth) {
+  //     fetchMonthlyAnimalData();
+  //   }
+  // }, [selectedMonth]);
 
   // Fetching Yearly Bite Counts by Month
-  useEffect(() => {
-    const fetchYearlyBites = async () => {
-      try {
-        const response = await axios.get(`http://localhost/api/animal-bites-yearly.php?year=${currentYear}`);
-        setYearlyBites(response.data);
-      } catch (error) {
-        console.error("Error fetching yearly bites:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchYearlyBites = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost/api/animal-bites-yearly.php?year=${currentYear}`);
+  //       setYearlyBites(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching yearly bites:", error);
+  //     }
+  //   };
 
-    fetchYearlyBites();
-  }, []);
+  //   fetchYearlyBites();
+  // }, []);
 
   // Handle Overall Animal Bite Report Download
   const handleAnimalBite = async () => {

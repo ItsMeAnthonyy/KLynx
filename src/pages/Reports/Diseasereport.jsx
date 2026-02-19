@@ -11,6 +11,10 @@ import styles from './DiseaseReport.module.css';
 // Generate Disease PDF Report
 import { generatePDF } from './D Report PDF';
 
+
+
+// import { /*getDiseaseReportData, processDiseaseData, getUniqueBarangays,*/ getYearlyOverview } from '../../services/reportsApi';
+
 // Dates Application
 const currentYear = new Date().getFullYear();
 const today = new Date();
@@ -33,8 +37,12 @@ const allMonths = Array.from({ length: 12 }, (_, i) => {
   return `${currentYear}-${month}`;
 });
 
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF6B6B', '#4ECDC4', '#45B7D1'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 function DiseaseReport() {
   // State for storing health data
+  const [viewMode, setViewMode] = useState('yearly');
   const [HealthData, setHealthData] = useState([]);
   const [diseaseStats, setDiseaseStats] = useState([]);
   const [topDiseasesMonth, setTopDiseasesMonth] = useState([]);
@@ -192,7 +200,8 @@ useEffect(() => {
 useEffect(() => {
   const fetchMonthlyTopDiseases = async () => {
     try {
-      const response = await axios.get(`http://localhost/api/monthly-top-diseases.php?year=${currentYear}`);
+      const response = await axios.get(`http://localhost/api/get_monthly_top_diseases.php?year=${currentYear}`);
+      console.log(response.year, "RETURNED:", response.data);
       setMonthlyTopDiseases(response.data);
     } catch (error) {
       console.error("Error fetching monthly top diseases:", error);
@@ -354,7 +363,7 @@ const processMonthlyTrends = () => {
     if (Array.isArray(monthData)) {
       monthData.forEach(item => {
         const disease = item.disease || item.DiagnosisName;
-        diseaseTotals[disease] = (diseaseTotals[disease] || 0) + (item.cases || 0);
+        diseaseTotals[disease] = (diseaseTotals[disease] || 0) + (item.disease_total || 0);
       });
     }
   });
@@ -474,6 +483,50 @@ const monthlyTrendsChartOptions = {
   },
 };
 
+  const [yearlyData, setYearlyData] = useState(null);
+
+  
+  useEffect(() => {
+    if (viewMode === 'monthly') {
+      loadMonthlyData();
+    } else {
+      loadYearlyData();
+    }
+  }, [/*viewMode, selectedYear, selectedMonth, filterBarangay, filterSex*/]);
+
+  const loadYearlyData = async () => {
+    setIsLoading(true);
+    try {
+      const overview = await getYearlyOverview(selectedYear);
+      setYearlyData(overview);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load yearly overview',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const getYearlyChartData = () => {
+    if (!yearlyData) return null;
+
+    const data = MONTHS.map((_, index) => yearlyData[index + 1]?.totalCases || 0);
+    return {
+      labels: MONTHS,
+      datasets: [{
+        label: 'Cases',
+        data: data,
+        backgroundColor: 'hsl(221, 83%, 53%)',
+        borderColor: 'hsl(221, 83%, 43%)',
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    };
+  }
+
 return (
   <div className={styles.container}>
     <Sidebar />
@@ -507,6 +560,24 @@ return (
           <BiDownload size={20} />
           Download Medical Report
         </button>
+      </div>
+
+      <div className={styles.chartSection}>
+        {getYearlyChartData() && (
+          <div className={styles.chartWrapper} style={{ height: '350px' }}>
+            <Bar 
+              data={getYearlyChartData()} 
+              options={{
+                        ...chartOptions,
+                        onClick: handleBarClick,
+                        plugins: {
+                          ...chartOptions.plugins,
+                          legend: { display: false }
+                        }
+              }} 
+            />
+          </div>
+        )}
       </div>
 
       {/* Monthly Disease Trends Line Chart */}

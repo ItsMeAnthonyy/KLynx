@@ -34,9 +34,9 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
         const dia = parseInt(diastolic);
 
         if (sys < 90 || dia < 60) return 'Hypotension';
-        if (sys < 120 && dia < 80) return 'Normal';
-        if (sys >= 120 && sys <= 129 && dia < 80) return 'Elevated';
-        if ((sys >= 130 && sys <= 139) || (dia >= 80 && dia <= 89)) return 'High Blood Pressure Stage 1';
+        if (sys <= 120 && dia <= 80) return 'Normal';
+        if (sys >= 121 && sys <= 129 && dia < 80) return 'Elevated';
+        if ((sys >= 130 && sys <= 139) || (dia >= 81 && dia <= 89)) return 'High Blood Pressure Stage 1';
         if (sys >= 140 || dia >= 90) return 'High Blood Pressure Stage 2';
         if (sys > 180 || dia > 120) return 'Hypertensive Crisis';
         return 'Normal';

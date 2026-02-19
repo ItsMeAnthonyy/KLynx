@@ -3,16 +3,21 @@ import { useState } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import { BiX, BiCapsule, BiSearch, BiUser, BiCalendar, BiErrorCircle, BiRuler, BiTransfer, BiTrip, BiPulse, BiHeart, BiTrendingUp, BiWind, BiDroplet, BiTime } from "react-icons/bi";
 import { basicTabs } from '../pages/VisitDetails';
+import { useToast } from '../../../hooks/use-toast';
 
 import ICD10SearchModal from './ICD10SearchModal';
 import PrescriptionListModal from './PrescriptionListModal';
 
+import { createDoctorsOrder } from '../api/doctorsOrderApi';
 
-export default function DoctorsOrderModal({ isOpen, onClose, activeTab, editingRecord, visitId, isReadOnly/*, patientId, onSubmit */}) {
+
+export default function DoctorsOrderModal({ isOpen, onClose, activeTab, editingRecord, visitId, patientId, isReadOnly/*, patientId, onSubmit */}) {
     const { auth } = useAuth();
     const isAdmin  = auth?.userRole?.includes("admin");
+    const { toast } = useToast();
 
     const activeTabData = basicTabs.find(tab => tab.id === activeTab);
+    const [loading, setLoading] = useState(false);
     const [doctorsOrderForm, setDoctorsOrderForm] = useState({
         imaging: [],
         alertType: [],

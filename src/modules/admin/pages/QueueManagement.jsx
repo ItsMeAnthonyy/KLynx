@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../../components/Sidebar';
 import EmergencyButton from '../../../components/EmergencyButton';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 // import { User, Clock, AlertCircle, Filter, Search, Plus, AlertTriangle } from 'lucide-react';
 import { BiUser, BiTime, BiErrorCircle, BiSearch, BiPlus, BiErrorAlt } from "react-icons/bi";
 import { useToast } from '../../../hooks/use-toast';
-import { getQueue/*, updateQueueStatus, removeFromQueue*/ } from '../api/queueManagementApi';
+import { getQueue, updateQueueStatus/*, removeFromQueue*/ } from '../api/queueManagementApi';
 // import { checkQueueLimits, startQueueLimitMonitor } from '@/services/queueLimitService';
 import AddWalkInModal from '../popups/addWalkInModal';
 import styles from './QueueManagement.module.css';
@@ -37,6 +38,7 @@ const QueueManagement = () => {
     const [providers, setProviders] = useState([]);
     const { toast } = useToast();
     const { auth } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         checkUser();
@@ -109,19 +111,23 @@ const QueueManagement = () => {
         setFilteredItems(filtered);
     };
 
-    // const handleStatusChange = async (id, newStatus) => {
-    //     try {
-    //         await updateQueueStatus(id, newStatus);
-    //         toast({ title: 'Status updated' });
-    //         fetchQueue();
-    //     } catch (error) {
-    //     toast({
-    //         title: 'Error',
-    //         description: error.message,
-    //         variant: 'destructive',
-    //     });
-    //     }
-    // };
+    const handleStatusChange = async (id, visitId, patientId, newStatus) => {
+        try {
+            await updateQueueStatus(id, visitId, newStatus);
+            
+            toast({ title: 'Service Started' });
+            
+            //fetchQueue();
+
+            navigate(`/patient/${patientId}/visit/${visitId}`);
+        } catch (error) {
+        toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive',
+        });
+        }
+    };
 
     // const handleCancel = async (id) => {
     //     if (!window.confirm('Cancel this queue entry?')) return;
@@ -342,12 +348,22 @@ const QueueManagement = () => {
                                     <div className={styles.actionsCell}>
                                         {item.status === 'waiting' && (
                                             <button
-                                                onClick={() => handleStatusChange(item.id, 'in_service')}
+                                                onClick={() => handleStatusChange(item.id, item.visit_id, item.patient_id, 'in_service')}
                                                 className={styles.actionBtn}
                                             >
                                                 Start Service
                                             </button>
                                         )}
+                                        {item.status === 'in_service' && (
+                                            <button
+                                                onClick={() => navigate(`/patient/${item.patient_id}/visit/${item.visit_id}`)}
+                                                className={styles.actionBtn}
+                                            >
+                                                Go to Visit Details
+                                            </button>
+                                        )
+
+                                        }
 
                                         {isAdmin && item.status !== 'finished_service' && (
                                             <button

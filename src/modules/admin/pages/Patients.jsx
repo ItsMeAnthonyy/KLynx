@@ -13,6 +13,7 @@ import { BiSearch } from 'react-icons/bi';
 import EmergencyButton from '../../../components/EmergencyButton';
 import ProfileDropdown from '../../../components/ProfileDropdown';
 //import IcdCollapsibleDropdown from "./IcdManager";
+import styles from './Patients.module.css';
 
 import AddPatientModal from '../popups/AddPatientModal';
 import ArchivePatientModal from '../popups/ArchivePatientModal';
@@ -499,14 +500,14 @@ const Patients = () => {
     
 
     return (
-        <div className="FileMaintenance-Container">
+        <div className={styles.container}>
             <Sidebar />
             <main className="FileMaintenance-Content">
-                <div className="FileMaintenance-Header">
-                    <div className="FileMaintenance-HeaderTitle">
-                        <h1>PATIENTS</h1>
+                <div className={styles.header}>
+                    <div className={styles.headerLeft}>
+                        <h1 className={styles.title}>PATIENTS</h1>
                     </div>
-                    <div className="FileMaintenance-HeaderSetting">
+                    <div className={styles.headerRight}>
                       <EmergencyButton />
                         <ProfileDropdown 
                             email="admin@klynx.com"

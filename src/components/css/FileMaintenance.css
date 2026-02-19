@@ -163,7 +163,7 @@
 }
 
 .FileMaintenance-Entries{
-    display: flex;
+    /* display: flex; */
     align-items: center;
     gap: 0.6em;
 
@@ -219,7 +219,7 @@
     width: 100%;
     text-align: center;
     transition: all 0.3s ease;
-    table-layout: fixed;
+    table-layout: auto; /*CHANGED FROM FIXED TO*/
 }
 
 .FileMaintenance-Content table td:nth-child(5) {
@@ -231,8 +231,8 @@
 
 .FileMaintenance-Content table th:nth-last-child(-n+3),
 .FileMaintenance-Content table td:nth-last-child(-n+3) {
-  width: 14%;
-  text-align: center;
+    /*width: 20%;*/
+    text-align: center;
 }
 
 .FileMaintenance-TableWrapper{

@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from 'react';
-import AnimalBiteModal from '../../../modules/admin/popups/AnimalBiteModal';
+import PrenatalModal from '../../../modules/admin/popups/PrenatalModal';
 
 export default function AnimalBiteForm({ activeTab, consultationType, visitId, patientId, isReadOnly }) {
-    const [animalBiteData, setAnimalBiteData] = useState(null);
-    
+    const [prenatalData, setPrenatalData] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingRecord, setEditingRecord] = useState(null);
 
@@ -33,7 +31,7 @@ export default function AnimalBiteForm({ activeTab, consultationType, visitId, p
             </div>
 
             {showAddModal && (
-                <AnimalBiteModal
+                <PrenatalModal
                     isOpen={showAddModal}
                     onClose={() => setShowAddModal(false)}
                     activeTab={activeTab}

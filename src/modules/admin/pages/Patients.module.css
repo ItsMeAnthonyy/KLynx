@@ -1,0 +1,370 @@
+.container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f7fa;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #DDE6ED;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    background-color: #07598D;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.headerLeft {
+    flex: 1;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.header2 {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.warningsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.warningBanner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.warningBanner.warning {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE047;
+}
+
+.warningBanner.critical {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+}
+
+.newBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: hsl(200 95% 40%);
+  color: hsl(0 0% 100%);
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  margin-top: 0.25rem;
+}
+
+.newBtn:hover {
+  opacity: 0.9;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+  margin-left: 30rem;
+  margin-top: 1rem;
+}
+
+.statCard {
+    padding: 1.5rem;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(210 25% 88%);
+    border-radius: 0.75rem;
+    min-width: 150px;
+}
+
+.statLabel {
+    font-size: 0.875rem;
+    color: hsl(215 15% 50%);
+    margin-bottom: 0.5rem;
+}
+
+.statValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: hsl(215 25% 15%);
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    margin-left: 1.5rem;
+}
+
+.searchContainer {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: hsl(215 15% 50%);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 0.5rem;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-size: 1rem;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: hsl(200 95% 40%);
+}
+
+.select {
+  padding: 0.75rem 1rem;
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 0.5rem;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: hsl(200 95% 40%);
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: hsl(215 15% 50%);
+  font-size: 1.125rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: hsl(215 15% 50%);
+  gap: 1rem;
+}
+
+.queueList {
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableHeader,
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1fr 1.2fr 1.5fr;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  align-items: center;
+}
+
+.tableHeader {
+  background: hsl(210 30% 92%);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: hsl(215 15% 50%);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.tableRow {
+  border-bottom: 1px solid hsl(210 25% 88%);
+  font-size: 0.9375rem;
+  color: hsl(215 25% 15%);
+  transition: background 0.2s;
+}
+
+.tableRow:hover {
+  background: hsl(210 30% 92% / 0.3);
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.patientCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.icon {
+  color: hsl(200 95% 40%);
+  flex-shrink: 0;
+}
+
+.typeCell {
+  text-transform: capitalize;
+}
+
+.priorityBadge,
+.statusBadge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.timeCell {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: hsl(215 15% 50%);
+}
+
+.actionsCell {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionBtn,
+.cancelBtn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.actionBtn {
+  background: hsl(200 95% 40%);
+  color: hsl(0 0% 100%);
+}
+
+.actionBtn:hover {
+  opacity: 0.9;
+}
+
+.cancelBtn {
+  background: hsl(0 84.2% 60.2%);
+  color: hsl(0 0% 100%);
+}
+
+.cancelBtn:hover {
+  opacity: 0.9;
+}
+
+.inlineSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  cursor: pointer;
+  width: 100%;
+  min-width: 120px;
+}
+
+.inlineSelect:focus {
+  outline: none;
+  border-color: hsl(var(--primary));
+}
+
+@media (max-width: 1200px) {
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    font-size: 0.8125rem;
+  }
+
+  .actionBtn,
+  .cancelBtn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .stats {
+    flex-direction: column;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .searchContainer {
+    max-width: 100%;
+  }
+
+  .table {
+    overflow-x: auto;
+  }
+
+  .tableHeader,
+  .tableRow {
+    min-width: 900px;
+  }
+}
+
+
