@@ -263,7 +263,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
             );
             
             toast({ 
-                title: `Test submit success (Case ID: ${animal_bite_case})`, 
+                title: `Submit success (Case ID: ${animal_bite_case})`, 
                 className: "toast-success" 
             });
 
@@ -289,7 +289,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                         </button>
                     </h2>
                 </div>
-                <form onSubmit={handleSubmit}>
+                <form id="myForm" onSubmit={handleSubmit}>
                     <div className="input-group">
                         <div className="inputBox">
                             <label className='required'>Date of Bite</label>
@@ -417,7 +417,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                             name="postExposureTreatment"
                                             value={value}
                                             checked={formData.postExposureTreatment.includes(value)}
-                                            onChange={(e) => { handlePostExposureChange(e); handleChange(e); }}
+                                            onChange={handleChange}
                                         />
                                         {label}
                                     </label>    
@@ -606,7 +606,6 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                                     showMonthDropdown
                                                     yearDropdownItemNumber={124}
                                                     minDate={new Date('1900-01-01')}
-                                                    maxDate={new Date()}
                                                 />
                                             </div>
 
@@ -635,7 +634,6 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                                     showMonthDropdown
                                                     yearDropdownItemNumber={124}
                                                     minDate={new Date('1900-01-01')}
-                                                    maxDate={new Date()}
                                                 />
                                             </div>
 
@@ -664,7 +662,6 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                                     showMonthDropdown
                                                     yearDropdownItemNumber={124}
                                                     minDate={new Date('1900-01-01')}
-                                                    maxDate={new Date()}
                                                 />
                                             </div>
 
@@ -693,15 +690,14 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                                                     showMonthDropdown
                                                     yearDropdownItemNumber={124}
                                                     minDate={new Date('1900-01-01')}
-                                                    maxDate={new Date()}
                                                 />
                                             </div>
                                         </div>
                                     </div>
                                     <div className="input-group">
                                         <div className="input-box">
-                                            <label className="required">PREVIOUS ARV VACC:</label>
-                                            <input type="text" name="previousArvVacc" placeholder="Previous ARV Vacc" required className="site-select" value={formData.previousArvVacc ?? ''} onChange={handleChange} />
+                                            <label>PREVIOUS ARV VACC:</label>
+                                            <input type="text" name="previousArvVacc" placeholder="Previous ARV Vacc" className="site-select" value={formData.previousArvVacc ?? ''} onChange={handleChange} />
                                         </div>
                                         <div className="input-box">
                                             <label className={formData.previousArvVacc ? "required" : ""}>When:</label>
@@ -1007,7 +1003,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                         </div>
                         <div className="input-box">
                             <label className="required">Owner's Contact #:</label>
-                            <input type="tel" name="ownerContact" value={formData.ownerContact} placeholder="Contact #" />
+                            <input type="tel" name="ownerContact" value={formData.ownerContact} placeholder="Contact #" onChange={handleChange} />
                         </div>
                     </div>
                     <div className="input-group">
@@ -1053,12 +1049,12 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                     {formData.wasAnimalVaccinated === "yes" && (
                         <div className="input-group">
                             <div className="input-box">
-                                <label className="required">Date of Vaccination:</label>
-                                <input type="date" placeholder="Name of Owner" name="dateOfAnimalVaccination" className="site-select" required value={formData.dateOfAnimalVaccination} onChange={handleChange} />
+                                <label>Date of Vaccination:</label>
+                                <input type="date" placeholder="Name of Owner" name="dateOfAnimalVaccination" className="site-select" value={formData.dateOfAnimalVaccination} onChange={handleChange} />
                             </div>
                             <div className="input-box">
-                                <label className="required">Type of Vaccine:</label>
-                                <input type="text" placeholder="Name of Owner" name="animalVaccineType" className="site-select" required value={formData.animalVaccineType} onChange={handleChange} />
+                                <label>Type of Vaccine:</label>
+                                <input type="text" placeholder="Name of Owner" name="animalVaccineType" className="site-select" value={formData.animalVaccineType} onChange={handleChange} />
                             </div>
                         </div>
                     )}
@@ -1149,7 +1145,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                     
                     <div className="input-group">
                         <div className="input-box">
-                            <label className="required">If animal is dead, when?</label>
+                            <label>If animal is dead, when?</label>
                             <input 
                                 type="date" 
                                 name="animalDeathDate" 
@@ -1160,25 +1156,27 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                         </div>
                     </div>
 
-                    <div className="input-group">
-                        <div className="input-box">
-                            <label className="required">Cause of Death:</label>
-                            <div className="radio-set">
-                                {animalCauseOfDeathOptions.map(({ label, value }) => (
-                                    <label key={value}>
-                                        <input
-                                            type="radio"
-                                            name="animalCauseOfDeath"
-                                            value={value}
-                                            checked={formData.animalCauseOfDeath === value}
-                                            onChange={(e) => { handleChange(e); }}
-                                        />
-                                        <span>{label}</span>
-                                    </label>    
-                                ))}
+                    {formData.animalDeathDate && (
+                        <div className="input-group">
+                            <div className="input-box">
+                                <label className="required">Cause of Death:</label>
+                                <div className="radio-set">
+                                    {animalCauseOfDeathOptions.map(({ label, value }) => (
+                                        <label key={value}>
+                                            <input
+                                                type="radio"
+                                                name="animalCauseOfDeath"
+                                                value={value}
+                                                checked={formData.animalCauseOfDeath === value}
+                                                onChange={(e) => { handleChange(e); }}
+                                            />
+                                            <span>{label}</span>
+                                        </label>    
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}  
 
                     <div className="input-group">
                         <div className="input-box">
@@ -1218,6 +1216,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
                     </button>
                     <button
                         type="submit"
+                        form="myForm"
                         className="save-button"
                     >
                         {editingRecord ? 'Update Record' : 'Save Record'}

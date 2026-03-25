@@ -17,7 +17,7 @@ import PrenatalForm from './PrenatalForm';
 
 export const basicTabs = [
     { id: 'vital-signs', label: 'Vital Signs', subLabel: 'Patient\'s vital signs', icon: '🩺' },
-    { id: 'physical-exam', label: 'Physical Exam', subLabel: 'Body examination details', icon: '👁️' },
+    //{ id: 'physical-exam', label: 'Physical Exam', subLabel: 'Body examination details', icon: '👁️' },
     //{ id: 'system-review', label: 'System Review', subLabel: 'Review of body systems', icon: '📋' },
     { id: 'doctors-order', label: "Doctor's Order", subLabel: 'Prescriptions and orders', icon: '📝' },
 ];
@@ -25,7 +25,7 @@ export const basicTabs = [
 export const getConsultationTabs = (consultationType) => {
     switch (consultationType) {
         case 'animal_bite':
-            return [{ id: 'animal-bite', label: 'Animal Bite', subLabel: 'Kagatkagat', icon: '🐾' }];
+            return [{ id: 'animal-bite', label: 'Animal Bite', subLabel: 'Animal bite details', icon: '🐾' }];
         case 'prenatal':
             return [{ id: 'prenatal', label: 'Prenatal', subLabel: 'Pregnancy care', icon: '🤰' }];
         default:
@@ -419,9 +419,9 @@ const VisitDetails = () => {
                     {activeTab === 'vital-signs' && (
                         <VitalSignsForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
                     )}
-                    {activeTab === 'physical-exam' && (
+                    {/* {activeTab === 'physical-exam' && (
                         <PhysicalExamForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
-                    )}
+                    )} */}
                     {activeTab === 'system-review' && (
                         <SystemReviewForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
                     )}

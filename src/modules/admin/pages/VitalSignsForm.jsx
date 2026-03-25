@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus, BiShow } from 'react-icons/bi';
+import { BiSearch, BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus, BiShow } from 'react-icons/bi';
 import VitalSignsModal from '../../../modules/admin/popups/VitalSignsModal';
+import VitalSignsViewModal from '../../../modules/admin/popups/VitalSignsViewModal';
 import { getVitalSignsByVisitId } from '../api/vitalSignsApi';
 
 export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
@@ -10,6 +11,7 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
     
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingRecord, setEditingRecord] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false);
 
     useEffect( () => {
         const fetchData = async () => {
@@ -66,7 +68,7 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
                                 <th>Body Temperature</th>
                                 <th>Pulse Rate</th>
                                 <th>BP Measurement Assessment</th>
-                                <th colSpan="2">Options</th>
+                                <th colSpan="3">Options</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,6 +87,42 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
                                     <td>{vitalSigns.bodyTemp}</td>
                                     <td>{vitalSigns.pulseRate}</td>
                                     <td>{computeBPAssessment(vitalSigns.bpSystolic, vitalSigns.bpDiastolic)}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => { 
+                                                if (!isArchived || isArchived) {
+                                                    setShowViewModal(true)
+                                                }
+                                            }} 
+                                            style={{ 
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '4px',
+                                                cursor: isArchived ? 'not-allowed' : 'pointer', 
+                                                padding: '8px',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                transition: 'all 0.2s',
+                                                opacity: isArchived ? 0.5 : 1
+                                            }} 
+                                            title={'View Details'}
+                                            onMouseEnter={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                                    e.currentTarget.style.borderColor = '#d1d5db';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                                }
+                                            }}
+                                        >
+                                            <BiSearch style={{ fontSize: '18px', color: '#282a2eff' }} />
+                                        </button>
+                                    </td>
                                     <td>
                                         <button 
                                             onClick={() => { 
@@ -181,6 +219,14 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
                     //patientId = 
                     visitId = {visitId}
                     isReadOnly = {isReadOnly}
+                />
+            )}
+
+            {showViewModal && (
+                <VitalSignsViewModal
+                    isOpen={showViewModal}
+                    onClose={() => setShowViewModal(false)}
+                    formData={vitalSigns}
                 />
             )}
         </>

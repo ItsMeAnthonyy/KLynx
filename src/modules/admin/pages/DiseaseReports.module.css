@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda:wght@400;800&display=swap');
+
 /* Container */
 .container {
     display: flex;
@@ -10,6 +12,7 @@
     flex-direction: column;
     flex: 1;
     background: #DDE6ED;
+    font-family: 'Coda', sans-serif;
 }
 
 /* Header */
@@ -63,6 +66,123 @@
     background-color: #fff5f5;
 }
 
+/* View Toggle */
+.viewToggle {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.toggleBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid hsl(210 25% 88%);
+    border-radius: 0.75rem;
+    background: hsl(210 40% 98%);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: hsl(215 15% 50%);
+    transition: all 0.2s ease;
+}
+
+.toggleBtn:hover {
+    border-color: hsl(200 95% 40%);
+    color: hsl(200 95% 40%);
+}
+
+.toggleActive {
+    background: hsl(200 95% 40%);
+    border-color: hsl(200 95% 40%);
+    color: hsl(0 0% 100%);
+}
+
+.toggleActive:hover {
+    background: hsl(200 95% 40%);
+    color: hsl(0 0% 100%);
+}
+
+/* Filter Section */
+.filterSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin: 1rem 2rem;
+    padding: 1.5rem;
+    background: hsl(200 80% 94% / 0.5);
+    border-radius: 0.75rem;
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 140px;
+}
+
+.filterLabel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: hsl(215 25% 15%);
+}
+
+.filterSelect {
+    padding: 0.75rem 1rem;
+    border: 1px solid hsl(210 25% 88%);
+    border-radius: 0.75rem;
+    background: hsl(210 40% 98%);
+    font-size: 1rem;
+    color: hsl(215 25% 15%);
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.filterSelect:focus {
+    outline: none;
+    border-color: hsl(200 95% 40%);
+}
+
+.exportBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: hsl(200 95% 40%);
+    color: hsl(0 0% 100%);
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: auto;
+}
+
+.exportBtn:hover:not(:disabled) {
+    background: hsl(200 95% 40% / 0.9);
+    transform: translateY(-1px);
+}
+
+.exportBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.exportSpinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+
 /* Message */
 .message {
     padding: 12px 20px;
@@ -87,7 +207,7 @@
 /* Action Section */
 .actionSection {
     padding: 0 2rem;
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
     display: flex;
     justify-content: flex-end;
 }
@@ -135,6 +255,30 @@
     background-color: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #e2e8f0;
+}
+
+.chartWrapper {
+  width: 100%;
+  height: 350px;
+}
+
+.chartWrapper canvas {
+  width: 100% !important;   /* force canvas to fit parent */
+  height: 100% !important;  /* respect wrapper height */
+}
+
+.chartsRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 2rem;
+}
+
+.chartHalf {
+    padding: 1.5rem;
+    background: hsl(210 40% 98%);
+    border: 1px solid hsl(210 25% 88%);
+    border-radius: 0.75rem;
 }
 
 .chartControls {
@@ -226,33 +370,14 @@
     font-style: italic;
 }
 
+.noDataSmall {
+    text-align: center;
+    padding: 2rem;
+    color: hsl(215 15% 50%);
+    font-style: italic;
+}
+
 /* Table Section */
-.tableSection {
-    background: #DDE6ED;
-    border: 2px solid #27374D;
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 1.5rem 2rem 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.tableTitle {
-    font-size: 20px;
-    font-weight: 700;
-    color: #27374D;
-    margin: 0;
-    padding: 1.5rem 1.5rem 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.tableSubtitle {
-    font-size: 14px;
-    color: #718096;
-    margin: 0;
-    padding: 0 1.5rem 1rem;
-}
-
 .tableWrapper {
     overflow-x: auto;
 }
@@ -333,6 +458,256 @@
     color: #718096;
     font-style: italic;
 }
+
+/* Summary Cards */
+.summaryCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 2rem 2rem;
+}
+
+.summaryCard {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: hsl(210 40% 98%);
+    border: 1px solid hsl(210 25% 88%);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.summaryCard:hover {
+    border-color: hsl(200 95% 40%);
+    box-shadow: 0 10px 30px -10px hsl(200 95% 40% / 0.2);
+}
+
+.summaryIcon {
+    font-size: 2.5rem;
+}
+
+.summaryContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.summaryValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: hsl(200 95% 40%);
+    line-height: 1;
+}
+
+.summaryLabel {
+    font-size: 0.875rem;
+    color: hsl(215 15% 50%);
+    margin-top: 0.25rem;
+}
+
+/* Expanded Section */
+.expandedSection {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: hsl(200 80% 94% / 0.3);
+  border: 2px solid hsl(200 95% 40% / 0.3);
+  border-radius: 0.75rem;
+  animation: scale-in 0.2s ease-out;
+}
+
+.expandedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.expandedHeader h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: hsl(215 25% 15%);
+}
+
+/* Tables */
+.tableWrapper {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+}
+
+.table th,
+.table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid hsl(210 25% 88%);
+}
+
+.table th {
+    background: hsl(200 80% 94%);
+    font-weight: 600;
+    color: hsl(215 25% 15%);
+    white-space: nowrap;
+}
+
+.table tbody tr:hover {
+    background: hsl(200 80% 94% / 0.5);
+}
+
+/*
+.animalBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: hsl(var(--secondary));
+  border-radius: 999px;
+  font-weight: 500;
+}
+*/
+
+.newCases {
+    color: hsl(200 95% 40%);
+    font-weight: 600;
+}
+
+.underTreatment {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.recovered {
+    color: hsl(142 71% 45%);
+    font-weight: 600;
+}
+
+.deaths {
+    color: hsl(0 84.2% 60.2%);
+    font-weight: 600;
+}
+
+/* Loading State */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid hsl(210 25% 88%);
+    border-top-color: hsl(200 95% 40%);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Forms Report Section */
+.formsSection {
+    margin: 1.5rem 2rem 2rem;
+    padding: 1.5rem;
+    background: hsl(210 40% 98%);
+    border: 1px solid hsl(210 25% 88%);
+    border-radius: 0.75rem;
+}
+
+.formsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.formsTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: hsl(215 25% 15%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.formsPdfBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: hsl(200 95% 40%);
+    color: hsl(0 0% 100%);
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.formsPdfBtn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.formsPdfBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.pageBtn {
+  padding: 0.5rem 1rem;
+  border: 1px solid hsl(210 25% 88%);
+  border-radius: 0.75rem;
+  background: hsl(210 40% 98%);
+  color: hsl(215 25% 15%);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pageBtn:hover:not(:disabled) {
+    border-color: hsl(200 95% 40%);
+    color: hsl(200 95% 40%);
+}
+
+.pageBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pageBtnActive {
+    background: hsl(200 95% 40%);
+    color: hsl(0 0% 100%);
+    border-color: hsl(200 95% 40%);
+}
+
+.pageInfo {
+    font-size: 0.875rem;
+    color: hsl(215 15% 50%);
+    padding: 0.5rem 0;
+}
+
 
 /* Responsive */
 @media (max-width: 1200px) {

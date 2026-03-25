@@ -10,71 +10,6 @@ import styles from './UserManagement.module.css';
 //import { PERMISSIONS, hasPermission } from '../../../utils/rolePermissions';
 import useAuth from '../../../hooks/useAuth';
 
-// Mock user data
-const MOCK_USERS = [
-    {
-        id: 'admin',
-        username: 'admin',
-        fullName: 'System Administrator',
-        email: 'admin@healthcenter.com',
-        role: 'admin',
-        department: 'IT',
-        status: 'active',
-        lastLogin: '2024-01-20 10:30 AM',
-        lastPasswordChange: '2023-12-15',
-        createdAt: '2023-01-01'
-    },
-    {
-        id: 'dr_emily',
-        username: '@dr_smith',
-        fullName: 'Dr. Emily Smith',
-        email: 'e.smith@healthcenter.com',
-        role: 'doctor',
-        department: 'Internal Medicine',
-        status: 'active',
-        lastLogin: '2024-01-20 09:15 AM',
-        lastPasswordChange: '2024-01-01',
-        createdAt: '2023-03-15'
-    },
-    {
-        id: 'sarah_j',
-        username: '@nurfe.johnson',
-        fullName: 'Sarah Johnson',
-        email: 'sarah.johnson@healthcenter.com',
-        role: 'nurse',
-        department: 'Pediatrics',
-        status: 'active',
-        lastLogin: '2024-01-19 08:45 AM',
-        lastPasswordChange: '2023-11-20',
-        createdAt: '2023-05-10'
-    },
-    {
-        id: 'lisa_c',
-        username: '@receptionlist',
-        fullName: 'Lisa Chen',
-        email: 'l.chen@healthcenter.com',
-        role: 'staff',
-        department: 'Reception',
-        status: 'active',
-        lastLogin: '2024-01-20 08:00 AM',
-        lastPasswordChange: '2023-10-15',
-        createdAt: '2023-07-01'
-    },
-    {
-        id: 'temp_user',
-        username: '@temp.user',
-        fullName: 'Temporary Account',
-        email: 'temp@healthcenter.com',
-        role: 'guest',
-        department: 'Temporary',
-        status: 'inactive',
-        has2FA: false,
-        lastLogin: '2024-01-15 02:30 PM',
-        lastPasswordChange: '2024-01-15',
-        createdAt: '2024-01-15'
-    }
-];
-
 const UserManagement = () => {
     const { auth } = useAuth();
     
@@ -215,18 +150,32 @@ const UserManagement = () => {
     const validateForm = () => {
         const newErrors = {};
         
-        if (!formData.username.trim()) {
-            newErrors.username = 'Username is required';
-        } else if (formData.username.length < 3) {
-            newErrors.username = 'Username must be at least 3 characters';
-        } else if (!/^[a-zA-Z0-9_@.-]+$/.test(formData.username)) {
-            newErrors.username = 'Username can only contain letters, numbers, @, ., -, and _';
-        }
+        // if (!formData.username.trim()) {
+        //     newErrors.username = 'Username is required';
+        // } else if (formData.username.length < 3) {
+        //     newErrors.username = 'Username must be at least 3 characters';
+        // } else if (!/^[a-zA-Z0-9_@.-]+$/.test(formData.username)) {
+        //     newErrors.username = 'Username can only contain letters, numbers, @, ., -, and _';
+        // }
         
-        if (!formData.fullName.trim()) {
-            newErrors.fullName = 'Full name is required';
-        } else if (formData.fullName.length < 2) {
-            newErrors.fullName = 'Full name must be at least 2 characters';
+        // if (!formData.fullName.trim()) {
+        //     newErrors.fullName = 'Full name is required';
+        // } else if (formData.fullName.length < 2) {
+        //     newErrors.fullName = 'Full name must be at least 2 characters';
+        // }
+
+        // FIRST NAME
+        if (!formData.firstName?.trim()) {
+            newErrors.firstName = 'First name is required';
+        } else if (formData.firstName.trim().length < 2) {
+            newErrors.firstName = 'First name must be at least 2 characters';
+        }
+
+        // LAST NAME
+        if (!formData.lastName?.trim()) {
+            newErrors.lastName = 'Last name is required';
+        } else if (formData.lastName.trim().length < 2) {
+            newErrors.lastName = 'Last name must be at least 2 characters';
         }
         
         if (!formData.email.trim()) {
@@ -250,10 +199,10 @@ const UserManagement = () => {
         }
         
         // Check for duplicate username or email
-        const duplicateUsername = users.find(u => u.username.toLowerCase() === formData.username.toLowerCase());
-        if (duplicateUsername) {
-            newErrors.username = 'This username is already taken';
-        }
+        // const duplicateUsername = users.find(u => u.username.toLowerCase() === formData.username.toLowerCase());
+        // if (duplicateUsername) {
+        //     newErrors.username = 'This username is already taken';
+        // }
         
         const duplicateEmail = users.find(u => u.email.toLowerCase() === formData.email.toLowerCase());
         if (duplicateEmail) {
@@ -284,7 +233,7 @@ const UserManagement = () => {
                 email: formData.email,
                 role: formData.role,
                 // department: formData.department,
-                password: formData.tempPassword,
+                tempPassword: formData.tempPassword,
                 // status: 'active',
                 // has2FA: false,
                 // lastLogin: 'Never',
@@ -521,7 +470,7 @@ const UserManagement = () => {
                             value={filterRole}
                             onChange={(e) => setFilterRole(e.target.value)}
                         >
-                            <option>All Roles</option>
+                            <option hidden>All Roles</option>
                             <option>Admin</option>
                             <option>Doctor</option>
                             <option>Nurse</option>
@@ -532,15 +481,15 @@ const UserManagement = () => {
                     
                 </div>
 
-                        <div className={styles.createButtonContainer}>
-                            <button 
-                                className={styles.createButton}
-                                onClick={() => setShowCreateModal(true)}
-                            >
-                                <FaPlus size={16} />
-                                Create User Account
-                            </button>
-                        </div>
+                <div className={styles.createButtonContainer}>
+                    <button 
+                        className={styles.createButton}
+                        onClick={() => setShowCreateModal(true)}
+                    >
+                        <FaPlus size={16} />
+                        Create User Account
+                    </button>
+                </div>
 
                 
 
@@ -549,7 +498,7 @@ const UserManagement = () => {
                 <div className={styles.tableSection}>
                     <div className={styles.tableHeader}>
                         <h3 className={styles.tableTitle}>User Accounts</h3>
-                        <p className={styles.tableSubtitle}>Showing {filteredUsers.length} of {users.length} user accounts</p>
+                        <p className={styles.tableSubtitlxe}>Showing {filteredUsers.length} of {users.length} user accounts</p>
                     </div>
                     <table className={styles.table}>
                         <thead>
@@ -669,15 +618,15 @@ const UserManagement = () => {
                                             <input
                                                 type="text"
                                                 name="lastName"
-                                                className={`${styles.formInput} ${errors.username ? styles.inputError : ''}`}
+                                                className={`${styles.formInput} ${errors.lastName ? styles.inputError : ''}`}
                                                 placeholder="Mendoza"
                                                 value={formData.lastName}
                                                 onChange={handleInputChange}
                                                 required
                                             />
-                                            {errors.username && (
+                                            {errors.lastName && (
                                                 <span style={{ color: '#e53e3e', fontSize: '12px', marginTop: '4px', display: 'block' }}>
-                                                    {errors.username}
+                                                    {errors.lastName}
                                                 </span>
                                             )}
                                         </div>

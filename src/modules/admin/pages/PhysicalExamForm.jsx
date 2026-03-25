@@ -3,11 +3,29 @@ import { useState, useEffect } from 'react';
 import PhysicalExamsModal from '../../../modules/admin/popups/PhysicalExamsModal';
 
 export default function PhysicalExamForm({ visitId, activeTab, isReadOnly }) {
-
-    const [physicalExams, setPhysicalExams] = useState(null);
-
+    const isArchived = location.state?.isArchived || false;
+    const [formData, setFormData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingRecord, setEditingRecord] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false); 
+
+    // useEffect( () => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await getPhysicalExamByVisitId(visitId);
+    //             if(response.success) {
+    //                 setFormData(response);
+    //             }
+    //             console.log("Fetched physical exam data:", response);
+    //         } catch (error) {
+    //             console.error("Error fetching physical exam data:", error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //     fetchData();
+    // }, []);
 
     return(
         <>
@@ -36,8 +54,17 @@ export default function PhysicalExamForm({ visitId, activeTab, isReadOnly }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {physicalExams ? (
-                                <td></td>
+                            {formData ? (
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
                             ) : (
                                 <tr>
                                     <td colSpan="8">No physical exams recorded.</td>

@@ -37,7 +37,6 @@ const AppointmentCalendar = ({
     const [dayViewDate, setDayViewDate] = useState(currentDate);
 
 
-
     useEffect(() => {
         if (calendarRef.current) {
         const calendarApi = calendarRef.current.getApi();

@@ -23,3 +23,17 @@ export const createPrenatal = async (visitId, patientId, prenatalData) => {
         throw err;
     }
 };
+
+export const getPrenatalDataByVisitId = async (visitId) => {
+    try {
+        const response = await axios.get('http://localhost/api/get_prenatal_data_by_visit_id.php', {
+            params: { visit_id: visitId },
+            //withCredentials: true,
+        });
+
+        return response.data; // { success: true, data: [...] }
+    } catch (error) {
+        console.error('Error fetching prenatal data:', error);
+        return { success: false, error: error.message };
+    }
+}

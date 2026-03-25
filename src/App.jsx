@@ -66,7 +66,9 @@ import Prenatal2 from './pages/Patient/Prenatal';
 import DiseaseReport from './pages/Reports/Diseasereport';
 import DiseaseReports from './modules/admin/pages/DiseaseReports.jsx';
 import AnimalBiteReport from './pages/Reports/AnimalBiteReport';
+import AnimalBiteReports from './modules/admin/pages/AnimalBiteReports.jsx';
 import MaternalReport from './pages/Reports/MaternalReport';
+import MaternalReports from './modules/admin/pages/MaternalReports.jsx';
 
 // const ROLES = {
 //   'User': 2001,
@@ -187,7 +189,9 @@ function App() {
                 <Route path='/DiseaseReport' element={<DiseaseReport />} />
                 <Route path='/DiseaseReports' element={<DiseaseReports />} />
                 <Route path='/AnimalBiteReport' element={<AnimalBiteReport />} />
+                <Route path='/AnimalBiteReports' element={<AnimalBiteReports />} />                
                 <Route path='/MaternalReport' element={<MaternalReport />} />
+                <Route path='/MaternalReports' element={<MaternalReports />} />
                 {/*<Route path='/Dashboard' element={<Dashboard />} />  */}
               </Route>
 

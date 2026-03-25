@@ -34,9 +34,16 @@ const Appointment = () => {
     }, []);
 
     useEffect(() => {
-        if (currentUser) {
+        if (!currentUser) return;
+
+        // Delay fetch to ensure other data is loaded
+        const timer = setTimeout(() => {
             fetchAppointments();
-        }
+        }, 500); // 500ms delay
+
+        // Cleanup timeout if dependencies change before 500ms
+        return () => clearTimeout(timer);
+        
     }, [currentDate, selectedProvider, currentUser, viewMode]);
 
     const checkUser = async () => {
@@ -79,16 +86,13 @@ const Appointment = () => {
         } finally {
             setLoading(false);
         }
+        
     };
 
     const filteredAppointments = appointments.filter(apt => {
         const matchesConsultationType = selectedConsultationType === 'all' || apt.consultation_type === selectedConsultationType;
         return matchesConsultationType;
     });
-
-    if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
-    }
 
     return(
         <div className={styles.container}>
@@ -109,75 +113,83 @@ const Appointment = () => {
 
 
 
+                {loading ? (
+                    <div className={styles.loading}>
+                        <div className={styles.spinner}></div>
+                        <p>Loading appointment data...</p>
+                    </div>
+                ) : (
+                    <>
+                        <div className={styles.header2}>
+                            <div className={styles.headerRight2}>
+                                <div></div>
+                                <div className={styles.filters}>
+                                    <select
+                                        value={selectedProvider}
+                                        onChange={(e) => setSelectedProvider(e.target.value)}
+                                        className={styles.select}
+                                    >
+                                        <option value="all">All Providers</option>
+                                        {providers.map((provider) => (
+                                            <option key={provider.user_id} value={provider.user_id}>
+                                                {provider.first_name} {provider.last_name} ({provider.role})
+                                            </option>
+                                        ))}
+                                    </select>
 
-                <div className={styles.header2}>
-                    <div className={styles.headerRight2}>
-                        <div></div>
-                        <div className={styles.filters}>
-                            <select
-                                value={selectedProvider}
-                                onChange={(e) => setSelectedProvider(e.target.value)}
-                                className={styles.select}
-                            >
-                                <option value="all">All Providers</option>
-                                {providers.map((provider) => (
-                                    <option key={provider.user_id} value={provider.user_id}>
-                                        {provider.first_name} {provider.last_name} ({provider.role})
-                                    </option>
-                                ))}
-                            </select>
+                                    <select
+                                        value={selectedConsultationType}
+                                        onChange={(e) => setSelectedConsultationType(e.target.value)}
+                                        className={styles.select}
+                                    >
+                                        <option value="all">All Types</option>
+                                        <option value="general">General</option>
+                                        <option value="prenatal">Prenatal</option>
+                                        <option value="postnatal">Postnatal</option>
+                                        <option value="family_planning">Family Planning</option>
+                                        <option value="immunization">Immunization</option>
+                                        <option value="pediatric">Pediatric</option>
+                                        <option value="dental">Dental</option>
+                                        <option value="laboratory">Laboratory</option>
+                                    </select>
+                                </div>
 
-                            <select
-                                value={selectedConsultationType}
-                                onChange={(e) => setSelectedConsultationType(e.target.value)}
-                                className={styles.select}
-                            >
-                                <option value="all">All Types</option>
-                                <option value="general">General</option>
-                                <option value="prenatal">Prenatal</option>
-                                <option value="postnatal">Postnatal</option>
-                                <option value="family_planning">Family Planning</option>
-                                <option value="immunization">Immunization</option>
-                                <option value="pediatric">Pediatric</option>
-                                <option value="dental">Dental</option>
-                                <option value="laboratory">Laboratory</option>
-                            </select>
+                                {isAdmin && (
+                                    <button onClick={() => setShowBookingModal(true)} className={styles.newBtn}>
+                                        <BiPlus size={20} />
+                                        New Appointment
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
-                        {isAdmin && (
-                            <button onClick={() => setShowBookingModal(true)} className={styles.newBtn}>
-                                <BiPlus size={20} />
-                                New Appointment
-                            </button>
+                        <AppointmentCalendar
+                            appointments={filteredAppointments}
+                            onAppointmentClick={setSelectedAppointment}
+                            currentDate={currentDate}
+                            onDateChange={setCurrentDate}
+                            viewMode={viewMode}
+                            onViewChange={setViewMode}
+                        />
+
+                        {selectedAppointment && (
+                            <AppointmentModal
+                                appointment={selectedAppointment}
+                                onClose={() => setSelectedAppointment(null)}
+                                onUpdate={fetchAppointments}
+                                currentUserId={currentUser}
+                                isAdmin={isAdmin}
+                            />
                         )}
-                    </div>
-                </div>
 
-                <AppointmentCalendar
-                    appointments={filteredAppointments}
-                    onAppointmentClick={setSelectedAppointment}
-                    currentDate={currentDate}
-                    onDateChange={setCurrentDate}
-                    viewMode={viewMode}
-                    onViewChange={setViewMode}
-                />
-
-                {selectedAppointment && (
-                    <AppointmentModal
-                        appointment={selectedAppointment}
-                        onClose={() => setSelectedAppointment(null)}
-                        onUpdate={fetchAppointments}
-                        currentUserId={currentUser}
-                        isAdmin={isAdmin}
-                    />
-                )}
-
-                {showBookingModal && (
-                    <AppointmentBookingModal
-                        onClose={() => setShowBookingModal(false)}
-                        onSuccess={fetchAppointments}
-                        currentUserId={currentUser}
-                    />
+                        {showBookingModal && (
+                            <AppointmentBookingModal
+                                onClose={() => setShowBookingModal(false)}
+                                onSuccess={fetchAppointments}
+                                currentUserId={currentUser}
+                            />
+                        )}
+                    </>
                 )}
                 
             </main>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Search, Plus, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+// import { X, Search, Plus, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { getMedicines, createMedicine } from '../api/medicineApi';
 import useAuth from '../../../hooks/useAuth';
 import { useToast } from '../../../hooks/use-toast';

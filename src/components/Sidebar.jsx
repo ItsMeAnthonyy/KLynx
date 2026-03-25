@@ -85,8 +85,8 @@ const Sidebar = () => {
                                 <Link to="/UserManagement">User Management</Link>
                             </>
                         )}
-                        <Link to="/Notifications">Notifications</Link>
-                        <Link to="/StaffHealthRecord">Medical Staff Health Record</Link>
+                        {/* <Link to="/Notifications">Notifications</Link>
+                        <Link to="/StaffHealthRecord">Medical Staff Health Record</Link> */}
 
                 </li>
 
@@ -123,9 +123,9 @@ const Sidebar = () => {
                 </li>
                 <li className="sub-mSidebar-Nondropdown">
             {/*  */}
-                    <Link to="/DiseaseReport">Medical Report</Link>
-                    {/*<Link to="/AnimalBiteReport">Animal Bite Incident Report</Link>
-                    <Link to="/MaternalReport">Maternal Care Report</Link>*/}
+                    <Link to="/DiseaseReports">Medical Report</Link>
+                    <Link to="/AnimalBiteReports">Animal Bite Reports</Link>
+                    <Link to="/MaternalReports">Maternal Care Reports</Link>
                 </li>
 
                 <li className="mSidebar-logout">

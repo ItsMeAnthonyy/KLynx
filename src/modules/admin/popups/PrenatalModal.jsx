@@ -84,7 +84,7 @@ export default function PrenatalModal({ isOpen, onClose, activeTab, consultation
             );
 
             toast({ 
-                title: `Test submit success (Case ID: ${prenatal_case})`, 
+                title: `Submit success (Case ID: ${prenatal_case})`, 
                 className: "toast-success" 
             });
 

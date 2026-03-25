@@ -230,7 +230,7 @@ const Archives = () => {
                         />
                     </div>
                 </div>
-
+                
                 {/* Filters Section */}
                 <div className={styles.filtersSection}>
                     <div className={styles.searchBar}>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-  
+import styles from './AuthProvider.module.css';  
 
 const AuthContext = createContext({});
 
@@ -33,8 +33,14 @@ export const AuthProvider = ({ children }) => {
     }, []);
     
     console.log("Login info:", auth);
-    if (loading) return <div>Loading...</div>;
-
+    if (loading) {
+        return ( 
+            <div className={styles.loading}>
+                <div className={styles.spinner}></div>
+                <p>Loading...</p>
+            </div>
+        )
+    }
 
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>

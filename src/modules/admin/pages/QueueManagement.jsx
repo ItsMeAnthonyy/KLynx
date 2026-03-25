@@ -46,9 +46,14 @@ const QueueManagement = () => {
 
     useEffect(() => {
         if (currentUser) {
-            fetchQueue();
-            // checkLimits();
-            fetchProviders(setProviders);
+            const timer = setTimeout(() => {
+                fetchQueue();
+                // checkLimits();
+                fetchProviders(setProviders);
+            }, 500);
+
+            // cleanup (important)
+            return () => clearTimeout(timer);
         }
     }, [currentUser]);
 
@@ -175,10 +180,6 @@ const QueueManagement = () => {
         return `${hours}h ${remainingMinutes}m`;
     };
 
-    if (loading) {
-        return <div className={styles.loading}>Loading queue...</div>;
-    }
-
     return(
         <div className={styles.container}>
             <Sidebar />
@@ -195,190 +196,198 @@ const QueueManagement = () => {
                         />
                     </div>
                 </div>
-
-                <div className={styles.header2}>
-                    <div>
-                        <div></div>
-                        {queueWarnings.length > 0 && (
-                            <div className={styles.warningsContainer}>
-                                {queueWarnings.map(warning => (
-                                    <div 
-                                        key={warning.providerId} 
-                                        className={`${styles.warningBanner} ${styles[warning.level]}`}
-                                    >
-                                        <BiErrorAlt size={20} />
-                                        <span>
-                                            <strong>{warning.providerName}</strong> has {warning.count} patients queued
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className={styles.stats}>
-                            <div className={styles.statCard}>
-                                <div className={styles.statLabel}>Waiting</div>
-                                <div className={styles.statValue}>
-                                    {queueItems.filter(i => i.status === 'waiting').length}
-                                </div>
-                            </div>
-                            <div className={styles.statCard}>
-                                <div className={styles.statLabel}>In Service</div>
-                                <div className={styles.statValue}>
-                                    {queueItems.filter(i => i.status === 'in_service').length}
-                                </div>
-                            </div>
-                        </div>
+                {loading ? (
+                    <div className={styles.loading}>
+                        <div className={styles.spinner}></div>
+                        <p>Loading queue data...</p>
                     </div>
-
-                    {isAdmin && (
-                        <button onClick={() => setShowWalkInModal(true)} className={styles.newBtn}>
-                            <BiPlus size={20} />
-                            Add Walk-In
-                        </button>
-                    )}
-                </div>
-
-                <div className={styles.controls}>
-                    <div className={styles.searchContainer}>
-                        <BiSearch className={styles.searchIcon} size={20} />
-                        <input
-                            type="text"
-                            placeholder="Search patient..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className={styles.searchInput}
-                        />
-                    </div>
-
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className={styles.select}
-                    >
-                        <option value="all">All Status</option>
-                        <option value="waiting">Waiting</option>
-                        <option value="in_service">In Service</option>
-                        <option value="finished_service">Finished</option>
-                    </select>
-                </div>
-
-                <div className={styles.queueList}>
-                    {filteredItems.length === 0 ? (
-                        <div className={styles.emptyState}>
-                            <BiErrorCircle size={48} />
-                            <p>No patients in queue</p>
-                        </div>
-                    ) : (
-                        <div className={styles.table}>
-                            <div className={styles.tableHeader}>
-                                <div>Patient</div>
-                                <div>Provider</div>
-                                <div>Type</div>
-                                <div>Priority</div>
-                                <div>Waiting Time</div>
-                                <div>Status</div>
-                                <div>Actions</div>
-                            </div>
-
-                            {filteredItems.map((item) => (
-                                <div key={item.id} className={styles.tableRow}>
-                                    <div className={styles.patientCell}>
-                                        <BiUser size={18} className={styles.icon} />
-                                        <span>{item.patient_last_name}, {item.patient_first_name}</span>
-                                    </div>
-
-
-                                    <div>
-  {isAdmin && item.status !== 'finished_service' ? (
-  <select
-    value={item.assigned_provider_id || ''}
-    onChange={(e) => handleProviderChange(item.id, e.target.value)}
-    className={styles.inlineSelect}
-  >
-    <option value="">Unassigned</option>
-    {providers.map((provider) => (
-      <option key={provider.id} value={provider.id}>
-        {provider.last_name}, {provider.first_name}
-      </option>
-    ))}
-  </select>
-) : (
-  <span>
-    {item.assignedProviderId && item.provider_first_name
-      ? `${item.provider_last_name}, ${item.provider_first_name}`
-      : 'Unassigned'}
-  </span>
-)}
-</div>
-
-                                    {/* <div>
-                                        {item.provider_last_name && item.provider_first_name
-                                        ? `${item.provider_last_name}, ${item.provider_first_name}`
-                                        : 'Unassigned'}
-                                    </div> */}
-
-                                    <div className={styles.typeCell}>
-                                        {item.consultation_type?.replace('_', ' ')}
-                                    </div>
-
-                                    <div>
-                                        <span
-                                            className={styles.priorityBadge}
-                                            style={{ backgroundColor: PRIORITY_COLORS[item.priority] }}
-                                        >
-                                            {item.priority}
-                                        </span>
-                                    </div>
-
-                                    <div className={styles.timeCell}>
-                                        <BiTime size={16} />
-                                        {calculateWaitingTime(item.added_at)}
-                                    </div>
-
-                                    <div>
-                                        <span
-                                            className={styles.statusBadge}
-                                            style={{ backgroundColor: STATUS_COLORS[item.status] }}
-                                        >
-                                            {item.status.replace('_', ' ')}
-                                        </span>
-                                    </div>
-
-                                    <div className={styles.actionsCell}>
-                                        {item.status === 'waiting' && (
-                                            <button
-                                                onClick={() => handleStatusChange(item.id, item.visit_id, item.patient_id, 'in_service')}
-                                                className={styles.actionBtn}
+                ) : (
+                    <>
+                        <div className={styles.header2}>
+                            <div>
+                                <div></div>
+                                {queueWarnings.length > 0 && (
+                                    <div className={styles.warningsContainer}>
+                                        {queueWarnings.map(warning => (
+                                            <div 
+                                                key={warning.providerId} 
+                                                className={`${styles.warningBanner} ${styles[warning.level]}`}
                                             >
-                                                Start Service
-                                            </button>
-                                        )}
-                                        {item.status === 'in_service' && (
-                                            <button
-                                                onClick={() => navigate(`/patient/${item.patient_id}/visit/${item.visit_id}`)}
-                                                className={styles.actionBtn}
-                                            >
-                                                Go to Visit Details
-                                            </button>
-                                        )
+                                                <BiErrorAlt size={20} />
+                                                <span>
+                                                    <strong>{warning.providerName}</strong> has {warning.count} patients queued
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
-                                        }
-
-                                        {isAdmin && item.status !== 'finished_service' && (
-                                            <button
-                                                onClick={() => handleCancel(item.id)}
-                                                className={styles.cancelBtn}
-                                            >
-                                                Cancel
-                                            </button>
-                                        )}
+                                <div className={styles.stats}>
+                                    <div className={styles.statCard}>
+                                        <div className={styles.statLabel}>Waiting</div>
+                                        <div className={styles.statValue}>
+                                            {queueItems.filter(i => i.status === 'waiting').length}
+                                        </div>
+                                    </div>
+                                    <div className={styles.statCard}>
+                                        <div className={styles.statLabel}>In Service</div>
+                                        <div className={styles.statValue}>
+                                            {queueItems.filter(i => i.status === 'in_service').length}
+                                        </div>
                                     </div>
                                 </div>
-                            ))}
+                            </div>
+
+                            {isAdmin && (
+                                <button onClick={() => setShowWalkInModal(true)} className={styles.newBtn}>
+                                    <BiPlus size={20} />
+                                    Add Walk-In
+                                </button>
+                            )}
                         </div>
-                    )}
-                </div>
+
+                        <div className={styles.controls}>
+                            <div className={styles.searchContainer}>
+                                <BiSearch className={styles.searchIcon} size={20} />
+                                <input
+                                    type="text"
+                                    placeholder="Search patient..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className={styles.searchInput}
+                                />
+                            </div>
+
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className={styles.select}
+                            >
+                                <option value="all">All Status</option>
+                                <option value="waiting">Waiting</option>
+                                <option value="in_service">In Service</option>
+                                <option value="finished_service">Finished</option>
+                            </select>
+                        </div>
+
+                        <div className={styles.queueList}>
+                            {filteredItems.length === 0 ? (
+                                <div className={styles.emptyState}>
+                                    <BiErrorCircle size={48} />
+                                    <p>No patients in queue</p>
+                                </div>
+                            ) : (
+                                <div className={styles.table}>
+                                    <div className={styles.tableHeader}>
+                                        <div>Patient</div>
+                                        <div>Provider</div>
+                                        <div>Type</div>
+                                        <div>Priority</div>
+                                        <div>Waiting Time</div>
+                                        <div>Status</div>
+                                        <div>Actions</div>
+                                    </div>
+
+                                    {filteredItems.map((item) => (
+                                        <div key={item.id} className={styles.tableRow}>
+                                            <div className={styles.patientCell}>
+                                                <BiUser size={18} className={styles.icon} />
+                                                <span>{item.patient_last_name}, {item.patient_first_name}</span>
+                                            </div>
+
+
+                                            <div>
+                                                {isAdmin && item.status !== 'finished_service' ? (
+                                                <select
+                                                    value={item.assigned_provider_id || ''}
+                                                    onChange={(e) => handleProviderChange(item.id, e.target.value)}
+                                                    className={styles.inlineSelect}
+                                                >
+                                                    <option value="">Unassigned</option>
+                                                    {providers.map((provider) => (
+                                                    <option key={provider.id} value={provider.id}>
+                                                        {provider.last_name}, {provider.first_name}
+                                                    </option>
+                                                    ))}
+                                                </select>
+                                                ) : (
+                                                <span>
+                                                    {item.assignedProviderId && item.provider_first_name
+                                                    ? `${item.provider_last_name}, ${item.provider_first_name}`
+                                                    : 'Unassigned'}
+                                                </span>
+                                                )}
+                                            </div>
+
+                                            {/* <div>
+                                                {item.provider_last_name && item.provider_first_name
+                                                ? `${item.provider_last_name}, ${item.provider_first_name}`
+                                                : 'Unassigned'}
+                                            </div> */}
+
+                                            <div className={styles.typeCell}>
+                                                {item.consultation_type?.replace('_', ' ')}
+                                            </div>
+
+                                            <div>
+                                                <span
+                                                    className={styles.priorityBadge}
+                                                    style={{ backgroundColor: PRIORITY_COLORS[item.priority] }}
+                                                >
+                                                    {item.priority}
+                                                </span>
+                                            </div>
+
+                                            <div className={styles.timeCell}>
+                                                <BiTime size={16} />
+                                                {calculateWaitingTime(item.added_at)}
+                                            </div>
+
+                                            <div>
+                                                <span
+                                                    className={styles.statusBadge}
+                                                    style={{ backgroundColor: STATUS_COLORS[item.status] }}
+                                                >
+                                                    {item.status.replace('_', ' ')}
+                                                </span>
+                                            </div>
+
+                                            <div className={styles.actionsCell}>
+                                                {item.status === 'waiting' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange(item.id, item.visit_id, item.patient_id, 'in_service')}
+                                                        className={styles.actionBtn}
+                                                    >
+                                                        Start Service
+                                                    </button>
+                                                )}
+                                                {item.status === 'in_service' && (
+                                                    <button
+                                                        onClick={() => navigate(`/patient/${item.patient_id}/visit/${item.visit_id}`)}
+                                                        className={styles.actionBtn}
+                                                    >
+                                                        Go to Visit Details
+                                                    </button>
+                                                )
+
+                                                }
+
+                                                {isAdmin && item.status !== 'finished_service' && (
+                                                    <button
+                                                        onClick={() => handleCancel(item.id)}
+                                                        className={styles.cancelBtn}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
             </main>
 
             {showWalkInModal && (

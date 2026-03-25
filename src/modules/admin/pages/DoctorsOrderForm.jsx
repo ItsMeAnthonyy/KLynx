@@ -1,25 +1,35 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { BiSearch, BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
 import DoctorsOrderModal from '../../../modules/admin/popups/DoctorsOrderModal';
+import DoctorsOrderViewModal from '../../../modules/admin/popups/DoctorsOrderViewModal';
+import { getDoctorsOrderByVisitId } from '../api/doctorsOrderApi';
 
 export default function DoctorsOrderForm({ activeTab, visitId, patientId, isReadOnly }) {
-    const [formData, setFormData] = useState({
-        laboratory_request: '',
-        imaging: [],
-        alert_type: [],
-        alert_description: '',
-        diagnosis: '',
-        diagnosis_specify: '',
-        icd10_a: '',
-        icd10_b: '',
-        icd10_c: '',
-        treatment_plan: '',
-        remarks: ''
-    });
+    const isArchived = location.state?.isArchived || false;
+    const [formData, setFormData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingRecord, setEditingRecord] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false);
+
+    useEffect( () => {
+        const fetchData = async () => {
+            try {
+                const response = await getDoctorsOrderByVisitId(visitId);
+                if(response.success) {
+                    setFormData(response);
+                }
+                console.log("Fetched doctors order data:", response);
+            } catch (error) {
+                console.error("Error fetching doctors order data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     return(
         <>
@@ -39,18 +49,149 @@ export default function DoctorsOrderForm({ activeTab, visitId, patientId, isRead
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Prescribed by</th>
+                                {/* <th>Laboratory Request</th> */}
+                                <th>Imaging Request</th>
                                 <th>Diagnosis</th>
-                                <th>Medication</th>
-                                <th>Dosage</th>
-                                <th>Frequency</th>
-                                <th>Follow-up Visit</th>
-                                <th>Special Instructions</th>
-                                <th colSpan='3'>Actions</th>
+                                <th colSpan='3'>Options</th>
                             </tr>
                         </thead>
                         <tbody>
-
+                            {formData ? (
+                                <tr>
+                                    <td>{formData.data[0].visit_date_time}</td>
+                                    <td>
+                                        {formData.data[0].imaging
+                                            .split(',')
+                                            .map(type => type.charAt(0).toUpperCase() + type.slice(1))
+                                            .join(', ')
+                                        }
+                                    </td>
+                                    <td>
+                                        {formData.data[0].diagnosis_status
+                                            .replace(/_/g, ' ')
+                                            .split(' ')
+                                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                            .join(' ')
+                                        }
+                                    </td>
+                                    <td>
+                                        <button
+                                            onClick={() => { 
+                                                if (!isArchived || isArchived) {
+                                                    setShowViewModal(true)
+                                                }
+                                            }} 
+                                            style={{ 
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '4px',
+                                                cursor: isArchived ? 'not-allowed' : 'pointer', 
+                                                padding: '8px',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                transition: 'all 0.2s',
+                                                opacity: isArchived ? 0.5 : 1
+                                            }} 
+                                            title={'View Details'}
+                                            onMouseEnter={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                                    e.currentTarget.style.borderColor = '#d1d5db';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                                }
+                                            }}
+                                        >
+                                            <BiSearch style={{ fontSize: '18px', color: '#282a2eff' }} />
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button
+                                            onClick={() => { 
+                                                if (!isArchived) {
+                                                    setSelectedVisit(patient); 
+                                                    setEditVisitModal(true);
+                                                }
+                                            }} 
+                                            disabled={isArchived}
+                                            style={{ 
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '4px',
+                                                cursor: isArchived ? 'not-allowed' : 'pointer', 
+                                                padding: '8px',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                transition: 'all 0.2s',
+                                                opacity: isArchived ? 0.5 : 1
+                                            }} 
+                                            title={isArchived ? 'Cannot edit visits for archived patients' : 'Edit'}
+                                            onMouseEnter={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                                    e.currentTarget.style.borderColor = '#d1d5db';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                                }
+                                            }}
+                                        >
+                                            <BiSolidEdit style={{ fontSize: '18px', color: '#282a2eff' }} />
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button 
+                                            onClick={() => { 
+                                                if (!isArchived) {
+                                                    setSelectedVisit(patient); 
+                                                    setDeleteVisitModal(true);
+                                                }
+                                            }} 
+                                            disabled={isArchived}
+                                            style={{ 
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '4px',
+                                                cursor: isArchived ? 'not-allowed' : 'pointer', 
+                                                padding: '8px',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                transition: 'all 0.2s',
+                                                opacity: isArchived ? 0.5 : 1
+                                            }} 
+                                            title={isArchived ? 'Cannot delete visits for archived patients' : 'Delete'}
+                                            onMouseEnter={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = '#fee2e2';
+                                                    e.currentTarget.style.borderColor = '#fca5a5';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isArchived) {
+                                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                                    e.currentTarget.style.borderColor = '#e5e7eb';
+                                                }
+                                            }}
+                                        >
+                                            <BiSolidTrash style={{ fontSize: '18px', color: '#ef4444' }} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ) : (
+                                <tr>
+                                    <td colSpan="6">No doctors order recorded.</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -65,6 +206,14 @@ export default function DoctorsOrderForm({ activeTab, visitId, patientId, isRead
                     visitId = {visitId}
                     patientId = {patientId}
                     isReadOnly = {isReadOnly}
+                />
+            )}
+
+            {showViewModal && (
+                <DoctorsOrderViewModal
+                    isOpen={showViewModal}
+                    onClose={() => setShowViewModal(false)}
+                    formData={formData}
                 />
             )}
         </>

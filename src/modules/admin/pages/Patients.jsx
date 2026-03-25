@@ -515,239 +515,249 @@ const Patients = () => {
                         />
                     </div>
                 </div>
-                {/*<hr></hr>*/}
-                <div className="Patients-Cards-Container">
-                    <div className="Patients-Card">
-                        <div className="Patients-CardTitle">
-                            <h4>Total Number of Patients</h4>
-                        </div>
-                        <div className="Patients-CardNumber">
-                            <h1>{allPatients.length + JSON.parse(localStorage.getItem('archivedPatients') || '[]').length}</h1>
-                        </div>
+                {loading ? (
+                    <div className={styles.loading}>
+                        <div className={styles.spinner}></div>
+                        <p>Loading dashboard data...</p>
                     </div>
-                    <div className="Patients-Card">
-                        <div className="Patients-CardTitle">
-                            <h4>Active Patients</h4>
-                        </div>
-                        <div className="Patients-CardNumber">
-                            <h1>{consultProfiles.length}</h1>
-                        </div>
-                    </div>
-                    <div className="Patients-Card">
-                        <div className="Patients-CardTitle">
-                            <h4>Inactive Patients</h4>
-                        </div>
-                        <div className="Patients-CardNumber">
-                            <h1>{JSON.parse(localStorage.getItem('archivedPatients') || '[]').length}</h1>
-                        </div>
-                    </div>
-                </div>
-                <div className="FileMaintenance-Filter-Container">
-                    <div className="FileMaintenance-Entries">
-                        <span>SHOW</span>
-                        <select value={entriesPerPage} onChange={handleEntriesChange}>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                        </select>
-                        <span>Entries</span>
-                    </div>
-                    {/* <div className="FileMaintenance-AddSearch">
-                            <button 
-                                title="Add new Patient" 
-                                onClick={() => setIsAddPatientModalOpen(true)}
-                                aria-label="Add new Patient"
-                            >
-                                +
-                            </button>
-                            <input type="text" placeholder="Search here..."/>
-                            <input
-                                type="checkbox"
-                                //checked={includeArchived}
-                                //onChange={(e) => setIncludeArchived(e.target.checked)}
-                            />
-                            <span>Include Archived Patients</span>
-                    </div> */}
-                    
-                        <div className="searchSection">
-                            
-                            <div className="searchRow">
-                                <button
-                                className="addPatientButton"
-                                title="Add new Patient"
-                                onClick={() => setIsAddPatientModalOpen(true)}
-                                aria-label="Add new Patient"
-                                >
-                                    + Add Patient
-                                </button>
-                                <div className="searchInputContainer">
-                                    <BiSearch className="searchIcon" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search by name or patient ID..."
-                                        // value=/*{searchQuery}*/
-                                        // onChange={(e) => setSearchQuery(e.target.value)}
-                                        onChange={handleSearchChange}
-                                        value={searchTerm}
-                                        className="searchInput"
-                                    />
-                                </div>
-                                <label className="filterCheckbox">
-                                    <input
-                                        type="checkbox"
-                                        // checked={includeArchived}
-                                        // onChange={(e) => setIncludeArchived(e.target.checked)}
-                                    />
-                                    <span>Include Archived Patients</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                </div>
-
-                {isLoading ? (
-                    <div className="loadingState">Loading patients...</div>
                 ) : (
                     <>
-                <div className="FileMaintenance-TableWrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Patient Name (Lastname, Firstname, Middle)</th>
-                                <th>Birthday</th>
-                                <th>Registration</th>
-                                <th>Queue</th>
-                                <th colSpan="2">Actions</th>
+                        {/*<hr></hr>*/}
+                        <div className="Patients-Cards-Container">
+                            <div className="Patients-Card">
+                                <div className="Patients-CardTitle">
+                                    <h4>Total Number of Patients</h4>
+                                </div>
+                                <div className="Patients-CardNumber">
+                                    <h1>{allPatients.length + JSON.parse(localStorage.getItem('archivedPatients') || '[]').length}</h1>
+                                </div>
+                            </div>
+                            <div className="Patients-Card">
+                                <div className="Patients-CardTitle">
+                                    <h4>Active Patients</h4>
+                                </div>
+                                <div className="Patients-CardNumber">
+                                    <h1>{consultProfiles.length}</h1>
+                                </div>
+                            </div>
+                            <div className="Patients-Card">
+                                <div className="Patients-CardTitle">
+                                    <h4>Inactive Patients</h4>
+                                </div>
+                                <div className="Patients-CardNumber">
+                                    <h1>{JSON.parse(localStorage.getItem('archivedPatients') || '[]').length}</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="FileMaintenance-Filter-Container">
+                            <div className="FileMaintenance-Entries">
+                                <span>SHOW</span>
+                                <select value={entriesPerPage} onChange={handleEntriesChange}>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                </select>
+                                <span>Entries</span>
+                            </div>
+                            {/* <div className="FileMaintenance-AddSearch">
+                                    <button 
+                                        title="Add new Patient" 
+                                        onClick={() => setIsAddPatientModalOpen(true)}
+                                        aria-label="Add new Patient"
+                                    >
+                                        +
+                                    </button>
+                                    <input type="text" placeholder="Search here..."/>
+                                    <input
+                                        type="checkbox"
+                                        //checked={includeArchived}
+                                        //onChange={(e) => setIncludeArchived(e.target.checked)}
+                                    />
+                                    <span>Include Archived Patients</span>
+                            </div> */}
+                            
+                                <div className="searchSection">
+                                    
+                                    <div className="searchRow">
+                                        <button
+                                        className="addPatientButton"
+                                        title="Add new Patient"
+                                        onClick={() => setIsAddPatientModalOpen(true)}
+                                        aria-label="Add new Patient"
+                                        >
+                                            + Add Patient
+                                        </button>
+                                        <div className="searchInputContainer">
+                                            <BiSearch className="searchIcon" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search by name or patient ID..."
+                                                // value=/*{searchQuery}*/
+                                                // onChange={(e) => setSearchQuery(e.target.value)}
+                                                onChange={handleSearchChange}
+                                                value={searchTerm}
+                                                className="searchInput"
+                                            />
+                                        </div>
+                                        <label className="filterCheckbox">
+                                            <input
+                                                type="checkbox"
+                                                // checked={includeArchived}
+                                                // onChange={(e) => setIncludeArchived(e.target.checked)}
+                                            />
+                                            <span>Include Archived Patients</span>
+                                        </label>
+                                    </div>
+                                </div>
                                 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentPatients.map((consProf, key) => (
-                            <tr key={key} onClick={() => handleViewPatient(consProf)}>
-                                <td>
-                                    <button
-                                        className="PatientNameButton"
-                                        onClick={() => handleViewPatient(consProf)}
-                                    >
-                                        {consProf.LastName}, {consProf.FirstName} {consProf.MiddleName}
-                                    </button>
-                                </td>
-                                <td>
-                                    {consProf.Birthdate}
-                                </td>
-                                <td>
-                                    {consProf.DateCreated}
-                                </td>
-                                <td>
-                                    <button 
-                                        className="queue-button" 
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // prevent row click
-                                            handleAddToQueue(consProf);
-                                        }}
-                                        style={{
-                                            padding: '6px 12px',
-                                            backgroundColor: '#10b981',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                            fontSize: '14px',
-                                            fontWeight: '500'
-                                        }}
-                                    >
-                                        Add to Queue
-                                    </button>
-                                </td>
-                                <td>
-                                    <button 
-                                        className="download-button"
+                        </div>
+            
+
+                        {isLoading ? (
+                            <div className="loadingState">Loading patients...</div>
+                        ) : (
+                            <>
+                        <div className="FileMaintenance-TableWrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Patient Name (Lastname, Firstname, Middle)</th>
+                                        <th>Birthday</th>
+                                        <th>Registration</th>
+                                        <th>Queue</th>
+                                        <th colSpan="2">Actions</th>
                                         
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDownloadData(consProf);
-                                        }}
-                                    >
-                                        <FaDownload />
-                                    </button>
-                                </td>
-                                <td>
-                                    <button 
-                                        className="archive-button" 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleArchivePatient(consProf);
-                                        }}
-                                    >
-                                        <FaArchive />
-                                    </button>
-                                </td>
-                            </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                
-             
-                <div className="FileMaintenance-Pagination" style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '20px',
-                    marginTop: '10px'
-                }}>
-                    <div style={{ fontSize: '14px', color: '#666' }}>
-                        Showing {startIndex + 1} to {Math.min(endIndex, filteredPatients.length)} of {filteredPatients.length} entries
-                    </div>
-                    <div style={{ display: 'flex', gap: '5px' }}>
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            style={{
-                                padding: '8px 12px',
-                                border: '1px solid #ddd',
-                                backgroundColor: currentPage === 1 ? '#f5f5f5' : '#fff',
-                                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                                borderRadius: '4px'
-                            }}
-                        >
-                            Previous
-                        </button>
-                        {[...Array(totalPages)].map((_, index) => (
-                            <button
-                                key={index + 1}
-                                onClick={() => handlePageChange(index + 1)}
-                                style={{
-                                    padding: '8px 12px',
-                                    border: '1px solid #ddd',
-                                    backgroundColor: currentPage === index + 1 ? '#07598D' : '#fff',
-                                    color: currentPage === index + 1 ? '#fff' : '#333',
-                                    cursor: 'pointer',
-                                    borderRadius: '4px',
-                                    fontWeight: currentPage === index + 1 ? 'bold' : 'normal'
-                                }}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            style={{
-                                padding: '8px 12px',
-                                border: '1px solid #ddd',
-                                backgroundColor: currentPage === totalPages ? '#f5f5f5' : '#fff',
-                                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                                borderRadius: '4px'
-                            }}
-                        >
-                            Next
-                        </button>
-                    </div>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentPatients.map((consProf, key) => (
+                                    <tr key={key} onClick={() => handleViewPatient(consProf)}>
+                                        <td>
+                                            <button
+                                                className="PatientNameButton"
+                                                onClick={() => handleViewPatient(consProf)}
+                                            >
+                                                {consProf.LastName}, {consProf.FirstName} {consProf.MiddleName}
+                                            </button>
+                                        </td>
+                                        <td>
+                                            {consProf.Birthdate}
+                                        </td>
+                                        <td>
+                                            {consProf.DateCreated}
+                                        </td>
+                                        <td>
+                                            <button 
+                                                className="queue-button" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // prevent row click
+                                                    handleAddToQueue(consProf);
+                                                }}
+                                                style={{
+                                                    padding: '6px 12px',
+                                                    backgroundColor: '#10b981',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500'
+                                                }}
+                                            >
+                                                Add to Queue
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button 
+                                                className="download-button"
+                                                
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDownloadData(consProf);
+                                                }}
+                                            >
+                                                <FaDownload />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button 
+                                                className="archive-button" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleArchivePatient(consProf);
+                                                }}
+                                            >
+                                                <FaArchive />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        
                     
-                </div>
-                </>
+                        <div className="FileMaintenance-Pagination" style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '20px',
+                            marginTop: '10px'
+                        }}>
+                            <div style={{ fontSize: '14px', color: '#666' }}>
+                                Showing {startIndex + 1} to {Math.min(endIndex, filteredPatients.length)} of {filteredPatients.length} entries
+                            </div>
+                            <div style={{ display: 'flex', gap: '5px' }}>
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    style={{
+                                        padding: '8px 12px',
+                                        border: '1px solid #ddd',
+                                        backgroundColor: currentPage === 1 ? '#f5f5f5' : '#fff',
+                                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                                        borderRadius: '4px'
+                                    }}
+                                >
+                                    Previous
+                                </button>
+                                {[...Array(totalPages)].map((_, index) => (
+                                    <button
+                                        key={index + 1}
+                                        onClick={() => handlePageChange(index + 1)}
+                                        style={{
+                                            padding: '8px 12px',
+                                            border: '1px solid #ddd',
+                                            backgroundColor: currentPage === index + 1 ? '#07598D' : '#fff',
+                                            color: currentPage === index + 1 ? '#fff' : '#333',
+                                            cursor: 'pointer',
+                                            borderRadius: '4px',
+                                            fontWeight: currentPage === index + 1 ? 'bold' : 'normal'
+                                        }}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    style={{
+                                        padding: '8px 12px',
+                                        border: '1px solid #ddd',
+                                        backgroundColor: currentPage === totalPages ? '#f5f5f5' : '#fff',
+                                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                                        borderRadius: '4px'
+                                    }}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                            
+                        </div>
+                        </>
+                        )}
+                    </>
                 )}
             </main>
 
