@@ -22,7 +22,7 @@ export const basicTabs = [
     //{ id: 'physical-exam', label: 'Physical Exam', subLabel: 'Body examination details', icon: '👁️' },
     //{ id: 'system-review', label: 'System Review', subLabel: 'Review of body systems', icon: '📋' },
     { id: 'doctors-order', label: "Doctor's Order", subLabel: 'Prescriptions and orders', icon: '📝' },
-    { id: 'doctors-order-2', label: "Doctor's Order 2", subLabel: 'Prescriptions and orders', icon: '📝' },
+    // { id: 'doctors-order-2', label: "Doctor's Order 2", subLabel: 'Prescriptions and orders', icon: '📝' },
     // { id: 'animal-bite-2', label: 'Animal Bite 2', subLabel: 'Animal bite details', icon: '🐾' }
 ];
 
@@ -329,11 +329,11 @@ const VisitDetails = () => {
                             <div className="emergency-details">
                                 <div className="emergency-info-row">
                                     <span className="emergency-label">Primary Contact Name:</span>
-                                    <span className="emergency-value">{patient.emergencyContact}</span>
+                                    <span className="emergency-value">Victor Reyes</span>
                                 </div>
                                 <div className="emergency-info-row">
                                     <span className="emergency-label">Relationship:</span>
-                                    <span className="emergency-value">Temp Unavail</span>
+                                    <span className="emergency-value">Husband</span>
                                 </div>
                                 <div className="emergency-info-row">
                                     <span className="emergency-label">Phone Number:</span>
@@ -341,7 +341,7 @@ const VisitDetails = () => {
                                 </div>
                                 <div className="emergency-info-row">
                                     <span className="emergency-label">Alternative Phone:</span>
-                                    <span className="emergency-value">Temp Unavailable</span>
+                                    <span className="emergency-value">N/A</span>
                                 </div>
                             </div>
                         </div>
