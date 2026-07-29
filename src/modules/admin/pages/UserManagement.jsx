@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Sidebar';
-import ProfileDropdown from '../../../components/ProfileDropdown';
-import EmergencyButton from '../../../components/EmergencyButton';
 //import PermissionGate from '../../../components/PermissionGate';
 import { BiError } from 'react-icons/bi';
 import { FaPlus, FaEye, FaEdit, FaTrash, FaRandom, FaSpinner } from 'react-icons/fa';
@@ -9,6 +7,7 @@ import axios from 'axios';
 import styles from './UserManagement.module.css';
 //import { PERMISSIONS, hasPermission } from '../../../utils/rolePermissions';
 import useAuth from '../../../hooks/useAuth';
+import Header from '../../../shared/components/Header';
 
 const UserManagement = () => {
     const { auth } = useAuth();
@@ -408,20 +407,7 @@ const UserManagement = () => {
             <Sidebar />
             <main className={styles.content}>
                 {/* Header */}
-                <div className={styles.header}>
-                    <div className={styles.headerLeft}>
-                        <h1 className={styles.title}>User Account Management</h1>
-
-                    </div>
-                    <div className={styles.headerRight}>
-                        <EmergencyButton />
-                        {/* Temporarily removed PermissionGate for testing */}
-                        <ProfileDropdown 
-                            email={formData.email}
-                            name={formData.fullName}
-                        />
-                    </div>
-                </div>
+                <Header title="User Account Management" />
 
                 {/* Success/Error Message */}
                 {message.text && (
@@ -470,7 +456,7 @@ const UserManagement = () => {
                             value={filterRole}
                             onChange={(e) => setFilterRole(e.target.value)}
                         >
-                            <option hidden>All Roles</option>
+                            <option>All Roles</option>
                             <option>Admin</option>
                             <option>Doctor</option>
                             <option>Nurse</option>
@@ -564,24 +550,34 @@ const UserManagement = () => {
                                     </div>
                                     </td>
                                     <td>
-                                    <div className={styles.actions}>
-                                        <button className={`${styles.actionButton} ${styles.view}`} title="View">
-                                        <FaEye size={16} />
-                                        </button>
-                                        <button className={`${styles.actionButton} ${styles.edit}`} title="Edit">
-                                        <FaEdit size={16} />
-                                        </button>
-                                        <button 
-                                        className={`${styles.actionButton} ${styles.delete}`} 
-                                        title="Delete"
-                                        onClick={() => {
-                                            setSelectedUser(user);
-                                            setShowDeleteConfirm(true);
-                                        }}
-                                        >
-                                        <FaTrash size={16} />
-                                        </button>
-                                    </div>
+                                        <div className={styles.actions}>
+                                            <button className={`${styles.actionButton} ${styles.view}`} title="View">
+                                                <FaEye size={16} />
+                                            </button>
+                                            <button className={`${styles.actionButton} ${styles.edit}`} title="Edit">
+                                                <FaEdit size={16} />
+                                            </button>
+                                            <button className={`${styles.actionButton} ${styles.reset}`} title="Reset Password">
+                                                <FaRandom size={16}/>
+                                            </button>
+                                            <button className={`
+                                                ${styles.actionButton} 
+                                                ${styles.statusToggle} 
+                                                ${user.status === 'active' ? styles.deactivate : styles.activate}
+                                            `}>
+                                                {user.status === 'active' ? 'Deactivate' : 'Activate'}
+                                            </button>
+                                            {/* <button 
+                                            className={`${styles.actionButton} ${styles.delete}`} 
+                                            title="Delete"
+                                            onClick={() => {
+                                                setSelectedUser(user);
+                                                setShowDeleteConfirm(true);
+                                            }}
+                                            >
+                                            <FaTrash size={16} />
+                                            </button> */}
+                                        </div>
                                     </td>
                                 </tr>
                                 );

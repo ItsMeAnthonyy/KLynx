@@ -1,56 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Coda:wght@400;800&display=swap');
 
-/* Loading State */
-.loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 6rem;
-    gap: 1rem;
-    flex: 1;
-}
-
-.spinner {
-    width: 80px;
-    height: 80px;
-    border: 4px solid hsl(210 25% 88%);
-    border-top-color: #07598D;
+.spinner{
+    border: 3px solid #E2E8F0;
+    border-top-color: #2563EB;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin .8s linear infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+/* Small - for stat cards */
+.spinnerSmall{
+    width: 22px;
+    height: 22px;
 }
 
-.loading p {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #07598D;
-    font-family: 'Coda', sans-serif;
+/* Medium - for table loading */
+.spinnerMedium{
+    width: 38px;
+    height: 38px;
+}
+
+/* Large - optional for full-page loading */
+.spinnerLarge{
+    width: 56px;
+    height: 56px;
 }
 
 .container {
-    display: flex;
-    min-height: 100vh;
-    background-color: #f5f7fa;
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f7fa;
 }
 
 .content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    background: #DDE6ED;
-    font-family: 'Coda', sans-serif;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: #DDE6ED;
+  font-family: 'Coda', sans-serif;
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 2rem;
-    background-color: #07598D;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  background-color: #07598D;
 }
 
 .headerRight {
@@ -138,23 +132,375 @@
 }
 
 .statCard {
-    padding: 1.5rem;
-    background: hsl(0 0% 100%);
-    border: 1px solid hsl(210 25% 88%);
-    border-radius: 0.75rem;
-    min-width: 150px;
+  background-color: #ebeff3;
+  border: 1px solid #112250;
+  border-radius: 12px;
+  padding: 1.25rem;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
+
+  transition: 0.5s ease-in-out;
+}
+
+.statCard:hover {
+  transform: scale(1.04);
+}
+
+.statIcon {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 12px;
+
+  background: #eff6ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #112250;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
 }
 
 .statLabel {
-    font-size: 0.875rem;
-    color: hsl(215 15% 50%);
-    margin-bottom: 0.5rem;
+  font-size: .85rem;
+  color: #64748b;
 }
 
 .statValue {
-    font-size: 2rem;
-    font-weight: 700;
-    color: hsl(215 25% 15%);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.queueContainer{
+  background:#fff;
+  border:1px solid #E2E8F0;
+  border-radius:12px;
+  overflow:hidden;
+  margin-top: 1rem;
+}
+
+.queueTable{
+  width: 100%;
+  background: #DDE6ED;
+  /* border-collapse: collapse; */
+  border: 1px solid #112250;
+  box-shadow: 5px 5px 1px rgba(151, 151, 151, 0.15);
+  border-radius: 11px;
+  border-spacing: 0 1rem;
+  padding: 0.5rem 1.5rem;
+  
+}
+
+.queueTable thead tr{
+  border-bottom: 1px solid #112250;
+}
+
+.queueTable th{
+  text-transform: uppercase;
+  
+  text-align: center;
+  font-size: .9rem;
+  font-weight: 600;
+  color:#475569;
+  /* border-bottom:1px solid #E2E8F0; */
+}
+
+.queueTable tbody tr:hover{
+  background-color: #dcdce477;
+}
+
+.queueTable td{
+  background: #ebeff3;
+  padding: 1rem;
+  vertical-align: middle;
+  text-align: center;
+  height: 4.5em;
+  border-top: 1px solid #112250;
+    border-bottom: 1px solid #112250;
+}
+
+.queueTable tbody tr:hover td {
+  background: #8e8e974e; /* ← hover each cell */
+}
+
+.queueTable td:first-child {
+    border-left: 1px solid #112250;
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+}
+
+.queueTable td:last-child {
+    border-right: 1px solid #112250;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+/* ---------- Patient ---------- */
+
+.patientInfo{
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.patientName{
+  font-size: .9rem;
+}
+
+/* ---------- Waiting ---------- */
+
+.waitingCell {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  color: #475569;
+}
+
+/* ---------- Badges ---------- */
+
+.typeBadge,
+.priorityBadge,
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: .3rem .8rem;
+
+  border-radius: 999px;
+
+  font-size: .8rem;
+  font-weight: 600;
+
+  color: white;
+}
+
+.typeBadge {
+  background: #EEF2FF;
+  color: #4338CA;
+}
+
+/* ---------- Select ---------- */
+
+.inlineSelect {
+  width: 100%;
+
+  padding: .55rem .75rem;
+
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+
+  background: white;
+
+  font-size: .9rem;
+}
+
+.inlineSelect:focus {
+  outline: none;
+
+  border-color: #3B82F6;
+
+  box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+}
+
+/* ---------- Actions ---------- */
+
+.actionGroup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: nowrap;
+}
+
+/* ---------- Empty ---------- */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 1rem;
+
+  padding: 4rem;
+
+  color: #64748B;
+}
+
+.emptyState svg {
+  color: #CBD5E1;
+}
+
+/* ---------- Loading ---------- */
+
+.loadingCell {
+    padding: 4rem !important;
+    text-align: center;
+}
+
+.loadingContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: hsl(215 15% 50%);
+}
+
+.loading p {
+    font-size: .95rem;
+    color: #64748B;
+    font-weight: 600;
+}
+
+.summaryFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+
+    gap: 1rem;
+}
+
+
+
+.entriesSection{
+  display: flex;
+
+  align-items: center;
+
+  gap: .75rem;
+
+  color: #475569;
+
+  font-size: .9rem;
+}
+
+.entriesSelect{
+
+  padding: .45rem .75rem;
+
+  border: 1px solid #CBD5E1;
+
+  border-radius: 8px;
+
+  background: white;
+
+  font-size: .9rem;
+
+  cursor: pointer;
+}
+
+.entriesSelect:hover{
+  outline: none;
+  border-color: #2563EB;
+}
+
+.entriesSelect:focus{
+
+  outline: none;
+
+  border-color: #2563EB;
+
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+
+.paginationInfo{
+
+  color: #64748B;
+
+  font-size: .9rem;
+}
+
+.pagination{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:.5rem;
+}
+
+.pageButton{
+
+    width:36px;
+
+    height:36px;
+
+    border-radius:8px;
+
+    border:1px solid #CBD5E1;
+
+    background:white;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.pageButton:hover:not(:disabled){
+
+    background:#EFF6FF;
+
+    border-color:#2563EB;
+}
+
+.pageButton:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.5;
+}
+
+.currentPage{
+
+    min-width:36px;
+
+    height:36px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:8px;
+
+    background:#2563EB;
+
+    color:white;
+
+    font-weight:600;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .queueTable {
+    min-width: 900px;
+  }
+
+  .queueContainer {
+    overflow-x: auto;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .controls {
@@ -207,16 +553,6 @@
 .select:focus {
   outline: none;
   border-color: hsl(200 95% 40%);
-}
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  color: hsl(215 15% 50%);
-  gap: 1rem;
 }
 
 .queueList {
@@ -280,16 +616,6 @@
   text-transform: capitalize;
 }
 
-.priorityBadge,
-.statusBadge {
-  display: inline-block;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: white;
-}
 
 .timeCell {
   display: flex;

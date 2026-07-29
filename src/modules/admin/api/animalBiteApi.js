@@ -1,39 +1,75 @@
 import axios from "axios";
+const BASE_URL = "http://localhost/api/animal_bites";
 
-export const createAnimalBite = async (visitId, patientId, animalBiteData) => {
+export const createAnimalBiteRecord = async (visitId, animalBiteData) => {
     try {
-        const { data } = await axios.post(
-            "http://localhost/api/create_animal_bite.php",
+        const response = await axios.post(
+            `${BASE_URL}/create.php`,
             {
-                visit_id: visitId,
-                patient_id: patientId,
+                visitId,
                 ...animalBiteData
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
             }
         );
 
-        if (!data.success) {
-            throw new Error(data.errors || "Failed to save animal bite");
-        }
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to create animal bite record";
 
-        console.log("Animal Bite API Success:", data.success);
-        console.log("Animal Bite API Data:", data.data);
-        return data.data;
-    } catch (err) {
-        console.error("Animal Bite API Error:", err.response.data);
-        throw err;
+        throw new Error(message);
     }
 };
 
 export const getAnimalBiteByVisitId = async (visitId) => {
     try {
-        const response = await axios.get('http://localhost/api/get_animal_bite_by_visit_id.php', {
-            params: { visit_id: visitId },
-            //withCredentials: true,
-        });
+        const response = await axios.get(
+            `${BASE_URL}/get_by_id.php`,
+            {
+                params: { visit_id: visitId },
+                withCredentials: true,
+            }
+        );
 
-        return response.data; // { success: true, data: [...] }
+        return response.data;
+
     } catch (error) {
-        console.error('Error fetching animal bite data:', error);
-        return { success: false, error: error.message };
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to fetch animal bite record";
+
+        throw new Error(message);
     }
 }
+
+export const updateAnimalBiteRecord = async (data) => {
+    try {
+        const response = await axios.put(
+            `${BASE_URL}/update.php`,
+            data,
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+            
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to update animal bite record";
+
+        throw new Error(message);
+    }
+};

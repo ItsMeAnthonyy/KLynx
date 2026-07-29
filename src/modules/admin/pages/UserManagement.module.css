@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Coda:wght@400;800&display=swap');
 
-
 /* Container */
 .container {
     display: flex;
@@ -15,72 +14,14 @@
  
 }
 
-/* Header */
-.header {
-     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1rem;
-    background-color: #07598D;
-}
-
-.container .content .header h1{
-   color: white;
-}
-
-.headerLeft {
-    flex: 1;
-}
-
-.title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1a202c;
-    margin: 0 0 8px 0;
-    font-family: 'Coda', sans-serif;
-}
-
-.subtitle {
-    font-size: 14px;
-    color: #718096;
-    margin: 0;
-}
-
-.headerRight {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.emergencyButton {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background-color: #fff;
-    border: 2px solid #fc8181;
-    border-radius: 8px;
-    color: #c53030;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.emergencyButton:hover {
-    background-color: #fff5f5;
-}
-
 .createButtonContainer {
     display: flex;
     justify-content: flex-end;
-    font-family: 'Coda', sans-serif;
 }
 
 .createButton {
     display: flex;
     align-items: center;
-
     gap: 8px;
     padding: 14px 28px;
     background-color: #27374D;
@@ -265,6 +206,10 @@
     border-bottom: 2px solid #27374D;
 }
 
+.table thead th:last-child {
+    text-align: center;
+}
+
 .table tbody tr {
     border-bottom: 2px solid #27374D;
     transition: background-color 0.15s;
@@ -397,14 +342,14 @@
     background-color: #e53e3e;
 }
 
-.securityInfo {
+/* .securityInfo {
     display: flex;
     align-items: center;
     gap: 4px;
     font-size: 12px;
     color: #718096;
     margin-top: 2px;
-}
+} SAN TO? */
 
 /* Last Login */
 .lastLogin {
@@ -427,8 +372,9 @@
 /* Actions */
 .actions {
     display: flex;
-    gap: 8px;
     align-items: center;
+    gap: 8px;
+    flex-wrap: wrap; /* optional if many buttons */
 }
 
 .actionButton {
@@ -466,6 +412,32 @@
 
 .actionButton.edit:hover {
     background-color: #27374D;
+    color: white;
+}
+
+.actionButton.reset {
+    color: #27374D;
+}
+
+.actionButton.reset:hover {
+    background-color: #27374D;
+    color: white;
+}
+
+.actionButton.statusToggle {
+    width: auto;              /* remove fixed square */
+    padding: 0 12px;          /* horizontal spacing */
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.actionButton.statusToggle.deactivate:hover {
+    background-color: #e53e3e;
+    color: white;
+}
+
+.actionButton.statusToggle.activate:hover {
+    background-color: #38a169;
     color: white;
 }
 
@@ -737,7 +709,7 @@
 }
 
 /* Spinner Animation */
-@keyframes spin {
+@keyframes spinner {
     from {
         transform: rotate(0deg);
     }
@@ -746,9 +718,6 @@
     }
 }
 
-:global(.spinner) {
-    animation: spin 1s linear infinite;
-}
 
 /* Responsive */
 @media (max-width: 1024px) {

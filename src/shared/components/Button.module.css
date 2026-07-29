@@ -1,0 +1,102 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: hsl(200 95% 40%);
+    color: hsl(0 0% 100%);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+/* .button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+} */
+
+/* Primary Actions */
+/* Create, Save, Update */
+.primary {
+    background: hsl(200 95% 40% / 0.9);
+    color: white;
+}
+
+.primary:hover {
+    background: hsl(200 95% 35%);
+}
+
+.primary:hover:not(:disabled) {
+    background: hsl(200 95% 35%);
+}
+
+/* Secondary Actions */
+/* Download, View, Print */
+.secondary {
+    background: hsl(200 80% 94%);
+    color: hsl(200 95% 25%);
+}
+
+.secondary:hover:not(:disabled) {
+    background: hsl(200 80% 88%);
+}
+
+/* Destructive Actions */
+/* Delete */
+.danger {
+    background: hsl(0 85% 60%);
+    color: white;
+}
+
+.danger:hover:not(:disabled) {
+    background: hsl(0 85% 55%);
+}
+
+/* Neutral */
+/* Cancel */
+.ghost {
+    background: transparent;
+    color: hsl(215 25% 27%);
+    border: 1px solid hsl(220 13% 91%);
+}
+
+.ghost:hover:not(:disabled) {
+    background: hsl(210 20% 98%);
+}
+
+/* Success */
+/* Approved, Completed */
+.success {
+    background: hsl(142 70% 45%);
+    color: white;
+}
+
+.success:hover:not(:disabled) {
+    background: hsl(142 70% 40%);
+}
+
+/* Warning */
+/* Archive, Deactivate */
+.warning {
+    background: hsl(38 92% 50%);
+    color: white;
+}
+
+.warning:hover:not(:disabled) {
+    background: hsl(38 92% 45%);
+}
+
+/* Outline Primary */
+.outline {
+    background: transparent;
+    color: hsl(200 95% 40%);
+    border: 1px solid hsl(200 95% 40%);
+}
+
+.outline:hover:not(:disabled) {
+    background: hsl(200 95% 97%);
+}

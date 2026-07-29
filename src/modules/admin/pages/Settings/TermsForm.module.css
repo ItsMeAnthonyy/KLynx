@@ -1,0 +1,51 @@
+
+.card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.termsContent {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.termsContent h4 {
+    color: #111250;
+    margin: 0 0 12px;
+    font-size: 1.1em;
+}
+
+.termsContent p {
+    margin: 0 0 12px;
+}
+
+.termsContent ul {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.termsContent li {
+    margin-bottom: 8px;
+}
+
+.termsContent .contactDetails {
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+.termsContent .contactDetails p {
+    margin: 4px 0;
+    color: #666;
+}
+

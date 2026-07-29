@@ -12,6 +12,7 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingRecord, setEditingRecord] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
+    const [loadingAction, setLoadingAction] = useState(null);
 
     useEffect( () => {
         const fetchData = async () => {
@@ -19,7 +20,6 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
                 const vitalSignsResponse = await getVitalSignsByVisitId(visitId);
                 if (vitalSignsResponse.success) {
                     setVitalSigns(vitalSignsResponse.data);
-                    console.log("VSR? ", vitalSignsResponse);
                 }
             } catch (error) {
                 console.error('Error fetching vital signs:', error);
@@ -43,6 +43,47 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
         if (sys > 180 || dia > 120) return 'Hypertensive Crisis';
         return 'Normal';
     };
+
+    const getUserModalTitle = () => {
+        //if (mode === "add") return "Create User Account";
+
+        // const name = selectedUser
+        //     ? `${selectedUser.first_name} ${selectedUser.last_name}`
+        //     : "";
+
+        if (mode === "view") return `View User - ${name}`;
+        if (mode === "edit") return `Edit User - ${name}`;
+        
+        if (mode === "status") {
+            return `Confirm Status Change - ${name}`;
+        }
+
+        return "";
+    };    
+
+    const openModal = ({ mode, modalType }) => {
+        setMode(mode);
+        setModalType(modalType);
+        setIsOpen(true);
+    };
+
+    const handleView = async (id) => {
+        setLoadingAction({ type: "openView", id });
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            openModal({
+                mode: "view",
+                modalType: "vitalSignsForm",
+            });
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoadingAction(null);
+        }
+    }
 
     return(
         <>
@@ -89,11 +130,6 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
                                     <td>{computeBPAssessment(vitalSigns.bpSystolic, vitalSigns.bpDiastolic)}</td>
                                     <td>
                                         <button
-                                            onClick={() => { 
-                                                if (!isArchived || isArchived) {
-                                                    setShowViewModal(true)
-                                                }
-                                            }} 
                                             style={{ 
                                                 backgroundColor: 'transparent',
                                                 border: '1px solid #e5e7eb',
@@ -106,7 +142,6 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
                                                 transition: 'all 0.2s',
                                                 opacity: isArchived ? 0.5 : 1
                                             }} 
-                                            title={'View Details'}
                                             onMouseEnter={(e) => {
                                                 if (!isArchived) {
                                                     e.currentTarget.style.backgroundColor = '#f3f4f6';
@@ -119,6 +154,12 @@ export default function VitalSignsForm({ visitId, activeTab, isReadOnly }) {
                                                     e.currentTarget.style.borderColor = '#e5e7eb';
                                                 }
                                             }}
+                                            title="View Details"
+                                            onClick={() => { 
+                                                console.log("Viewing vital signs: ", vitalSigns.visitId);
+                                                handleView(user.id);
+                                            }} 
+                                            
                                         >
                                             <BiSearch style={{ fontSize: '18px', color: '#282a2eff' }} />
                                         </button>

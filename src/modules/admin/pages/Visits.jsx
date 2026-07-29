@@ -11,6 +11,7 @@ import './ConsultationDetail.css'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import ProfileDropdown from '../../../components/ProfileDropdown';
+import useAuth from '../../../hooks/useAuth';
 
  
 import { BiError ,BiSolidEdit, BiSolidTrash, BiArrowBack, BiPlus, BiShow, BiSearch } from 'react-icons/bi';
@@ -21,6 +22,7 @@ import { getPatientById } from '../api/patientApi';
 import { getVisitsByPatientId } from '../api/visitApi';
 
 const Visits = () => {
+    const { auth } = useAuth();
     const navigate = useNavigate();
     const { patientId } = useParams();
     const location = useLocation();
@@ -652,8 +654,8 @@ const Visits = () => {
                           <BiError/>EMERGENCY MODE
                         </button>
                         <ProfileDropdown 
-                          email="admin@klynx.com"
-                          name="Admin User"
+                            email={auth.userEmail || "Email"}
+                            name= {auth.userFirstName + " " + auth.userLastName || "User"}
                         />
                       </div>
                     </div>

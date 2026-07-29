@@ -26,10 +26,11 @@ export default function ICD10SearchModal({ isOpen, onClose, onSelect, isAdmin })
     const fetchCodes = useCallback(async () => {
         setLoading(true);
         try {
-            const result = await getICD10Codes(currentPage, pageSize, searchTerm);
+            const result = await getICD10Codes(searchTerm, currentPage, pageSize);
             setCodes(result.data || []);
             setTotalPages(result.totalPages || 1);
             setTotalCount(result.count || 0);
+            console.log("Data: ", result);
         } catch (error) {
             console.error('Error fetching ICD10 codes:', error);
             toast({ title: 'Error', description: 'Failed to fetch ICD10 codes', variant: 'destructive' });

@@ -1,36 +1,78 @@
 import axios from "axios";
+const BASE_URL = "http://localhost/api/icd10";
+const CATEGORY_URL = "http://localhost/api/icd10_categories";
 
-export const getICD10Categories = async () => {
+/*
+TO CLEAN
+*/
+
+export const getICD10Categories = async ({
+    search = "",
+    page = 1,
+    limit = 10,
+}) => {
     try {
-        const { data } = await axios.post("http://localhost/api/get_icd10_categories.php");
+        const response = await axios.get(`${CATEGORY_URL}/get_all_2.php`, {
+            params: { 
+                search,
+                page,
+                limit 
+            },
+            withCredentials: true,
+        });
 
-        console.log("ICD10 Categories API:", data);
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to fetch icd10 categories record";
 
-        if (data.success) return data.data;
-        else throw new Error(data.message || "Failed to fetch ICD10 categories");
-
-    } catch (err) {
-        console.error("ICD10 Categories API error:", err);
-        throw err;
+        throw new Error(message);
     }
 };
 
-export const createICD10Category = async (name) => {
+export const getICD10CategoryOptions = async () => {
     try {
-        const { data } = await axios.post(
-            "http://localhost/api/create_icd10_category.php",
-            { name }
+        const response = await axios.get(
+            `${CATEGORY_URL}/get_all.php`, 
+            {
+                withCredentials: true,
+            }
         );
 
-        console.log("Create ICD10 Category API:", data);
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to fetch ICD10 category options";
 
-        if (!data.success) {
-            throw new Error(data.message || "Failed to create ICD10 category");
-        }
+        throw new Error(message);
+    }
+};
 
-    } catch (err) {
-        console.error("Create ICD10 Category API error:", err);
-        throw err;
+export const createICD10Category = async (icd10CategoryData) => {
+    try {
+        const response = await axios.post(
+            `${CATEGORY_URL}/create.php`,
+            icd10CategoryData,
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to create icd10 category entry";
+
+        throw new Error(message);
     }
 };
 
@@ -76,12 +118,42 @@ export const deleteICD10Category = async (id) => {
 };
 
 
+export const getICD10 = async ({
+    searchTerm = "",
+    page = 1,
+    pageSize = 10,
+    categoryId = null
+}) => {
+    try {
+        const response = await axios.get(
+            `${BASE_URL}/get_by_id.php`, 
+            {
+                params: { 
+                    searchTerm,
+                    page,
+                    pageSize,
+                    category_id: categoryId
+                },
+                withCredentials: true,
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to fetch ICD10 record";
+
+        throw new Error(message);
+    }
+};
 
 
 export const getICD10Codes = async (
+    searchTerm = "",
     page = 1,
     pageSize = 10,
-    searchTerm = "",
     categoryId = null
 ) => {
     try {
@@ -89,7 +161,7 @@ export const getICD10Codes = async (
             page,
             pageSize,
             searchTerm,
-            category_id: categoryId
+            category_id: categoryId //not used yet, for search filtering
         });
 
         console.log("ICD10 Codes API:", data);
@@ -107,6 +179,30 @@ export const getICD10Codes = async (
     } catch (err) {
         console.error("ICD10 API error:", err);
         throw err;
+    }
+};
+
+export const createICD10 = async (icd10Data) => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/create.php`,
+            icd10Data,
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to create icd10 entry";
+
+        throw new Error(message);
     }
 };
 

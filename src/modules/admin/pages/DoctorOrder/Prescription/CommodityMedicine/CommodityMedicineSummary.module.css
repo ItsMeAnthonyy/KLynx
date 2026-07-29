@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Coda:wght@400;800&display=swap');
+
+.entriesSelector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+    color: hsl(215 15% 50%);
+}
+
+.entriesSelect {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid hsl(210 25% 88%);
+    border-radius: 6px;
+    background: hsl(210 40% 98%);
+    color: hsl(215 25% 15%);
+}
+
+.tableContainer {
+    overflow-x: auto;
+    font-family: 'Coda', sans-serif;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid hsl(210 25% 88%);
+}
+
+.table th {
+    font-weight: 600;
+    color: hsl(215 25% 15%);
+    background: hsl(210 30% 92%);
+}
+
+.table td {
+    color: hsl(215 25% 15%);
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: hsl(215 15% 50%);
+    text-align: center;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid hsl(210 25% 88%);
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-family: 'Coda', sans-serif;
+}
+
+.pageInfo {
+    font-size: 0.85rem;
+    color: hsl(215 15% 50%);
+}
+
+.pageControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pageButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid hsl(210 25% 88%);
+    border-radius: 6px;
+    background: hsl(210 40% 98%);
+    color: hsl(215 25% 15%);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pageButton:hover:not(:disabled) {
+    background: hsl(210 30% 92%);
+}
+
+.pageButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.currentPage {
+    padding: 0 0.75rem;
+    font-size: 0.9rem;
+    color: hsl(215 25% 15%);
+}
+
+.loading {
+    padding: 2rem;
+    text-align: center;
+    color: hsl(215 15% 50%);
+}

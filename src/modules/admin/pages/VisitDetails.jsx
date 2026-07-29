@@ -9,17 +9,21 @@ import { FaEdit, FaTrash, FaDownload } from 'react-icons/fa';
 
 import { getPatientById } from '../api/patientApi';
 import { getVisitsByPatientId } from '../api/visitApi';
-import VitalSignsForm from './VitalSignsForm';
+import VitalSignSummary from './VitalSign/VitalSignSummary';
 import PhysicalExamForm from './PhysicalExamForm';
 import DoctorsOrderForm from './DoctorsOrderForm';
 import AnimalBiteForm from './AnimalBiteForm';
-import PrenatalForm from './PrenatalForm';
+import PrenatalSummary from './Prenatal/PrenatalSummary';
+import DoctorOrderSummary from './DoctorOrder/DoctorOrderSummary';
+import AnimalBiteSummary from './AnimalBite/AnimalBiteSummary';
 
 export const basicTabs = [
     { id: 'vital-signs', label: 'Vital Signs', subLabel: 'Patient\'s vital signs', icon: '🩺' },
     //{ id: 'physical-exam', label: 'Physical Exam', subLabel: 'Body examination details', icon: '👁️' },
     //{ id: 'system-review', label: 'System Review', subLabel: 'Review of body systems', icon: '📋' },
     { id: 'doctors-order', label: "Doctor's Order", subLabel: 'Prescriptions and orders', icon: '📝' },
+    { id: 'doctors-order-2', label: "Doctor's Order 2", subLabel: 'Prescriptions and orders', icon: '📝' },
+    // { id: 'animal-bite-2', label: 'Animal Bite 2', subLabel: 'Animal bite details', icon: '🐾' }
 ];
 
 export const getConsultationTabs = (consultationType) => {
@@ -417,7 +421,7 @@ const VisitDetails = () => {
                 </div>
                 <div className="ConsultationDetail-Content">
                     {activeTab === 'vital-signs' && (
-                        <VitalSignsForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
+                        <VitalSignSummary visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} patientFullName={patient.fullName} />
                     )}
                     {/* {activeTab === 'physical-exam' && (
                         <PhysicalExamForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
@@ -426,13 +430,19 @@ const VisitDetails = () => {
                         <SystemReviewForm visitId={visitId} activeTab={activeTab} isReadOnly={isReadOnly} />
                     )}
                     {activeTab === 'doctors-order' && (
+                        <DoctorOrderSummary activeTab={activeTab} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} patientFullName={patient.fullName} />
+                    )}
+                    {activeTab === 'doctors-order-2' && (
                         <DoctorsOrderForm activeTab={activeTab} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} />
                     )}
-                    {activeTab === 'animal-bite' && (
+                    {/* {activeTab === 'animal-bite-2' && (
                         <AnimalBiteForm activeTab={activeTab} consultationType={visit.consultationType} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} />
+                    )} */}
+                    {activeTab === 'animal-bite' && (
+                        <AnimalBiteSummary activeTab={activeTab} consultationType={visit.consultationType} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} patientFullName={patient.fullName} />
                     )}
                     {activeTab === 'prenatal' && (
-                        <PrenatalForm activeTab={activeTab} consultationType={visit.consultationType} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} />
+                        <PrenatalSummary activeTab={activeTab} consultationType={visit.consultationType} visitId={visitId} patientId={patientId} isReadOnly={isReadOnly} patientFullName={patient.fullName} />
                     )}
                 </div>
 

@@ -17,7 +17,8 @@ export const AuthProvider = ({ children }) => {
                         userRole: res.data.role,
                         userEmail: res.data.email,
                         userFirstName: res.data.first_name,
-                        userLastName: res.data.last_name
+                        userLastName: res.data.last_name,
+                        userPhoneNumber: res.data.phone_number
                     });
                 }
 

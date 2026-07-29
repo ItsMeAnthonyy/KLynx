@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { BiSearch, BiSolidEdit, BiSolidTrash } from 'react-icons/bi';
 import DoctorsOrderModal from '../../../modules/admin/popups/DoctorsOrderModal';
 import DoctorsOrderViewModal from '../../../modules/admin/popups/DoctorsOrderViewModal';
-import { getDoctorsOrderByVisitId } from '../api/doctorsOrderApi';
+import { getDoctorOrderByVisitId } from '../api/doctorsOrderApi';
 
 export default function DoctorsOrderForm({ activeTab, visitId, patientId, isReadOnly }) {
     const isArchived = location.state?.isArchived || false;
@@ -17,7 +17,7 @@ export default function DoctorsOrderForm({ activeTab, visitId, patientId, isRead
     useEffect( () => {
         const fetchData = async () => {
             try {
-                const response = await getDoctorsOrderByVisitId(visitId);
+                const response = await getDoctorOrderByVisitId(visitId);
                 if(response.success) {
                     setFormData(response);
                 }
@@ -58,21 +58,31 @@ export default function DoctorsOrderForm({ activeTab, visitId, patientId, isRead
                         <tbody>
                             {formData ? (
                                 <tr>
-                                    <td>{formData.data[0].visit_date_time}</td>
                                     <td>
-                                        {formData.data[0].imaging
-                                            .split(',')
-                                            .map(type => type.charAt(0).toUpperCase() + type.slice(1))
-                                            .join(', ')
+                                        {new Date(formData.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}
+                                    </td>
+                                    <td>
+                                        {
+                                            (formData.imaging ?? [])
+                                                .map(word =>
+                                                    word
+                                                        .replace(/_/g, ' ')
+                                                        .replace(/\b\w/g, l => l.toUpperCase())
+                                                )
+                                                .join(', ')
                                         }
                                     </td>
                                     <td>
-                                        {formData.data[0].diagnosis_status
+                                        {/* {formData.diagnosisStatus
                                             .replace(/_/g, ' ')
                                             .split(' ')
                                             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                                             .join(' ')
-                                        }
+                                        } */}
                                     </td>
                                     <td>
                                         <button

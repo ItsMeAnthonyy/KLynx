@@ -57,6 +57,7 @@ function getDiseaseSeverity(diseaseName, caseCount) {
   return { level: 'high', color: '#dc2626', label: 'High' };
 }
 
+//TO BE REMOVED
 /* 🗄️ Sample address data ---------------------------------------- */
 const rawData = [
   { address: 'Kasipagan, Karangalan Village, Cainta, Rizal', street: 'Kasipagan',  disease: 'Dengue Fever' },
@@ -87,6 +88,7 @@ const rawData = [
 
 ];
 
+// TO BE REMOVE
 /* 🌐 Geocode helper --------------------------------------------- */
 async function geocode(addr) {
   const url = `https://api.maptiler.com/geocoding/${encodeURIComponent(addr)}.json?key=${maptilersdk.config.apiKey}`;
@@ -233,7 +235,7 @@ function FloatingFilterControls({ onFilterChange, activeFilter, searchTerm, onSe
                   {result.Street}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#666' }}>
-                  {result.DiagnosisName}
+                  {result.diagnosisName}
                 </div>
               </div>
             ))}
@@ -751,6 +753,8 @@ ViewAllDiseasesModal.propTypes = {
 
 /* 🚀 React component -------------------------------------------- */
 export default function Map() {
+
+  const [patientData, setPatientData] = useState([]);
     const [dbData, setDbData] = useState([]);
   const containerRef = useRef(null);
   const mapRef       = useRef(null);
@@ -802,111 +806,126 @@ export default function Map() {
 
   /* 1️⃣ Geocode & prepare GeoJSON -------------------------------- */
 
-    useEffect(() => {
-    
-        axios.get('http://localhost/api/geomap-locations.php').then(function(response){
-            console.log("Geo Loc: ", response.data);
-            setDbData(response.data);
-        });
-    }, []);
-
-  /* Calculate barangay severity data when dbData changes */
   useEffect(() => {
-    if (dbData && dbData.length > 0) {
-      const severityData = aggregateCaseData(dbData);
+  
+    axios.get('http://localhost/api/geomap-locations.php').then(function(response){
+        console.log("Geo Loc: ", response.data);
+        setDbData(response.data);
+    });
+
+    axios
+      .get('http://localhost/api/geo_map/get_all.php', {
+        withCredentials: true
+      })
+      .then((res) => {
+        console.log("New Backend Data: ", res.data.data);
+
+        setPatientData(res.data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
+  /* Calculate barangay severity data when patientData changes */
+  useEffect(() => {
+    if (patientData && patientData.length > 0) {
+      const severityData = aggregateCaseData(patientData);
       setBarangaySeverityData(severityData);
       console.log('Barangay Severity Data:', severityData);
     }
-  }, [dbData]);
+  }, [patientData]);
 
   useEffect(() => {
-  if (!dbData || dbData.length === 0) return;
+    if (!patientData || patientData.length === 0) return;
 
-  // Define disease categories inside useEffect to avoid dependency issues
-  const categories = {
-    all: [],
-    'active-cases': ['COVID-19, virus identified', 'Dengue Fever', 'Tuberculosis', 'Leptospirosis'],
-    warning: ['Cholera', 'Influenza', 'Measles'],
-    critical: ['COVID-19, virus identified', 'Tuberculosis', 'Cholera'],
-    monitored: ['Malaria', 'Asthma', 'Influenza', 'Measles']
-  };
-
-  // Filter data based on active filter
-  let filteredData = dbData;
-  if (activeFilter !== 'all') {
-    const allowedDiseases = categories[activeFilter] || [];
-    filteredData = dbData.filter(entry => allowedDiseases.includes(entry.DiagnosisName));
-  }
-
-  // Apply search filter
-  if (searchTerm.trim()) {
-    const searchLower = searchTerm.toLowerCase();
-    filteredData = filteredData.filter(entry => {
-      return (
-        entry.Street?.toLowerCase().includes(searchLower) ||
-        entry.DiagnosisName?.toLowerCase().includes(searchLower) ||
-        entry.Barangay?.toLowerCase().includes(searchLower) ||
-        entry.Municipality?.toLowerCase().includes(searchLower)
-      );
-    });
-  }
-
-  // Calculate disease severity per street
-  const streetDiseaseCounts = {};
-  filteredData.forEach(entry => {
-    const key = `${entry.Street}-${entry.DiagnosisName}`;
-    streetDiseaseCounts[key] = (streetDiseaseCounts[key] || 0) + 1;
-  });
-
-  const pointFeatures = filteredData.map((entry) => {
-    const key = `${entry.Street}-${entry.DiagnosisName}`;
-    const caseCount = streetDiseaseCounts[key] || 1;
-    const severity = getDiseaseSeverity(entry.DiagnosisName, caseCount);
-    
-    return {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [Number(entry.longitude), Number(entry.latitude)]
-      },
-      properties: {
-        description: `<b>Street:</b> ${entry.Street}<br><b>Disease:</b> ${entry.DiagnosisName}<br><b>Severity:</b> ${severity.label} (${caseCount} cases)`,
-        disease: entry.DiagnosisName,
-        street: entry.Street,
-        severity: severity.level,
-        severityColor: severity.color,
-        caseCount: caseCount
-      }
+    // Define disease categories inside useEffect to avoid dependency issues
+    const categories = {
+      all: [],
+      'active-cases': ['COVID-19, virus identified', 'Dengue Fever', 'Tuberculosis', 'Leptospirosis'],
+      warning: ['Cholera', 'Influenza', 'Measles'],
+      critical: ['COVID-19, virus identified', 'Tuberculosis', 'Cholera'],
+      monitored: ['Malaria', 'Asthma', 'Influenza', 'Measles']
     };
-  });
 
-  setPointData({ type: 'FeatureCollection', features: pointFeatures });
+    // Filter data based on active filter
+    let filteredData = patientData;
+    if (activeFilter !== 'all') {
+      const allowedDiseases = categories[activeFilter] || [];
+      filteredData = patientData.filter(entry => 
+        allowedDiseases.includes(entry.diagnosisName)
+      );
+    }
 
-  const RADAR_R_KM = 0.025;
-  const radar = filteredData.map((entry) =>
-    turf.circle([entry.longitude, entry.latitude], RADAR_R_KM, {
-      steps: 128,
-      units: 'kilometers'
-    })
-  );
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filteredData = filteredData.filter(entry => {
+        return (
+          entry.streetName?.toLowerCase().includes(searchLower) ||
+          entry.diagnosisName?.toLowerCase().includes(searchLower) ||
+          entry.barangay?.toLowerCase().includes(searchLower) ||
+          entry.city?.toLowerCase().includes(searchLower)
+        );
+      });
+    }
 
-  setRadarData({ type: 'FeatureCollection', features: radar });
-}, [dbData, activeFilter, searchTerm]);
+    // Calculate disease severity per street
+    const streetDiseaseCounts = {};
+    filteredData.forEach(entry => {
+      const key = `${entry.streetName}-${entry.diagnosisName}`;
+      streetDiseaseCounts[key] = (streetDiseaseCounts[key] || 0) + 1;
+    });
+
+    const pointFeatures = filteredData.map((entry) => {
+      const key = `${entry.streetName}-${entry.diagnosisName}`;
+      const caseCount = streetDiseaseCounts[key] || 1;
+      const severity = getDiseaseSeverity(entry.diagnosisName, caseCount);
+    
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [Number(entry.longitude), Number(entry.latitude)]
+        },
+        properties: {
+          description: `<b>Street:</b> ${entry.streetName}<br><b>Disease:</b> ${entry.diagnosisName}<br><b>Severity:</b> ${severity.label} (${caseCount} cases)`,
+          disease: entry.diagnosisName,
+          street: entry.streetName,
+          severity: severity.level,
+          severityColor: severity.color,
+          caseCount: caseCount
+        }
+      };
+    });
+
+    setPointData({ type: 'FeatureCollection', features: pointFeatures });
+
+    const RADAR_R_KM = 0.025;
+    const radar = filteredData.map((entry) =>
+      turf.circle([entry.longitude, entry.latitude], RADAR_R_KM, {
+        steps: 128,
+        units: 'kilometers'
+      })
+    );
+
+    setRadarData({ type: 'FeatureCollection', features: radar });
+  }, [patientData, activeFilter, searchTerm]);
 
   /* Update search results when search term changes */
   useEffect(() => {
-    if (!searchTerm.trim() || !dbData || dbData.length === 0) {
+    if (!searchTerm.trim() || !patientData || patientData.length === 0) {
       setSearchResults([]);
       return;
     }
 
     const searchLower = searchTerm.toLowerCase();
-    const results = dbData.filter(entry => {
+    const results = patientData.filter(entry => {
       return (
-        entry.Street?.toLowerCase().includes(searchLower) ||
-        entry.DiagnosisName?.toLowerCase().includes(searchLower) ||
-        entry.Barangay?.toLowerCase().includes(searchLower) ||
-        entry.Municipality?.toLowerCase().includes(searchLower)
+        entry.streetName?.toLowerCase().includes(searchLower) ||
+        entry.diagnosisName?.toLowerCase().includes(searchLower) ||
+        entry.barangay?.toLowerCase().includes(searchLower) ||
+        entry.city?.toLowerCase().includes(searchLower)
       );
     });
 
@@ -914,7 +933,7 @@ export default function Map() {
     const uniqueResults = [];
     const seen = new Set();
     results.forEach(result => {
-      const key = `${result.Street}-${result.DiagnosisName}`;
+      const key = `${result.streetName}-${result.diagnosisName}`;
       if (!seen.has(key)) {
         seen.add(key);
         uniqueResults.push(result);
@@ -922,7 +941,7 @@ export default function Map() {
     });
 
     setSearchResults(uniqueResults);
-  }, [searchTerm, dbData]);
+  }, [searchTerm, patientData]);
 
 
 
@@ -1352,9 +1371,9 @@ const handleSave = () => {
     setShowManageAccount(false);
   };
 
-  // Filter dbData based on active filter for stats
-  const getFilteredDbData = () => {
-    if (activeFilter === 'all') return dbData;
+  // Filter patientData based on active filter for stats
+  const getFilteredPatientData = () => {
+    if (activeFilter === 'all') return patientData;
     
     const categories = {
       'active-cases': ['COVID-19, virus identified', 'Dengue Fever', 'Tuberculosis', 'Leptospirosis'],
@@ -1364,34 +1383,34 @@ const handleSave = () => {
     };
     
     const allowedDiseases = categories[activeFilter] || [];
-    return dbData.filter(entry => allowedDiseases.includes(entry.DiagnosisName));
+    return patientData.filter(entry => allowedDiseases.includes(entry.diagnosisName));
   };
 
-  const filteredDbData = getFilteredDbData();
+  const filteredPatientData = getFilteredPatientData();
 
   // Aggregate disease counts per street (using filtered data)
   const streetDiseaseStats = {};
-  filteredDbData.forEach(({ Street, DiagnosisName }) => {
-    if (!streetDiseaseStats[Street]) streetDiseaseStats[Street] = {};
-    if (!streetDiseaseStats[Street][DiagnosisName]) streetDiseaseStats[Street][DiagnosisName] = 0;
-    streetDiseaseStats[Street][DiagnosisName]++;
+  filteredPatientData.forEach(({ streetName, diagnosisName }) => {
+    if (!streetDiseaseStats[streetName]) streetDiseaseStats[streetName] = {};
+    if (!streetDiseaseStats[streetName][diagnosisName]) streetDiseaseStats[streetName][diagnosisName] = 0;
+    streetDiseaseStats[streetName][diagnosisName]++;
   });
 
   // Aggregate total cases per disease (using all data for dashboard)
   const diseaseTotals = {};
-  dbData.forEach(({ DiagnosisName }) => {
-    if (!diseaseTotals[DiagnosisName]) diseaseTotals[DiagnosisName] = 0;
-    diseaseTotals[DiagnosisName]++;
+  patientData.forEach(({ diagnosisName }) => {
+    if (!diseaseTotals[diagnosisName]) diseaseTotals[diagnosisName] = 0;
+    diseaseTotals[diagnosisName]++;
   });
 
 
 
   // Handle street click to zoom to that street's location
   const handleStreetClick = (streetName) => {
-    if (!mapRef.current || !dbData || dbData.length === 0) return;
+    if (!mapRef.current || !patientData || patientData.length === 0) return;
 
     // Find all locations for this street
-    const streetLocations = dbData.filter(entry => entry.Street === streetName);
+    const streetLocations = patientData.filter(entry => entry.streetName === streetName);
     
     if (streetLocations.length === 0) return;
 
@@ -1412,21 +1431,21 @@ const handleSave = () => {
   /* 4️⃣ Render --------------------------------------------------- */
   return (
     <div className='container'>
-        <Sidebar />
-     <div className='FileMaintenance-Content'>
-      <div className="FileMaintenance-Header">
-               <div className="FileMaintenance-HeaderTitle">
-                 <h1>GeoMap</h1>
-               </div>
-     
-               <div className="FileMaintenance-HeaderSetting">
-                 <EmergencyButton />
-                 <ProfileDropdown 
-                    email={auth.userEmail || "Email"}
-                    name= {auth.userFirstName + " " + auth.userLastName || "User"}
-                 />
-               </div>
-             </div>
+      <Sidebar />
+      <div className='FileMaintenance-Content'>
+        <div className="FileMaintenance-Header">
+          <div className="FileMaintenance-HeaderTitle">
+            <h1>GeoMap</h1>
+          </div>
+
+          <div className="FileMaintenance-HeaderSetting">
+            <EmergencyButton />
+            <ProfileDropdown 
+              email={auth.userEmail || "Email"}
+              name= {auth.userFirstName + " " + auth.userLastName || "User"}
+            />
+          </div>
+        </div>
 
       {/* --- Compact Summary Strip --- */}
       <CompactSummaryStrip diseaseTotals={diseaseTotals} />

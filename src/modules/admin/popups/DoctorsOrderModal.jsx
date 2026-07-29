@@ -8,7 +8,7 @@ import { useToast } from '../../../hooks/use-toast';
 import ICD10SearchModal from './ICD10SearchModal';
 import PrescriptionListModal from './PrescriptionListModal';
 
-import { createDoctorsOrder } from '../api/doctorsOrderApi';
+import { createDoctorOrder } from '../api/doctorsOrderApi';
 
 
 export default function DoctorsOrderModal({ isOpen, onClose, activeTab, editingRecord, visitId, patientId, isReadOnly/*, patientId, onSubmit */}) {
@@ -78,7 +78,7 @@ export default function DoctorsOrderModal({ isOpen, onClose, activeTab, editingR
         setLoading(true);
 
         try {
-            await createDoctorsOrder(
+            await createDoctorOrder(
                 visitId,
                 patientId, 
                 doctorsOrderForm

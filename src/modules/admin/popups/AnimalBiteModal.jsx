@@ -6,7 +6,7 @@ import { useToast } from '../../../hooks/use-toast';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { createAnimalBite } from '../api/animalBiteApi';
+// import { createAnimalBite } from '../api/animalBiteApi';
 
 export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultationType, editingRecord, visitId, patientId, isReadOnly/*, onSubmit */}) {
     const { auth } = useAuth();
@@ -283,7 +283,7 @@ export default function AnimalBiteModal({ isOpen, onClose, activeTab, consultati
             <div className="addRecord-modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="addRecord-modal-header">
                     <h2 className="addRecord-modal-title">
-                        {editingRecord ? 'Edit' : 'Add'} {activeTabData.label} Record
+                        {/* {editingRecord ? 'Edit' : 'Add'} {activeTabData.label} Record */}
                         <button onClick={onClose} className="close-button">
                             <BiX size={24} />
                         </button>

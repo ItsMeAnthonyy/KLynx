@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { BiX, BiCapsule, BiSearch, BiUser, BiCalendar, BiErrorCircle, BiRuler, BiTransfer, BiTrip, BiPulse, BiHeart, BiTrendingUp, BiWind, BiDroplet, BiTime } from "react-icons/bi";
 
 import useAuth from '../../../hooks/useAuth';
-import { createDoctorsOrder } from '../api/doctorsOrderApi';
+import { createDoctorOrder } from '../api/doctorsOrderApi';
 import PropTypes from 'prop-types';
 import './AddRecordModal.css';
 import ICD10SearchModal from './ICD10SearchModal';
@@ -278,7 +278,7 @@ export default function AddRecordModal({ isOpen, onClose, recordType, patientId,
     e.preventDefault();
 
     try{
-      await createDoctorsOrder(
+      await createDoctorOrder(
         visitId,
         patientId, 
         doctorsOrderForm

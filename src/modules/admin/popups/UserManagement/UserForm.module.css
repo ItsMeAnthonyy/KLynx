@@ -1,0 +1,209 @@
+
+.form {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: hsl(210, 10%, 15%); /* dark gray text */
+    font-size: 0.9375rem;
+}
+
+.field label svg {
+    color: hsl(220, 90%, 60%); /* bright blue accent */
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid hsl(210, 15%, 80%); /* light gray border */
+    border-radius: 0.5rem;
+    background: hsl(0, 0%, 100%); /* white background */
+    color: hsl(210, 10%, 15%); /* dark gray text */
+    font-size: 0.9375rem;
+    font-family: inherit;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: hsl(220, 90%, 60%); /* bright blue focus border */
+}
+
+.input:disabled {
+    background: #f5f5f5;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.select {
+    cursor: pointer;
+}
+
+.select:disabled {
+    background: #f5f5f5;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.passwordRow {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.passwordRow .input {
+    flex: 1;
+}
+
+.generateBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid hsl(210, 15%, 80%);
+    border-radius: 0.5rem;
+    background: hsl(220, 90%, 60%);
+    color: white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.generateBtn:hover {
+    background: hsl(220, 90%, 55%);
+}
+
+.generateBtn svg {
+    display: block;
+}
+
+.generateBtn:disabled {
+    background: hsl(220, 20%, 85%); /* muted blue-gray */
+    color: hsl(210, 10%, 60%);      /* faded text */
+    border: 1px solid hsl(210, 15%, 80%);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.optionsSection {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.checkboxLabel:hover {
+    background: hsl(210, 20%, 96%);
+}
+
+.checkbox {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+.checkboxText {
+    font-size: 0.875rem;
+    color: hsl(210, 10%, 25%);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid hsl(210, 25%, 88%);
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    border: none;
+}
+
+.btnCancel {
+    background: transparent;
+    color: hsl(215, 25%, 15%);
+    border: 1px solid hsl(210, 25%, 88%);
+}
+
+.btnCancel:hover:not(:disabled) {
+    background: hsl(185, 90%, 45%);
+}
+
+.btnPrimary {
+    background: hsl(200, 95%, 40%);
+    color: hsl(0, 0%, 100%);
+    box-shadow: 0 10px 30px -10px hsl(200, 95%, 40%, 0.2);
+}
+
+.btnPrimary:hover:not(:disabled) {
+    background: hsl(195, 100%, 50%);
+    transform: translateY(-1px);
+    box-shadow: 0 0 40px hsl(195, 100%, 50%, 0.15);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn:focus-visible {
+    outline: 2px solid hsl(200, 95%, 40%);
+    outline-offset: 2px;
+}
+
+.btnContent {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* controls space */
+}
+
+.spinner {
+    animation: spinner 1s linear infinite;
+}
+
+
+@keyframes spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

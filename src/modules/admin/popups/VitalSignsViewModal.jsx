@@ -46,7 +46,7 @@ export default function VitalSignsViewModal({ isOpen, onClose, formData}) {
                             <label>Respiratory Rate</label>
                             <input
                                 type="text"
-                                name="alert_type"
+                                name="respiratoryRate"
                                 readOnly
                                 value={formData.respiratoryRate}
                             />

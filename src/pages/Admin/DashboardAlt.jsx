@@ -151,7 +151,6 @@ const DashboardAlt = () => {
             }
         };
 
-        // ⏱ delay 3 seconds
         const timer = setTimeout(() => {
             fetchAnimalChartData();
         }, 500);

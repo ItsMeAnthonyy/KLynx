@@ -1,0 +1,109 @@
+
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.cardHeader {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.cardHeader h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5em;
+}
+
+.cardDescription {
+    margin: 8px 0 0;
+    color: #666;
+}
+
+.cardContent {
+    padding: 20px;
+}
+
+.formGroup {
+    margin-bottom: 16px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+}
+
+.formGroup input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+.formGroup input:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.saveButton {
+    background: #111250;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.saveButton:hover {
+    background: #07598D;
+}
+
+.saveButton:disabled {
+    background: #ccc;       /* lighter gray */
+    color: #666;            /* dark gray text */
+    cursor: not-allowed;
+    opacity: 0.6;           /* slightly transparent for effect */
+}
+
+.saveButton:disabled:hover {
+    background: #ccc;       /* prevent hover effect when disabled */
+}
+
+.inputWithIcon {
+    position: relative;
+}
+
+.inputWithIcon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.inputWithIcon input {
+    padding-left: 35px;
+}
+
+.formActions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mt4 {
+    margin-top: 24px;
+}

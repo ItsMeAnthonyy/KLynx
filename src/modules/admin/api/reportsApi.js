@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const BASE_URL = "http://localhost/api/reports"; 
+
 const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return null;
     const today = new Date();
@@ -336,4 +338,49 @@ export function processPrenatalData(visits, filterBarangay = null, filterSex = n
         byBarangay,
         monthlyData,
     };
+}
+
+export async function exportFile({
+    endpoint,
+    filename,
+    params = {},
+}) {
+    try {
+        const response = await axios.get(
+            `${BASE_URL}/${endpoint}`,
+            {
+                params,
+                responseType: "blob",
+                withCredentials: true,
+            }
+        );
+
+        const blob = new Blob(
+            [response.data],
+            {
+                type: response.headers["content-type"],
+            }
+        );
+
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = filename;
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.remove();
+
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+
+        console.error("Export failed:", error);
+
+        throw error;
+
+    }
 }

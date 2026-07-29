@@ -54,10 +54,10 @@ import VisitDetails from './modules/admin/pages/VisitDetails';
 
 import Notifications from './pages/Admin/Notifications';
 import Settings from './pages/Admin/Settings';
+import Settings2 from './modules/admin/pages/Settings/Settings';
 import QueueManagement2 from './modules/admin/pages/QueueManagement2';
 import QueueManagement from './modules/admin/pages/QueueManagement';
 import Archives from './modules/admin/pages/Archives';
-
 
 //import TotalPatients from './pages/Admin/TotalPatients';
 //import Notes from './pages/Admin/Note';
@@ -99,7 +99,8 @@ import NurseNotes from './pages/Admin/NurseNotes';
 
 import Patients from './modules/admin/pages/Patients';
 import Visits from './modules/admin/pages/Visits';
-import UserManagement from './modules/admin/pages/UserManagement';
+import UserManagement from './modules/admin/pages/UserManagement/UserManagement';
+import UserManagement2 from './modules/admin/pages/UserManagement';
 import StaffHealthRecord from './modules/admin/pages/StaffHealthRecord';
 import Appointments from './modules/admin/pages/appointment';
 
@@ -159,9 +160,11 @@ function App() {
                 <Route path='/IcdManager2' element={<IcdManager2 />} />
                 
                 <Route path='/UserManagement' element={<UserManagement />} />
+                <Route path='/UserManagement2' element={<UserManagement2 />} />
                 <Route path='/Notifications' element={<Notifications />} />
-                  <Route path='/Settings' element={<Settings />} />
-
+                <Route path='/Settings2' element={<Settings />} />
+                <Route path='/Settings' element={<Settings2 />} />
+                
                 <Route path='/GeoMap' element={<GeoMaps />} />              
                 <Route path='/DashboardAlt' element={<DashboardAlt/>} />
 

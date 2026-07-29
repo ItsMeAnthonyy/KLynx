@@ -1,39 +1,76 @@
 import axios from "axios";
+const BASE_URL = "http://localhost/api/prenatal_records";
 
-export const createPrenatal = async (visitId, patientId, prenatalData) => {
+export const createPrenatalRecord = async (visitId, prenatalData) => {
     try {
-        const { data } = await axios.post(
-            "http://localhost/api/create_prenatal.php",
+        const response = await axios.post(
+            `${BASE_URL}/create.php`,
             {
-                visit_id: visitId,
-                patient_id: patientId,
+                visitId,
                 ...prenatalData
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
             }
         );
 
-        if (!data.success) {
-            throw new Error(data.errors || "Failed to save Prenatal data");
-        }
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to create prenatal record";
 
-        console.log("Prenatal API Success:", data.success);
-        console.log("Prenatal API Data:", data.data);
-        return data.data;
-    } catch (err) {
-        console.error("Prenatal API Error:", err.response.data);
-        throw err;
+        throw new Error(message);
     }
 };
 
-export const getPrenatalDataByVisitId = async (visitId) => {
+export const getPrenatalRecordByVisitId = async (visitId) => {
     try {
-        const response = await axios.get('http://localhost/api/get_prenatal_data_by_visit_id.php', {
-            params: { visit_id: visitId },
-            //withCredentials: true,
-        });
+        const response = await axios.get(
+            `${BASE_URL}/get_by_id.php`,
+            {
+                params: { visit_id: visitId },
+                withCredentials: true,
+            }
+        );
 
-        return response.data; // { success: true, data: [...] }
+        return response.data;
+        
     } catch (error) {
-        console.error('Error fetching prenatal data:', error);
-        return { success: false, error: error.message };
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to fetch prenatal record";
+
+        throw new Error(message);
     }
-}
+};
+
+export const updatePrenatalRecord = async (data) => {
+    try {
+        console.log("What data sent? ", data);
+        const response = await axios.put(
+            `${BASE_URL}/update.php`,
+            data,
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+            
+        return response.data;
+    } catch (error) {
+        const message =
+            error.response?.data?.message ||
+            error.message ||
+            "Failed to update prenatal record";
+
+        throw new Error(message);
+    }
+};

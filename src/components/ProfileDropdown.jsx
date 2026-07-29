@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BiUser, BiCog, BiLogOut } from 'react-icons/bi';
 import PropTypes from 'prop-types';
-
-
 import './ProfileDropdown.css';
 
 export default function ProfileDropdown({ email = "user@example.com", name = "User Name" }) {

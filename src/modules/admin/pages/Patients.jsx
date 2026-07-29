@@ -8,7 +8,7 @@ import '../../../pages/Admin/Doctors.css'
 import axios from 'axios'; 
 import { FaDownload, FaArchive } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { BiSearch } from 'react-icons/bi';
+import { BiSearch, BiExport, BiSpreadsheet, BiFile } from 'react-icons/bi';
 
 import EmergencyButton from '../../../components/EmergencyButton';
 import ProfileDropdown from '../../../components/ProfileDropdown';
@@ -17,11 +17,14 @@ import styles from './Patients.module.css';
 
 import AddPatientModal from '../popups/AddPatientModal';
 import ArchivePatientModal from '../popups/ArchivePatientModal';
-
+import useAuth from '../../../hooks/useAuth';
+import ExportDropdown from '../../../shared/components/ExportDropdown';
+import { exportFile } from '../api/exportApi';
 
 import { fetchPatientData } from "../services/patientService";
 
 const Patients = () => {
+    const { auth } = useAuth();
     const navigate = useNavigate();
     const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
 
@@ -60,6 +63,147 @@ const Patients = () => {
     const [entriesPerPage, setEntriesPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [exportLoading, setExportLoading] = useState({
+        filteredExcel: false,
+        filteredPdf: false,
+        allExcel: false,
+        allPdf: false,
+    });
+
+    const handleFilteredExcel = async () => {
+        try {
+            setExportLoading(prev => ({
+                ...prev,
+                filteredExcel: true,
+            }));
+
+            await exportFile({
+                endpoint: "/export_excel.php",
+                filename: "Patients_Filtered.xlsx",
+                params: {
+                    scope: "filtered",
+                    searchTerm,
+                },
+            });
+
+            toast({
+                title: "Success",
+                description: "Excel exported successfully.",
+                className: "toast-succcess",
+            });
+        }
+        finally {
+            setExportLoading(prev => ({
+                ...prev,
+                filteredExcel: false,
+            }));
+        }
+    };
+
+    const handleFilteredPdf = async () => {
+        try {
+            setExportLoading(prev => ({
+                ...prev,
+                filteredPdf: true,
+            }));
+
+            await exportFile({
+                endpoint: "/export_pdf.php",
+                filename: "Patients_Filtered.pdf",
+                params: {
+                    scope: "filtered",
+                    searchTerm,
+                },
+            });
+
+            toast({
+                title: "Success",
+                description: "PDF exported successfully.",
+            });
+
+            
+        } catch (error) {
+            toast({
+                title: "Export Failed",
+                description: "Unable to export PDF.",
+                variant: "destructive",
+            });
+        } finally {
+            setExportLoading(prev => ({
+                ...prev,
+                filteredPdf: false,
+            }));
+        }
+    };
+
+    const handleAllExcel = async () => {
+        try {
+            setExportLoading(prev => ({
+                ...prev,
+                allExcel: true,
+            }));
+
+            await exportFile({
+                endpoint: "/export_excel.php",
+                filename: "Patients_All.xlsx",
+                params: {
+                    scope: "all",
+                },
+            });
+
+            toast({
+                title: "Success",
+                description: "Excel exported successfully.",
+            });
+
+        } catch (error) {
+            toast({
+                title: "Export Failed",
+                description: "Unable to export Excel.",
+                variant: "destructive",
+            });
+        } finally {
+            setExportLoading(prev => ({
+                ...prev,
+                allExcel: false,
+            }));
+        }
+    };
+
+    const handleAllPdf = async () => {
+        try {
+            setExportLoading(prev => ({
+                ...prev,
+                allPdf: true,
+            }));
+
+            await exportFile({
+                endpoint: "/export_pdf.php",
+                filename: "Patients_All.pdf",
+                params: {
+                    scope: "all",
+                },
+            });
+
+            toast({
+                title: "Success",
+                description: "PDF exported successfully.",
+            });
+
+        } catch (error) {
+            toast({
+                title: "Export Failed",
+                description: "Unable to export PDF.",
+                variant: "destructive",
+            });
+        } finally {
+            setExportLoading(prev => ({
+                ...prev,
+                allPdf: false,
+            }));
+        }
+    };
 
     const handleModalOpen = () =>{
         setShowModal(true);
@@ -510,8 +654,8 @@ const Patients = () => {
                     <div className={styles.headerRight}>
                       <EmergencyButton />
                         <ProfileDropdown 
-                            email="admin@klynx.com"
-                            name="Admin User"
+                            email={auth.userEmail || "Email"}
+                            name= {auth.userFirstName + " " + auth.userLastName || "User"}
                         />
                     </div>
                 </div>
@@ -578,6 +722,43 @@ const Patients = () => {
                             </div> */}
                             
                                 <div className="searchSection">
+
+                                    <ExportDropdown
+                                        title="Export"
+                                        icon={<BiExport />}
+                                        sections={[
+                                            {
+                                                title: "Filtered Results",
+                                                items: [
+                                                    {
+                                                        label: "Excel",
+                                                        icon: <BiSpreadsheet size={18} />,
+                                                        onClick: handleFilteredExcel,
+                                                    },
+                                                    {
+                                                        label: "PDF",
+                                                        icon: <BiFile size={18} />,
+                                                        onClick: handleFilteredPdf,
+                                                    },
+                                                ],
+                                            },
+                                            {
+                                                title: "All Patients",
+                                                items: [
+                                                    {
+                                                        label: "Excel (.xlsx)",
+                                                        icon: <BiSpreadsheet size={18} />,
+                                                        onClick: handleAllExcel,
+                                                    },
+                                                    {
+                                                        label: "PDF",
+                                                        icon: <BiFile size={18} />,
+                                                        onClick: handleAllPdf,
+                                                    },
+                                                ],
+                                            },
+                                        ]}
+                                    />
                                     
                                     <div className="searchRow">
                                         <button

@@ -1,0 +1,68 @@
+.helpCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.helpCard {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.helpCard h4 {
+  color: #333;
+  margin: 0 0 12px;
+}
+
+.helpCard p {
+  color: #666;
+  margin: 0 0 16px;
+}
+
+.outlineButton {
+  background: transparent;
+  border: 1px solid #1a73e8;
+  color: #1a73e8;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.outlineButton:hover {
+  background: #f0f2ff;
+}
+
+.contactInfo {
+  margin: 16px 0;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.contactItem i {
+  color: #1a73e8;
+}
+
+.systemInfo {
+  display: grid;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infoLabel {
+  color: #666;
+  font-weight: 500;
+}

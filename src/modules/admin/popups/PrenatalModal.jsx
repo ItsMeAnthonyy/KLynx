@@ -4,7 +4,7 @@ import { BiX, BiCapsule, BiSearch, BiUser, BiCalendar, BiErrorCircle, BiRuler, B
 import { getConsultationTabs } from '../pages/VisitDetails';
 import { useToast } from '../../../hooks/use-toast';
 
-import { createPrenatal } from '../api/prenatalApi';
+// import { createPrenatal } from '../api/prenatalApi';
 
 export default function PrenatalModal({ isOpen, onClose, activeTab, consultationType, editingRecord, visitId, patientId, isReadOnly/*, onSubmit */}) {
     const { auth } = useAuth();

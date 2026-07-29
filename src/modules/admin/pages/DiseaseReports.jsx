@@ -21,6 +21,7 @@ import styles from './DiseaseReports.module.css';
 import Sidebar from '../../../components/Sidebar';
 import EmergencyButton from '../../../components/EmergencyButton';
 import ProfileDropdown from '../../../components/ProfileDropdown';
+import { exportFile } from '../api/reportsApi';
 
 // Register Chart.js components
 ChartJS.register(
@@ -70,6 +71,11 @@ export default function DiseaseReports() {
     const [rawVisits, setRawVisits] = useState([]);
     const [formsPage, setFormsPage] = useState(1);
     const [message, setMessage] = useState({ text: '', type: '' });
+
+    const [exportLoading, setExportLoading] = useState({
+        filteredExcel: false,
+        filteredPdf: false,
+    });
 
     useEffect(() => {
         loadBarangays();
@@ -311,6 +317,53 @@ export default function DiseaseReports() {
             setExpandedMonth(monthIndex + 1);
         }
     };
+    
+
+    const handleFilteredPdf = async () => {
+        try {
+            setExportLoading(prev => ({
+                ...prev,
+                filteredPdf: true,
+            }));
+
+            await exportFile({
+                endpoint: "export_disease_report_pdf.php",
+                filename: `Disease_Report_${viewMode}.pdf`,
+                params: {
+                    scope: "filtered",
+
+                    viewMode,
+
+                    year: selectedYear,
+
+                    month: selectedMonth,
+
+                    quarter: selectedQuarter,
+
+                    barangay: filterBarangay,
+
+                    sex: filterSex,
+                },
+            });
+
+            toast({
+                title: "Success",
+                description: "Disease report exported successfully.",
+            });
+
+        } catch (error) {
+            toast({
+                title: "Export Failed",
+                description: "Unable to export PDF.",
+                variant: "destructive",
+            });
+        } finally {
+            setExportLoading(prev => ({
+                ...prev,
+                filteredPdf: false,
+            }));
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -533,7 +586,7 @@ export default function DiseaseReports() {
                         <div className={styles.formsSection}>
                             <div className={styles.formsHeader}>
                                 <h3 className={styles.formsTitle}>📝 Forms Report - Diagnosis Breakdown - {getPeriodLabel()} </h3>
-                                <button className={styles.formsPdfBtn} /*onClick={exportFormsPDF}*/ /*disabled={formsData.length === 0}*/>
+                                <button className={styles.formsPdfBtn} onClick={handleFilteredPdf} /*disabled={formsData.length === 0}*/>
                                     📄 Export / Download PDF
                                 </button>
                             </div>
